@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 public class PlayerShooting : MonoBehaviour
 {
     [Header("Positions")]
@@ -9,9 +9,11 @@ public class PlayerShooting : MonoBehaviour
     public Transform trailStartTransform;
     private int layerMasks;
     [Header("Tracer")]
-    public TrailRenderer tracer;
+    //public TrailRenderer tracer;
     public LineRenderer lineRenderer;
     public float trailTime;
+    public float trailWidth;
+    private Color teamColor;
 
     public enum gunState
     {
@@ -34,6 +36,14 @@ public class PlayerShooting : MonoBehaviour
     {
         layerMasks = 1 << 8;
         layerMasks = ~layerMasks;
+        try
+        {
+            teamColor = GetComponent<TeamManager>().teamColor;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to find team color in team manager! Did you forget to attach the component to this object? (" + gameObject.name + ")");
+        }
     }
 
     // Update is called once per frame
@@ -81,14 +91,21 @@ public class PlayerShooting : MonoBehaviour
             Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer
             StartCoroutine(setLine(line, trailStartTransform.position, hit.point));
+            try
+            {
+                hit.collider.gameObject.GetComponent<HealthHandler>().UpdateHealth(10, gameObject, HealthHandler.damageType.paint);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Failed to Update Health of " + hit.collider.gameObject.name + ". Are you missing the component?");
+            }
         }
         else
         {
             Debug.DrawRay(startPos, fireTransform.forward * 50f, Color.red, 0.1f);
-            Debug.Log("Missed object");
+            Debug.Log("Missed object.");
             //Begins to set up the tracer
             StartCoroutine(setLine(line, trailStartTransform.position, fireTransform.forward * 50f));
-
         }
         // stops the gun from firing stupidly
         state = gunState.firing;
@@ -101,11 +118,15 @@ public class PlayerShooting : MonoBehaviour
         line.SetPosition(1, endPoint);
         // Sets how long the trail is visible for
         //this needs to be a different variable
+        // the colour here should corespond to the colour of the player's team/paint
+        line.startColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
+        line.endColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
+
         float time = trailTime;
         while (time > 0)
         {
-            // the colour here should corespond to the colour of the player's team/paint
-            line.startColor = new Color(255,0,0,time);
+            line.startWidth = trailWidth * time;
+            line.endWidth = line.startWidth;
             time -= Time.deltaTime;
             yield return null;
         }
