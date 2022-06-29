@@ -200,6 +200,7 @@ GameObject:
   - component: {fileID: 4993881104809740753}
   - component: {fileID: 4993881104809740765}
   - component: {fileID: 4993881104809740752}
+  - component: {fileID: 6412462036860231513}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -310,11 +311,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fireTransform: {fileID: 0}
   trailStartTransform: {fileID: 0}
-  tracer: {fileID: 6514541997033907938, guid: cae7d81f1de76ea43a4242a71a1b7a47, type: 3}
   lineRenderer: {fileID: 8727200555337586795, guid: 032123c27f1152f4fb0d38bdeca25025, type: 3}
-  trailTime: 0.1
+  trailTime: 1
+  trailWidth: 0.1
   state: 0
   fireKey: 323
   secondaryActionKey: 324
   reloadKey: 114
   switchWeaponKey: 9
+--- !u!114 &6412462036860231513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4993881104809740758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d51295ee2d2cfa429d1c08008bfcdbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  teamColor: {r: 0, g: 1, b: 0, a: 0}
