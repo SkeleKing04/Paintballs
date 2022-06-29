@@ -76399,10 +76399,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 4993881104809740765, guid: 08143d5af9b98ee4392c9d7e4f9c1a25, type: 3}
-      propertyPath: _maxSlideTime
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08143d5af9b98ee4392c9d7e4f9c1a25, type: 3}
 --- !u!1001 &6514541996869198578
