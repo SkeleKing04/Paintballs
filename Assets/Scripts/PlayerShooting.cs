@@ -93,7 +93,7 @@ public class PlayerShooting : MonoBehaviour
             StartCoroutine(setLine(line, trailStartTransform.position, hit.point));
             try
             {
-                hit.collider.gameObject.GetComponent<HealthHandler>().UpdateHealth(10, gameObject, HealthHandler.damageType.paint);
+                hit.collider.gameObject.GetComponent<HealthHandler>().UpdateHealth(10, gameObject, true, false);
             }
             catch (Exception e)
             {

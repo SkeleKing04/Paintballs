@@ -10,39 +10,32 @@ public class HealthHandler : MonoBehaviour
     public float currentHealth;
     public float maxPaint;
     public float currentPaint;
-    public enum damageType
-    {
-        normal,
-        paint,
-        healing,
-        overheal,
-        removepaint
-    };
     //private damageType type;
     public void Awake()
     {
         currentHealth = baseHealth;
     }
-    public void UpdateHealth(float pointAmmount, GameObject sender, damageType type)
+    public void UpdateHealth(float pointAmmount, GameObject sender, bool doPaint, bool doOverheal)
     {
-        switch(type)
+        if(doPaint)
         {
-            case damageType.normal:
-                currentHealth -= Mathf.Clamp(pointAmmount, 0, baseHealth);
-                break;
-            case damageType.paint:
-                currentPaint += Mathf.Clamp(pointAmmount, 0, maxPaint);
-                break;
-            case damageType.healing:
-                currentHealth += Mathf.Clamp(pointAmmount, 0, baseHealth);
-                break;
-            case damageType.overheal:
-                currentHealth += Mathf.Clamp(pointAmmount, 0, baseHealth * 2);
-                break;
-            case damageType.removepaint:
-                currentPaint -= Mathf.Clamp(pointAmmount, 0, maxPaint);
-                break;
+            Debug.Log(gameObject.name + " got " + pointAmmount.ToString() + " points of paint damage from " + sender.name);
+            currentPaint = Mathf.Clamp(currentPaint + pointAmmount, 0, maxPaint);
         }
+        else if(!doPaint)
+        {
+            Debug.Log(gameObject.name + " got " + pointAmmount.ToString() + " points of damage from " + sender.name);
+            if(doOverheal)
+            {
+                currentHealth = Mathf.Clamp(currentHealth + pointAmmount, 0, Mathf.Infinity);
+            }
+            else if (!doOverheal)
+            {
+                currentHealth = Mathf.Clamp(currentHealth + pointAmmount, 0, baseHealth);
+
+            }
+        }
+
         DeathCheck(sender);
     }
     private void DeathCheck(GameObject sender)
@@ -50,6 +43,10 @@ public class HealthHandler : MonoBehaviour
         if(currentPaint >= maxPaint)
         {
             Debug.Log(gameObject.name + " has been killed by " + sender.name);
+        }
+        if(currentHealth <= 0)
+        {
+            Debug.Log(gameObject.name + " has been knocked out by " + sender.name);
         }
     }
 }
