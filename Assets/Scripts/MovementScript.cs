@@ -12,6 +12,8 @@ public class MovementScript : MonoBehaviour
     private float desiredMoveSpeed;
     private float lastDesiredMoveSpeed;
     public float groundDrag;
+    private HealthHandler playerHealth;
+    public float healthMultiplier;
     [Header("Smooth Speed")]
     public float speedIncreaseMultiplier;
     public float slopeIncreaseMultiplier;
@@ -63,6 +65,7 @@ public class MovementScript : MonoBehaviour
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
+        playerHealth = GetComponent<HealthHandler>();
         rigidbody.freezeRotation = true;
         readyToJump = true;
         startYScale = playerObj.localScale.y;
@@ -92,6 +95,7 @@ public class MovementScript : MonoBehaviour
     }
     void FixedUpdate()
     {
+        healthMultiplier = Mathf.Clamp(Mathf.Pow(1.6f, playerHealth.currentHealth / 100) -0.6f, 0.5f, 1);
         movePlayer();
     }
     private void userInput()
@@ -183,7 +187,7 @@ public class MovementScript : MonoBehaviour
         moveDirection = playerOrient.forward * verticalInput + playerOrient.right * horizontalInput;
         if(OnSlope() && !exitingSlope)
         {
-            rigidbody.AddForce(GetSlopeMoveDirection(moveDirection) * moveSpeed * 20f, ForceMode.Force);
+            rigidbody.AddForce(GetSlopeMoveDirection(moveDirection) * moveSpeed * 20f * healthMultiplier, ForceMode.Force);
             if(rigidbody.velocity.y > 0)
             {
                 rigidbody.AddForce(Vector3.down * 80f, ForceMode.Force);
@@ -191,11 +195,11 @@ public class MovementScript : MonoBehaviour
         }
         if(grounded)
         {
-            rigidbody.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+            rigidbody.AddForce(moveDirection.normalized * moveSpeed * 10f * healthMultiplier, ForceMode.Force);
         }
         else if(!grounded)
         {
-            rigidbody.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+            rigidbody.AddForce(moveDirection.normalized * moveSpeed * 10f * (healthMultiplier / 5) * airMultiplier, ForceMode.Force);
         }
     }
     private void SpeedControl()
@@ -222,7 +226,7 @@ public class MovementScript : MonoBehaviour
     {
         exitingSlope = true;
         rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
-        rigidbody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        rigidbody.AddForce(transform.up * jumpForce * healthMultiplier, ForceMode.Impulse);
     }
     private void ResetJump()
     {

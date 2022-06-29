@@ -19,6 +19,10 @@ public class HealthHandler : MonoBehaviour
         removepaint
     };
     //private damageType type;
+    public void Awake()
+    {
+        currentHealth = baseHealth;
+    }
     public void UpdateHealth(float pointAmmount, GameObject sender, damageType type)
     {
         switch(type)

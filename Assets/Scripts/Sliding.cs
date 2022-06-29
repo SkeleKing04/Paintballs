@@ -48,19 +48,20 @@ public class Sliding : MonoBehaviour
         _playerObj.localScale = new Vector3(_playerObj.localScale.x, _slideYScale, _playerObj.localScale.z);
         _rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
 
-        _slideTimer = _maxSlideTime;
+        _slideTimer = _maxSlideTime * _movementScript.healthMultiplier;
+        Debug.Log(_slideTimer);
     }
     private void SlidingMovement()
     {
         Vector3 inputDirection = _orientation.forward * _verticalInput + _orientation.right * _horizontalInput;
         if(!_movementScript.OnSlope() || _rigidbody.velocity.y > -0.1f)
         {
-            _rigidbody.AddForce(inputDirection.normalized * _slideForce, ForceMode.Force);
+            _rigidbody.AddForce(inputDirection.normalized * _slideForce * (_movementScript.healthMultiplier / (_movementScript.healthMultiplier * 10)), ForceMode.Force);
             _slideTimer -= Time.deltaTime;
         }
         else
         {
-            _rigidbody.AddForce(_movementScript.GetSlopeMoveDirection(inputDirection).normalized * _slideForce, ForceMode.Force);
+            _rigidbody.AddForce(_movementScript.GetSlopeMoveDirection(inputDirection).normalized * _slideForce * (_movementScript.healthMultiplier / (_movementScript.healthMultiplier * 10)), ForceMode.Force);
 
         }
 

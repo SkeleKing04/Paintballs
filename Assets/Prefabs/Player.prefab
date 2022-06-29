@@ -201,6 +201,7 @@ GameObject:
   - component: {fileID: 4993881104809740765}
   - component: {fileID: 4993881104809740752}
   - component: {fileID: 6412462036860231513}
+  - component: {fileID: 5551147818230728758}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -257,6 +258,7 @@ MonoBehaviour:
   sprintSpeed: 10
   slideSpeed: 30
   groundDrag: 4
+  healthMultiplier: 0
   speedIncreaseMultiplier: 1.5
   slopeIncreaseMultiplier: 2.5
   jumpForce: 12
@@ -332,3 +334,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   teamColor: {r: 0, g: 1, b: 0, a: 0}
+--- !u!114 &5551147818230728758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4993881104809740758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41c056d43c2b6eb43b1ecae3a730255e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseHealth: 100
+  currentHealth: 0
+  maxPaint: 100
+  currentPaint: 0
