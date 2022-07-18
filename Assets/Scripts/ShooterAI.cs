@@ -20,7 +20,7 @@ public class ShooterAI : MonoBehaviour
     public GameObject target;
     private Vector3 lastKnownTargetPos;
     // Navigation
-    private NavMeshAgent Agent;
+    //private NavMeshAgent Agent;
     public float randomMoveFloat;
     public float randomMoveWait;
     private bool canMove;
@@ -29,6 +29,7 @@ public class ShooterAI : MonoBehaviour
     public Transform fireTransform;
     public Transform trailTransform;
     private AIShooting shooting;
+    private AIMovementScript movementScript;
     // Other
     private LayerMask layerMasks;
     // Start is called before the first frame update
@@ -37,8 +38,9 @@ public class ShooterAI : MonoBehaviour
         canMove = true;
         layerMasks = 1 << 8;
         layerMasks = ~layerMasks;
-        Agent = GetComponent<NavMeshAgent>();
+        //Agent = GetComponent<NavMeshAgent>();
         shooting = GetComponent<AIShooting>();
+        movementScript = GetComponent<AIMovementScript>();
         foreach(GameObject player in GameObject.FindGameObjectsWithTag("Combatant"))
         {
             if(player.GetComponent<TeamManager>().teamColor != teamManager.teamColor)
@@ -54,16 +56,21 @@ public class ShooterAI : MonoBehaviour
         switch(state)
         {
             case actionState.idle:
-                if(canMove)
-                {
-                    Invoke(nameof(doIdle),randomMoveWait);
-                    canMove = false;
-                }
-                if(target == null) trackEnemies();
+                //if(canMove)
+                //{
+                    //canMove = false;
+                    //doIdle();
+                //}
+                if(target == null) checkForEnemies();
                 break;
             case actionState.inChase:
+                trackTargetData();
+                movementScript.doMove = 1;
+                moveToTarget();
                 break;
             case actionState.inCombat:
+                trackTargetData();
+                movementScript.doMove = 0;
                 int chooseAction = Random.Range(0, 4);
                 if(chooseAction == 0 && shooting.state == AIShooting.gunState.ready)
                 {
@@ -82,19 +89,22 @@ public class ShooterAI : MonoBehaviour
                     //Switch to next weapon
                 }
                 break;
-        }
-        if (target != null) trackTarget();        
+        } 
     }
     // IDLE
     private void doIdle()
     {
         Vector3 randomPos = new Vector3(Random.Range(transform.position.x - randomMoveFloat,transform.position.x + randomMoveFloat),Random.Range(transform.position.y - randomMoveFloat,transform.position.y + randomMoveFloat),Random.Range(transform.position.z - randomMoveFloat,transform.position.z + randomMoveFloat));
         Debug.Log(randomPos);
-        Agent.SetDestination(randomPos);
+        //Agent.SetDestination(randomPos);
+        Invoke(nameof(resetCanMove), randomMoveWait);
+    }
+    private void resetCanMove()
+    {
         canMove = true;
     }
     // FOLLOWING AND TRACKING
-    private void trackEnemies()
+    private void checkForEnemies()
     {
         foreach(GameObject enemy in enemies)
         {
@@ -102,31 +112,50 @@ public class ShooterAI : MonoBehaviour
             if(distance < AISightRange && !targetBlocked(enemy, enemy.transform.position))
             {
                 Debug.Log(enemy.name + " can be seen");
-                target = enemy;
-                state = actionState.inChase;
+                if(target != null)
+                {
+                    if((target.transform.position - transform.position).magnitude > distance)
+                    {
+                        target = enemy;
+                        state = actionState.inChase;
+                    }
+                }
+                else
+                {
+                    target = enemy;
+                    state = actionState.inChase;
+                }
                 //inCombat = true;
             }
         }
     }
-    private void trackTarget()
+    private void trackTargetData()
     {
-        if((target.transform.position - transform.position).magnitude <= 10) state = actionState.inCombat;
+        if(target.transform.position != lastKnownTargetPos && !targetBlocked(target, target.transform.position))
+        {
+            lastKnownTargetPos = target.transform.position;     
+            Head.transform.LookAt(lastKnownTargetPos);
+            movementScript.ObjOrient.LookAt(lastKnownTargetPos);
+            //Agent.SetDestination(lastKnownTargetPos);
+        }    
+    }
+    private void moveToTarget()
+    {
+        if((lastKnownTargetPos - transform.position).magnitude <= 10 && !targetBlocked(target, target.transform.position))
+        {
+            state = actionState.inCombat;
+            return;
+        }
         else state = actionState.inChase;
         Debug.DrawRay(lastKnownTargetPos, transform.up * 10, Color.yellow, 0.01f);
-        float distance = (target.transform.position - transform.position).magnitude;
+        float distance = (target.transform.position - lastKnownTargetPos).magnitude;
         if(distance < AISightRange && !targetBlocked(target, target.transform.position))
         {
-            Agent.stoppingDistance = AIStopRange;
-            if(target.transform.position != lastKnownTargetPos)
-            {
-                lastKnownTargetPos = target.transform.position;     
-                Head.transform.LookAt(lastKnownTargetPos);
-                Agent.SetDestination(lastKnownTargetPos);
-            }     
+            movementScript.state = AIMovementScript.MovementStates.sprinting;
         }
-        else if (Agent.remainingDistance > 0)
+        else if (distance < AISightRange && distance > 0)
         {
-            Agent.stoppingDistance = 0;
+            //Agent.stoppingDistance = 0;
         }
         else
         {
@@ -139,9 +168,17 @@ public class ShooterAI : MonoBehaviour
     {
         RaycastHit hit;
         bool blocked = !Physics.Linecast(transform.position, targetPos, out hit);
-        if(hit.collider.gameObject == objectToHit) return false;
-        else if(blocked && hit.collider.gameObject != objectToHit) return true;
-        else return true;
+        Debug.DrawLine(transform.position, targetPos, Color.magenta, 0.1f);
+        if(hit.collider.gameObject == objectToHit) 
+        {
+            Debug.Log(gameObject.name + " can see " + objectToHit.gameObject.name);
+            return false;
+        }
+        else
+        {
+            Debug.Log(gameObject.name + " is blocked from seeing " + objectToHit.gameObject.name + " by " + hit.collider.name);
+            return true;
+        }
     }
     // COMBAT AND SHOOTING
     private void inputSim()
