@@ -204,6 +204,7 @@ MonoBehaviour:
   target: {fileID: 0}
   randomMoveFloat: 10
   randomMoveWait: 5
+  changeStrafeDirCooldown: 0
   Head: {fileID: 1214664907990219749}
   fireTransform: {fileID: 5208586042228674720}
   trailTransform: {fileID: 1962341307861956937}
@@ -219,7 +220,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0cc7f38e3ea3264ba713a1e300b05a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  doMove: 0
+  forwardInput: 0
+  strafeInput: 0
   walkSpeed: 7
   sprintSpeed: 10
   slideSpeed: 30
@@ -278,17 +280,17 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5416148545652274367}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.65
-  m_Speed: 2
-  m_Acceleration: 1000
+  m_Speed: 1
+  m_Acceleration: 1
   avoidancePriority: 50
-  m_AngularSpeed: 1000
-  m_StoppingDistance: 5
+  m_AngularSpeed: 1
+  m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 0
-  m_AutoRepath: 1
+  m_AutoRepath: 0
   m_Height: 2
   m_BaseOffset: 1
   m_WalkableMask: 4294967295

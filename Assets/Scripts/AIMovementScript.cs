@@ -6,7 +6,8 @@ public class AIMovementScript : MonoBehaviour
 {    
     private float moveSpeed;
     [Header("Movement")]
-    public int doMove;
+    public int forwardInput;
+    public int strafeInput;
     public float walkSpeed;
     public float sprintSpeed;
     public float slideSpeed;
@@ -165,7 +166,7 @@ public class AIMovementScript : MonoBehaviour
     }
     private void movePlayer()
     {
-        moveDirection = ObjOrient.forward * doMove + ObjOrient.right * doMove;
+        moveDirection = ObjOrient.forward * forwardInput + ObjOrient.right * strafeInput;
         if(OnSlope() && !exitingSlope)
         {
             rigidbody.AddForce(GetSlopeMoveDirection(moveDirection) * moveSpeed * 20f * healthMultiplier, ForceMode.Force);

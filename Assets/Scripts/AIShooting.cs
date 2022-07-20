@@ -69,7 +69,7 @@ public class AIShooting : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError("Failed to Update Health of " + hit.collider.gameObject.name + ". Are you missing the component?");
+                Debug.LogWarning("Failed to Update Health of " + hit.collider.gameObject.name + ". Are you missing the component?");
             }
         }
         else
