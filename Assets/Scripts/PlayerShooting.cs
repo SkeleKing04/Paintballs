@@ -8,6 +8,7 @@ public class PlayerShooting : MonoBehaviour
     public Transform fireTransform;
     public Transform trailStartTransform;
     private int layerMasks;
+    private GunPointer gunPointer;
     [Header("Tracer")]
     //public TrailRenderer tracer;
     public LineRenderer lineRenderer;
@@ -44,11 +45,13 @@ public class PlayerShooting : MonoBehaviour
         {
             Debug.LogError("Failed to find team color in team manager! Did you forget to attach the component to this object? (" + gameObject.name + ")");
         }
+        gunPointer.GetComponentInChildren<GunPointer>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        gunPointer.pointGun(Camera.main.transform);
         stateCheck();
         if(Input.GetKey(fireKey) && state == gunState.ready)
         {

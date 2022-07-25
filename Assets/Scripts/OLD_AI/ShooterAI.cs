@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class ShooterAI : MonoBehaviour
 {
-    // Players and Enemeies
+    [Header("Enemies & Tracking")]
     public List<GameObject> enemies;
     public TeamManager teamManager;
     public float AISightRange;
@@ -16,22 +16,23 @@ public class ShooterAI : MonoBehaviour
         inChase,
         inCombat
     };
+    [Header("Targeting & Nav")]
     public actionState state;
     public GameObject target;
-    private Vector3 lastKnownTargetPos;
-    // Navigation
+    public Vector3 lastKnownTargetPos;
     private NavMeshAgent Agent;
     private NavMeshPath navPath;
-    private Vector3[] travelPoints;
-    private int travelPointIndex;
-    private bool atPoint = false;
-    private bool destinationReached = false;
+    public Vector3[] travelPoints;
+    public int travelPointIndex;
+    public bool atPoint = false;
+    public bool destinationReached = false;
+    [Header("Idle Movement")]
     public float randomMoveFloat;
     public float randomMoveWait;
-    private bool canIdleMove;
+    private bool canMove;
     private bool doStrafe;
     public float changeStrafeDirCooldown;
-    // Shooting
+    [Header("Shooting")]
     public GameObject Head;
     public Transform fireTransform;
     public Transform trailTransform;
@@ -42,7 +43,7 @@ public class ShooterAI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        canIdleMove = true;
+        canMove = true;
         doStrafe = true;
         layerMasks = 1 << 8;
         layerMasks = ~layerMasks;
@@ -64,25 +65,40 @@ public class ShooterAI : MonoBehaviour
         switch(state)
         {
             case actionState.idle:
-                if(canIdleMove)
+                if(canMove)
                 {
-                    canIdleMove = false;
+                    canMove = false;
                     Vector3 randomPos = new Vector3(Random.Range(transform.position.x - randomMoveFloat,transform.position.x + randomMoveFloat),Random.Range(transform.position.y - randomMoveFloat,transform.position.y + randomMoveFloat),Random.Range(transform.position.z - randomMoveFloat,transform.position.z + randomMoveFloat));
-                    //Debug.Log(gameObject.name + " is going to move to " + randomPos.ToString());
                     while(!Agent.CalculatePath(randomPos, Agent.path))
                     {
                         randomPos = new Vector3(Random.Range(transform.position.x - randomMoveFloat,transform.position.x + randomMoveFloat),Random.Range(transform.position.y - randomMoveFloat,transform.position.y + randomMoveFloat),Random.Range(transform.position.z - randomMoveFloat,transform.position.z + randomMoveFloat));
                         Debug.DrawLine(transform.position, randomPos, Color.black, 0.5f);
-                        //Debug.LogWarning("Path cannot be crossed, retrying");
-                        //return;
                     }           
                     movementScript.ObjOrient.LookAt(randomPos);
-                    moveToTarget(randomPos);
+                    setMovePath(randomPos);
                     Invoke(nameof(resetCanMove), randomMoveWait);
                 }
                 break;
             case actionState.inChase:
-                chaseTarget();
+                if(target != null)
+                {
+                    if(!targetBlocked(target, target.transform.position) && canMove)
+                    {   
+                        canMove = false;
+                        lastKnownTargetPos = target.transform.position;
+                        setMovePath(lastKnownTargetPos);
+                        Invoke(nameof(resetCanMove), 0.5f);
+                    }
+                }
+                if(destinationReached)
+                {
+                    if(targetBlocked(target, target.transform.position))
+                    {
+                        target = null;
+                        state = actionState.idle;
+                    }
+                }
+                
                 //movementScript.forwardInput = 1;
                 //moveToTarget();
                 break;
@@ -116,15 +132,16 @@ public class ShooterAI : MonoBehaviour
         }
         if(!destinationReached)
         {
+            movementScript.ObjOrient.LookAt(travelPoints[travelPointIndex]);
+            Debug.DrawLine(transform.position, travelPoints[travelPointIndex], Color.cyan, 0.1f);
+            movementScript.forwardInput = 1;
             if(!atPoint)
             {
-                //Debug.Log("The travel point index is " + travelPointIndex.ToString());
+                Debug.Log("Travelling to " + travelPoints[travelPointIndex].ToString());
                 Quaternion lookRot = Quaternion.LookRotation(travelPoints[travelPointIndex]);
                 lookRot.x = 0; lookRot.z = 0;
                 Head.transform.rotation = Quaternion.Slerp(Head.transform.rotation,lookRot, 100 * Time.deltaTime);
-                movementScript.ObjOrient.LookAt(travelPoints[travelPointIndex]);
-                Debug.DrawLine(transform.position, travelPoints[travelPointIndex], Color.cyan, 0.5f);
-                movementScript.forwardInput = 1;
+                
                 float distanceToPoint = (transform.position - travelPoints[travelPointIndex]).magnitude;
                 if(distanceToPoint < 1.1f)
                 {
@@ -149,12 +166,12 @@ public class ShooterAI : MonoBehaviour
     }
     private void resetCanMove()
     {
-        canIdleMove = true;
+        canMove = true;
     }
     // FOLLOWING AND TRACKING
-    private void moveToTarget(Vector3 position)
+    private void setMovePath(Vector3 position)
     {
-        Debug.DrawLine(transform.position, position, Color.yellow, 0.5f);
+        Debug.DrawLine(transform.position, position, Color.yellow, 0.1f);
         float distance = (transform.position - position).magnitude;
         if(distance < AISightRange)
         {
@@ -174,22 +191,22 @@ public class ShooterAI : MonoBehaviour
             float distance = (enemy.transform.position - transform.position).magnitude;
             if(distance < AISightRange)
             {
-                Debug.Log(enemy.name + " is in range of " + gameObject.name);
+                //Debug.Log(enemy.name + " is in range of " + gameObject.name);
                 if(!targetBlocked(enemy, enemy.transform.position))
                 {
-                    Debug.Log(enemy.name + " can be seen");
+                    //Debug.Log(enemy.name + " can be seen");
                     if(target != null)
                     {
                         if((target.transform.position - transform.position).magnitude > distance)
                         {
-                            Debug.Log(gameObject.name + " is now targeting " + enemy.name + " instead of " + target.name);
+                            //Debug.Log(gameObject.name + " is now targeting " + enemy.name + " instead of " + target.name);
                             target = enemy;
                             state = actionState.inChase;
                         }
                     }
                     else
                     {
-                        Debug.Log(gameObject.name + " is now targeting " + enemy.name);
+                        //Debug.Log(gameObject.name + " is now targeting " + enemy.name);
                         target = enemy;
                         state = actionState.inChase;
                     }
@@ -197,20 +214,22 @@ public class ShooterAI : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log(gameObject.name + " cannot see " + enemy.name);
+                    //Debug.Log(gameObject.name + " cannot see " + enemy.name);
                 }
             }
             else
             {
-                Debug.Log(enemy.name + " is out of range of " + gameObject.name);
+                //Debug.Log(enemy.name + " is out of range of " + gameObject.name);
             }
         }
     }
-    private void chaseTarget()
+    private void updateTargetPos()
     {
         if(!targetBlocked(target, target.transform.position))
-        moveToTarget(lastKnownTargetPos);
+        {
+        }
     }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private void checkTarget()
     {
         if((lastKnownTargetPos - transform.position).magnitude <= 10 && !targetBlocked(target, target.transform.position))
@@ -219,7 +238,6 @@ public class ShooterAI : MonoBehaviour
             return;
         }
         else state = actionState.inChase;
-
     }
     private void ResetStrafe()
     {
