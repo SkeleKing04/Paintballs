@@ -91,8 +91,17 @@ public class AIShooting : MonoBehaviour
         // Sets how long the trail is visible for
         //this needs to be a different variable
         // the colour here should corespond to the colour of the player's team/paint
-        line.startColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
-        line.endColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
+        try
+        {
+            teamColor = GetComponent<TeamManager>().teamColor;
+            Debug.Log(gameObject.name + "'s team colour is " + teamColor.ToString());
+            line.startColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
+            line.endColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
+        }
+        catch (Exception e)
+        {
+            
+        }
 
         float time = trailTime;
         while (time > 0)

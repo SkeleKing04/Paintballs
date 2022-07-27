@@ -311,7 +311,7 @@ MonoBehaviour:
   _orientation: {fileID: 4993881103670140355}
   _playerObj: {fileID: 4993881103358442342}
   _maxSlideTime: 0.75
-  _slideForce: 200
+  _slideForce: 400
   _slideYScale: 0.5
   _startYScale: 0
   _slideKey: 306
@@ -329,6 +329,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fireTransform: {fileID: 0}
   trailStartTransform: {fileID: 5425343136333513420}
+  gunPointer: {fileID: 0}
   lineRenderer: {fileID: 8727200555337586795, guid: 032123c27f1152f4fb0d38bdeca25025, type: 3}
   trailTime: 1
   trailWidth: 0.1
@@ -377,9 +378,17 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2172434568393525842, guid: 8338f2683626d08408935900f9d008e2, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 3370440768074223052, guid: 8338f2683626d08408935900f9d008e2, type: 3}
       propertyPath: m_Name
       value: Gun
+      objectReference: {fileID: 0}
+    - target: {fileID: 3843347679477719742, guid: 8338f2683626d08408935900f9d008e2, type: 3}
+      propertyPath: m_Mesh
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4468813983645372633, guid: 8338f2683626d08408935900f9d008e2, type: 3}
       propertyPath: m_RootOrder
@@ -395,19 +404,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4468813983645372633, guid: 8338f2683626d08408935900f9d008e2, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4468813983645372633, guid: 8338f2683626d08408935900f9d008e2, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4468813983645372633, guid: 8338f2683626d08408935900f9d008e2, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4468813983645372633, guid: 8338f2683626d08408935900f9d008e2, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4468813983645372633, guid: 8338f2683626d08408935900f9d008e2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -422,6 +431,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7084128021168629783, guid: 8338f2683626d08408935900f9d008e2, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7354769447277942433, guid: 8338f2683626d08408935900f9d008e2, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}

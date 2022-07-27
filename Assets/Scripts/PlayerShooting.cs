@@ -8,7 +8,7 @@ public class PlayerShooting : MonoBehaviour
     public Transform fireTransform;
     public Transform trailStartTransform;
     private int layerMasks;
-    private GunPointer gunPointer;
+    public GunPointer gunPointer;
     [Header("Tracer")]
     //public TrailRenderer tracer;
     public LineRenderer lineRenderer;
@@ -45,7 +45,7 @@ public class PlayerShooting : MonoBehaviour
         {
             Debug.LogError("Failed to find team color in team manager! Did you forget to attach the component to this object? (" + gameObject.name + ")");
         }
-        gunPointer.GetComponentInChildren<GunPointer>();
+        gunPointer = GetComponentInChildren<GunPointer>();
     }
 
     // Update is called once per frame
@@ -100,7 +100,7 @@ public class PlayerShooting : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError("Failed to Update Health of " + hit.collider.gameObject.name + ". Are you missing the component?");
+                Debug.LogAssertion("Failed to Update Health of " + hit.collider.gameObject.name + ". Are you missing the component?");
             }
         }
         else
@@ -122,8 +122,17 @@ public class PlayerShooting : MonoBehaviour
         // Sets how long the trail is visible for
         //this needs to be a different variable
         // the colour here should corespond to the colour of the player's team/paint
-        line.startColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
-        line.endColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
+        try
+        {
+            teamColor = GetComponent<TeamManager>().teamColor;
+            Debug.Log(gameObject.name + "'s team colour is " + teamColor.ToString());
+            line.startColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
+            line.endColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
+        }
+        catch (Exception e)
+        {
+            
+        }
 
         float time = trailTime;
         while (time > 0)
