@@ -1,31 +1,45 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class DeathmatchScript : MonoBehaviour
 {
+    public enum gameState
+    {
+        setup,
+        starting,
+        loading,
+        playing,
+        ending,
+        restarting,
+        leaving
+    };
+    public gameState state;
     [Header("Players")]
     public List<GameObject> players;
     [Header("Spawning")]
     public Transform spawnArea;
-    public float spawnSize;
-    public float spawnSafeZone;
+    public float spawnSize, spawnSafeZone;
     public LayerMask combatantLayer;
     public Transform[] spawnPoints;
     [Header("Game Settings")]
     public bool teamDeathmatch;
-    public int teamSize;
-    public int botCount;
+    public int teamSize, botCount;
     public GameObject botPrefab;
     public bool fillRoomWithBots;
     public Color teamAColour, teamBColour;
     public float gameStartTime;
     [Header("Unsorted")]
     public Transform mapCenter;
+    public new Transform camera;
+    public TextMeshProUGUI timerText;
+    public float timeTillStart;
 
     // Start is called before the first frame update
     void Start()
     {   
+        state = gameState.setup;
         teamAColour = new Color(Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,255f);
         teamBColour = new Color(1f - teamAColour.r,1f - teamAColour.g, 1f - teamAColour.b,255f);
         foreach(GameObject combatant in GameObject.FindGameObjectsWithTag("Combatant"))
@@ -46,7 +60,6 @@ public class DeathmatchScript : MonoBehaviour
     }
     public static List<GameObject> playerShuffle (List<GameObject> incomingList)
     {
- 
         System.Random rnd = new System.Random ();
  
         GameObject myGO;
@@ -75,25 +88,48 @@ public class DeathmatchScript : MonoBehaviour
     }
     private void startGame()
     {
-        Camera.main.GetComponentInParent<MoveCamera>().enabled = false;
-        Camera.main.GetComponentInParent<Transform>().position = mapCenter.position;
-        Camera.main.GetComponentInParent<Transform>().rotation = mapCenter.rotation;
+        camera.GetComponent<MoveCamera>().enabled = false;
+        camera.GetComponent<Transform>().position = mapCenter.position;
+        camera.GetComponent<Transform>().rotation = mapCenter.rotation;
         foreach(GameObject player in players)
         {
             player.SetActive(false);
         }
-        float timeTillStart = gameStartTime;
-        while (timeTillStart > 0)
-        {
-            timeTillStart -= Time.deltaTime;
-        }
+        timeTillStart = gameStartTime;
+        state = gameState.starting;
 
     }
 
     // Update is called once per frame
     void Update()
+    {   
+        stateEventHandler();
+    }
+    private void stateEventHandler()
     {
-        
+        switch(state)
+        {
+            case gameState.starting:
+                if (timeTillStart >+ 0)
+                {
+                    timeTillStart -= Time.deltaTime;
+                    float minutes = Mathf.FloorToInt(timeTillStart / 60);
+                    float seconds = Mathf.FloorToInt(timeTillStart % 60);
+                    timerText.text = string.Format("{0:00} : {1:00}", minutes, seconds);
+                }
+                else
+                {
+                    state = gameState.loading;
+                }
+                break;
+            case gameState.loading:
+                foreach(GameObject player in players)
+                {
+                    spawnMe(player);
+                }
+                state = gameState.playing;
+                break;
+        }
     }
     public void spawnMe(GameObject sender)
     {
@@ -110,7 +146,13 @@ public class DeathmatchScript : MonoBehaviour
         }
         else
         {
-             
+            foreach(Transform spawnPoint in spawnPoints)
+            {
+                if(spawnPoint.GetComponent<SpawnPoint>().coolDown <= 0)
+                {
+                    possibleSpawns.Add(spawnPoint);
+                }
+            }
         }
         
         int rnd = Random.Range(0, possibleSpawns.Count);

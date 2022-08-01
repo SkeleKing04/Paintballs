@@ -43,7 +43,7 @@ public class PlayerShooting : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogError("Failed to find team color in team manager! Did you forget to attach the component to this object? (" + gameObject.name + ")");
+            Debug.LogError("Failed to find team color in team manager! Did you forget to attach the component to this object? (" + gameObject.name + ")\nThe error is " + e);
         }
         gunPointer = GetComponentInChildren<GunPointer>();
     }
@@ -100,7 +100,7 @@ public class PlayerShooting : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogAssertion("Failed to Update Health of " + hit.collider.gameObject.name + ". Are you missing the component?");
+                Debug.LogAssertion("Failed to Update Health of " + hit.collider.gameObject.name + ". Are you missing the component?\nThe error is " + e);
             }
         }
         else
@@ -131,7 +131,7 @@ public class PlayerShooting : MonoBehaviour
         }
         catch (Exception e)
         {
-            
+            Debug.Log("Failed to update the colour of the line. Does the sender have team manager attached?\nThe error is " + e);
         }
 
         float time = trailTime;

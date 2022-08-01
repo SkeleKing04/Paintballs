@@ -178,7 +178,7 @@ public class ShooterAI : MonoBehaviour
             travelPointIndex = 0;
             Agent.SetDestination(position);
             travelPoints = Agent.path.corners;
-            Agent.Stop();
+            Agent.isStopped = true;
             destinationReached = false;
             atPoint = false;
             //movementScript.state = AIMovementScript.MovementStates.sprinting;

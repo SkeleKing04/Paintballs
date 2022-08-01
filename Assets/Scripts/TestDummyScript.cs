@@ -14,7 +14,7 @@ public class TestDummyScript : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogError("Whatever just collided doesn't have a HealthHandler");
+            Debug.LogError("Whatever just collided doesn't have a HealthHandler\nThe error is " + e);
         }
     }
 }

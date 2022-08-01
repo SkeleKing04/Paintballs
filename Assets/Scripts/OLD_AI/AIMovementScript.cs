@@ -40,7 +40,7 @@ public class AIMovementScript : MonoBehaviour
     public Transform ObjOrient;
     [Header("General")]
     Vector3 moveDirection;
-    public Rigidbody rigidbody;
+    public new Rigidbody rigidbody;
     public Transform collisionObj;
     public MovementStates state;
     public enum MovementStates

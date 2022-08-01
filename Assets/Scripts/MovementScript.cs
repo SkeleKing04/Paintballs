@@ -47,8 +47,8 @@ public class MovementScript : MonoBehaviour
     float verticalInput;
     Vector3 moveDirection;
     [Header("General")]
-    public Rigidbody rigidbody;
-    public CameraController camera;
+    public new Rigidbody rigidbody;
+    public new CameraController camera;
     public Transform playerObj;
 
     public MovementStates state;
