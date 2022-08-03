@@ -351,6 +351,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   teamColor: {r: 0, g: 1, b: 0, a: 0}
+  renderer: {fileID: 4993881103776969325}
 --- !u!114 &5551147818230728758
 MonoBehaviour:
   m_ObjectHideFlags: 0

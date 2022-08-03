@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.AI;
 
 public class DeathmatchScript : MonoBehaviour
 {
@@ -39,6 +40,8 @@ public class DeathmatchScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {   
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         state = gameState.setup;
         teamAColour = new Color(Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,255f);
         teamBColour = new Color(1f - teamAColour.r,1f - teamAColour.g, 1f - teamAColour.b,255f);
@@ -79,18 +82,28 @@ public class DeathmatchScript : MonoBehaviour
     }
     private void sortTeams()
     {
-        players = playerShuffle(players);
-        for(int i = 0; i < players.Count; i += 2)
+        if(teamDeathmatch)
         {
-            players[i].GetComponent<TeamManager>().teamColor = teamAColour;
-            players[i + 1].GetComponent<TeamManager>().teamColor = teamBColour;
+            players = playerShuffle(players);
+            for(int i = 0; i < players.Count; i += 2)
+            {
+                players[i].GetComponent<TeamManager>().teamColor = teamAColour;
+                players[i].GetComponent<TeamManager>().UpdateColour();
+                players[i + 1].GetComponent<TeamManager>().teamColor = teamBColour;
+                players[i + 1].GetComponent<TeamManager>().UpdateColour();
+            }
+        }
+        else
+        {
+            foreach(GameObject player in players)
+            {
+                player.GetComponent<TeamManager>().teamColor = new Color(Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,255f);
+            }
         }
     }
     private void startGame()
     {
-        camera.GetComponent<MoveCamera>().enabled = false;
-        camera.GetComponent<Transform>().position = mapCenter.position;
-        camera.GetComponent<Transform>().rotation = mapCenter.rotation;
+        resetPlayerCam(false, mapCenter);
         foreach(GameObject player in players)
         {
             player.SetActive(false);
@@ -98,6 +111,15 @@ public class DeathmatchScript : MonoBehaviour
         timeTillStart = gameStartTime;
         state = gameState.starting;
 
+    }
+    private void resetPlayerCam(bool toggle, Transform posToMove)
+    {
+        camera.GetComponent<MoveCamera>().enabled = toggle;
+        if(posToMove != null)
+        {
+            camera.GetComponent<Transform>().position = posToMove.position;
+            camera.GetComponent<Transform>().rotation = posToMove.rotation;
+        }
     }
 
     // Update is called once per frame
@@ -154,12 +176,27 @@ public class DeathmatchScript : MonoBehaviour
                 }
             }
         }
-        
-        int rnd = Random.Range(0, possibleSpawns.Count);
-        if(Physics.CheckSphere(possibleSpawns[rnd].position, spawnSafeZone, combatantLayer))
+        bool isSpawned = false;
+        int whileIteration = 0;
+        while(!isSpawned && whileIteration < 10)
         {
-            sender.SetActive(true);
-            sender.transform.position = possibleSpawns[rnd].position;
+            int rnd = Random.Range(0, possibleSpawns.Count);
+            if(!Physics.CheckSphere(possibleSpawns[rnd].position, spawnSafeZone, combatantLayer))
+            {
+                sender.SetActive(true);
+                if(sender.GetComponent<MovementScript>() == true)
+                {
+                    resetPlayerCam(true, null);
+                    sender.transform.position = possibleSpawns[rnd].position;
+                }
+                else if(sender.GetComponent<EnemyAI>() == true)
+                {
+                    sender.GetComponent<EnemyAI>().findEnemies();
+                    sender.GetComponent<NavMeshAgent>().Warp(possibleSpawns[rnd].position);
+                }
+                isSpawned = true;
+            }
+            whileIteration++;
         }
     }
 }

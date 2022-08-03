@@ -5,15 +5,9 @@ using UnityEngine;
 public class TeamManager : MonoBehaviour
 {
     public Color teamColor;
-    // Start is called before the first frame update
-    void Start()
+    public new Renderer renderer;
+    public void UpdateColour()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        renderer.material.color = teamColor;
     }
 }

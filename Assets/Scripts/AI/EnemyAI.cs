@@ -27,13 +27,7 @@ public class EnemyAI : MonoBehaviour
 
     private void Awake()
     {
-        foreach(GameObject combatant in GameObject.FindGameObjectsWithTag("Combatant"))
-        {
-            if(combatant.GetComponent<TeamManager>().teamColor != gameObject.GetComponent<TeamManager>().teamColor)
-            {
-                enemies.Add(combatant);
-            }
-        }
+        findEnemies();
         shooting = GetComponent<AIShooting>();
         agent = GetComponent<NavMeshAgent>();
     }
@@ -44,6 +38,16 @@ public class EnemyAI : MonoBehaviour
         if (target == null) Patorling();
         if (target != null && (transform.position - target.transform.position).magnitude >= attackRange) ChasePlayer();
         if(target != null && (transform.position - target.transform.position).magnitude <= attackRange) AttackPlayer();
+    }
+    public void findEnemies()
+    {
+        foreach(GameObject combatant in GameObject.FindGameObjectsWithTag("Combatant"))
+        {
+            if(combatant.GetComponent<TeamManager>().teamColor != gameObject.GetComponent<TeamManager>().teamColor)
+            {
+                enemies.Add(combatant);
+            }
+        }
     }
     private void detectTarget()
     {
