@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class DeathmatchScript : MonoBehaviour
 {
@@ -34,7 +35,11 @@ public class DeathmatchScript : MonoBehaviour
     [Header("Unsorted")]
     public Transform mapCenter;
     public new Transform camera;
+    public GameObject[] gamePanel;
     public TextMeshProUGUI timerText;
+    public GameObject playerScorecard;
+    private List<GameObject> scorecards;
+    private List<float> scores;
     public float timeTillStart;
 
     // Start is called before the first frame update
@@ -92,12 +97,19 @@ public class DeathmatchScript : MonoBehaviour
                 players[i + 1].GetComponent<TeamManager>().teamColor = teamBColour;
                 players[i + 1].GetComponent<TeamManager>().UpdateColour();
             }
+            for(int i = 0; i < spawnPoints.Length / 2; i++)
+            {
+                Debug.Log("index is " + i + ", therefore, other point is " + (i + spawnPoints.Length / 2));
+                spawnPoints[i].GetComponent<TeamManager>().teamColor = teamAColour;
+                spawnPoints[i + spawnPoints.Length / 2].GetComponent<TeamManager>().teamColor = teamBColour;
+            }
         }
         else
         {
             foreach(GameObject player in players)
             {
                 player.GetComponent<TeamManager>().teamColor = new Color(Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,255f);
+                player.GetComponent<TeamManager>().UpdateColour();
             }
         }
     }
@@ -132,7 +144,8 @@ public class DeathmatchScript : MonoBehaviour
         switch(state)
         {
             case gameState.starting:
-                if (timeTillStart >+ 0)
+                ResetUIPanels(0);
+                if (timeTillStart > 0)
                 {
                     timeTillStart -= Time.deltaTime;
                     float minutes = Mathf.FloorToInt(timeTillStart / 60);
@@ -145,13 +158,32 @@ public class DeathmatchScript : MonoBehaviour
                 }
                 break;
             case gameState.loading:
-                foreach(GameObject player in players)
+                ResetUIPanels(1);
+                scores.Add(0);
+                scores.Clear();
+                for(int i = 0; i <= players.Count - 1; i++)
                 {
-                    spawnMe(player);
+                    spawnMe(players[i]);
+                    createScorecard(players[i]);
+                    int score = 0;
+                    scores.Add(score);                    
+                }
+                foreach(EnemyAI enemyAI in FindObjectsOfType<EnemyAI>())
+                {
+                    enemyAI.enemies.Clear();
+                    enemyAI.findEnemies();
                 }
                 state = gameState.playing;
                 break;
         }
+    }
+    private void ResetUIPanels(int index)
+    {
+        foreach(GameObject panel in gamePanel)
+        {
+            panel.SetActive(false);
+        }
+        gamePanel[index].SetActive(true);
     }
     public void spawnMe(GameObject sender)
     {
@@ -198,5 +230,21 @@ public class DeathmatchScript : MonoBehaviour
             }
             whileIteration++;
         }
+    }
+    private void createScorecard(GameObject player)
+    {
+        GameObject newScorecard = Instantiate<GameObject>(playerScorecard);
+        scorecards.Add(newScorecard);
+        newScorecard.transform.SetParent(gamePanel[1].transform);
+        newScorecard.transform.GetComponentInChildren<TextMeshProUGUI>().text = "0";
+        newScorecard.transform.localScale = new Vector3(1,1,1);
+        newScorecard.transform.GetComponent<Image>().color = player.GetComponent<TeamManager>().teamColor;
+        newScorecard.SetActive(true);
+    }
+    public void updatePlayerScore(GameObject player)
+    {
+        scores[players.IndexOf(player)]++;
+        scorecards[players.IndexOf(player)].transform.GetComponentInChildren<TextMeshProUGUI>().text = scores[players.IndexOf(player)].ToString();
+
     }
 }

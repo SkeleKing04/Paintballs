@@ -11,9 +11,11 @@ public class HealthHandler : MonoBehaviour
     public float maxPaint;
     public float currentPaint;
     //private damageType type;
+    private DeathmatchScript deathmatchScript;
     public void Awake()
     {
         currentHealth = baseHealth;
+        deathmatchScript = FindObjectOfType<DeathmatchScript>();
     }
     public void UpdateHealth(float pointAmmount, GameObject sender, bool doPaint, bool doOverheal)
     {
@@ -43,6 +45,7 @@ public class HealthHandler : MonoBehaviour
         if(currentPaint >= maxPaint)
         {
             Debug.Log(gameObject.name + " has been killed by " + sender.name);
+            deathmatchScript.updatePlayerScore(sender);
         }
         if(currentHealth <= 0)
         {
