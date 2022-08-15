@@ -100,7 +100,7 @@ public class PlayerShooting : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogAssertion("Failed to Update Health of " + hit.collider.gameObject.name + ". Are you missing the component?\nThe error is " + e);
+                //Debug.LogAssertion("Failed to Update Health of " + hit.collider.gameObject.name + ". Are you missing the component?\nThe error is " + e);
             }
         }
         else
@@ -125,7 +125,7 @@ public class PlayerShooting : MonoBehaviour
         try
         {
             teamColor = GetComponent<TeamManager>().teamColor;
-            Debug.Log(gameObject.name + "'s team colour is " + teamColor.ToString());
+//            Debug.Log(gameObject.name + "'s team colour is " + teamColor.ToString());
             line.startColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
             line.endColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
         }

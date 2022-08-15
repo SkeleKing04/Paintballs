@@ -49,7 +49,7 @@ public class Sliding : MonoBehaviour
         _rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
 
         _slideTimer = _maxSlideTime * _movementScript.healthMultiplier;
-        Debug.Log(_slideTimer);
+        //Debug.Log(_slideTimer);
     }
     private void SlidingMovement()
     {

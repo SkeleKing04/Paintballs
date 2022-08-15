@@ -327,7 +327,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 794a0d7c6d563c24e830925deb0c1e6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireTransform: {fileID: 0}
+  fireTransform: {fileID: 5425343136333513420}
   trailStartTransform: {fileID: 5425343136333513420}
   gunPointer: {fileID: 0}
   lineRenderer: {fileID: 8727200555337586795, guid: 032123c27f1152f4fb0d38bdeca25025, type: 3}

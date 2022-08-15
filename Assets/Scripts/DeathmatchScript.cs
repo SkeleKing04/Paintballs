@@ -19,9 +19,9 @@ public class DeathmatchScript : MonoBehaviour
     };
     public gameState state;
     [Header("Players")]
-    public List<GameObject> players;
+    //public List<GameObject> players;
     [Header("Spawning")]
-    public Transform spawnArea;
+    //public Transform spawnArea;
     public float spawnSize, spawnSafeZone;
     public LayerMask combatantLayer;
     public Transform[] spawnPoints;
@@ -38,39 +38,96 @@ public class DeathmatchScript : MonoBehaviour
     public GameObject[] gamePanel;
     public TextMeshProUGUI timerText;
     public GameObject playerScorecard;
-    private List<GameObject> scorecards;
-    private List<float> scores;
+    //private List<GameObject> scorecards;
+    //private List<float> scores;
     public float timeTillStart;
+    public List<playerData> data;
+    [System.Serializable]
+    public class playerData
+    {
+        public string playerName;
+        public GameObject playerObject;
+        public GameObject personalScorecard;
+        public float personalScore;
+    }
 
     // Start is called before the first frame update
     void Start()
     {   
+        //data = new playerData[teamSize * 2];
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         state = gameState.setup;
         teamAColour = new Color(Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,255f);
         teamBColour = new Color(1f - teamAColour.r,1f - teamAColour.g, 1f - teamAColour.b,255f);
-        foreach(GameObject combatant in GameObject.FindGameObjectsWithTag("Combatant"))
+        GameObject[] allCombatants = GameObject.FindGameObjectsWithTag("Combatant");
+        for(int i = 0; i <= allCombatants.Length - 1; i++)
         {
-            players.Add(combatant);
+            Debug.Log(allCombatants[i].ToString());
+            //data[i].playerObject = new GameObject("dummyObject");
+            data.Add(new playerData());
+            addNewPlayer(data[i], allCombatants[i]);
         }
         if(fillRoomWithBots)
         {
-            for(int i = botCount; i > 0; i--)
+            for(int i = 0; i < botCount; i++)
             {
                 GameObject newBot = Instantiate(botPrefab, new Vector3(0,0,0), Quaternion.identity);
-                players.Add(newBot);
+                data.Add(new playerData());
+                addNewPlayer(data[data.Count - 1], newBot);
                 newBot.SetActive(false);
             }
         }
         sortTeams();
         startGame();
     }
-    public static List<GameObject> playerShuffle (List<GameObject> incomingList)
+    private void addNewPlayer(playerData dataPoint, GameObject incomingObject)
+    {
+        dataPoint.playerName = "yooo";
+        dataPoint.playerObject = incomingObject;
+        dataPoint.personalScorecard = createScorecard(dataPoint.playerObject);
+        dataPoint.personalScore = 0;
+    }
+    private void sortTeams()
+    {
+        if(teamDeathmatch)
+        {
+            data = playerShuffle(data);
+            for(int i = 0; i < data.Count; i += 2)
+            {
+                data[i].playerObject.GetComponent<TeamManager>().teamColor = teamAColour;
+                data[i].playerObject.GetComponent<TeamManager>().UpdateColour();
+                data[i + 1].playerObject.GetComponent<TeamManager>().teamColor = teamBColour;
+                data[i + 1].playerObject.GetComponent<TeamManager>().UpdateColour();
+            }
+            for(int i = 0; i < spawnPoints.Length / 2; i++)
+            {
+                spawnPoints[i].GetComponent<TeamManager>().teamColor = teamAColour;
+                spawnPoints[i + spawnPoints.Length / 2].GetComponent<TeamManager>().teamColor = teamBColour;
+            }
+        }
+        else
+        {
+            foreach(playerData dataPoint in data)
+            {
+                dataPoint.playerObject.GetComponent<TeamManager>().teamColor = new Color(Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,255f);
+                dataPoint.playerObject.GetComponent<TeamManager>().UpdateColour();
+            }
+        }
+        resetScorecards();
+    }
+    public void resetScorecards()
+    {
+        foreach(playerData dataPoint in data)
+        {
+            dataPoint.personalScorecard.transform.GetComponent<Image>().color = dataPoint.playerObject.GetComponent<TeamManager>().teamColor;
+        }
+    }
+    public static List<playerData> playerShuffle (List<playerData> incomingList)
     {
         System.Random rnd = new System.Random ();
  
-        GameObject myGO;
+        playerData dataPoint;
  
         int n = incomingList.Count;
         for (int i = 0; i < n; i++)
@@ -78,47 +135,19 @@ public class DeathmatchScript : MonoBehaviour
             // NextDouble returns a random number between 0 and 1.
             // ... It is equivalent to Math.random() in Java.
             int r = i + (int)(rnd.NextDouble() * (n - i));
-            myGO = incomingList[r];
+            dataPoint = incomingList[r];
             incomingList[r] = incomingList[i];
-            incomingList[i] = myGO;
+            incomingList[i] = dataPoint;
         }
  
         return incomingList;
     }
-    private void sortTeams()
-    {
-        if(teamDeathmatch)
-        {
-            players = playerShuffle(players);
-            for(int i = 0; i < players.Count; i += 2)
-            {
-                players[i].GetComponent<TeamManager>().teamColor = teamAColour;
-                players[i].GetComponent<TeamManager>().UpdateColour();
-                players[i + 1].GetComponent<TeamManager>().teamColor = teamBColour;
-                players[i + 1].GetComponent<TeamManager>().UpdateColour();
-            }
-            for(int i = 0; i < spawnPoints.Length / 2; i++)
-            {
-                Debug.Log("index is " + i + ", therefore, other point is " + (i + spawnPoints.Length / 2));
-                spawnPoints[i].GetComponent<TeamManager>().teamColor = teamAColour;
-                spawnPoints[i + spawnPoints.Length / 2].GetComponent<TeamManager>().teamColor = teamBColour;
-            }
-        }
-        else
-        {
-            foreach(GameObject player in players)
-            {
-                player.GetComponent<TeamManager>().teamColor = new Color(Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,255f);
-                player.GetComponent<TeamManager>().UpdateColour();
-            }
-        }
-    }
     private void startGame()
     {
         resetPlayerCam(false, mapCenter);
-        foreach(GameObject player in players)
+        foreach(playerData dataPoint in data)
         {
-            player.SetActive(false);
+            dataPoint.playerObject.SetActive(false);
         }
         timeTillStart = gameStartTime;
         state = gameState.starting;
@@ -145,7 +174,7 @@ public class DeathmatchScript : MonoBehaviour
         {
             case gameState.starting:
                 ResetUIPanels(0);
-                if (timeTillStart > 0)
+                if (timeTillStart >= 0)
                 {
                     timeTillStart -= Time.deltaTime;
                     float minutes = Mathf.FloorToInt(timeTillStart / 60);
@@ -159,14 +188,10 @@ public class DeathmatchScript : MonoBehaviour
                 break;
             case gameState.loading:
                 ResetUIPanels(1);
-                scores.Add(0);
-                scores.Clear();
-                for(int i = 0; i <= players.Count - 1; i++)
+                for(int i = 0; i <= data.Count - 1; i++)
                 {
-                    spawnMe(players[i]);
-                    createScorecard(players[i]);
-                    int score = 0;
-                    scores.Add(score);                    
+                    spawnMe(data[i].playerObject);
+                    data[i].personalScore = 0;
                 }
                 foreach(EnemyAI enemyAI in FindObjectsOfType<EnemyAI>())
                 {
@@ -231,20 +256,31 @@ public class DeathmatchScript : MonoBehaviour
             whileIteration++;
         }
     }
-    private void createScorecard(GameObject player)
+    private GameObject createScorecard(GameObject player)
     {
         GameObject newScorecard = Instantiate<GameObject>(playerScorecard);
-        scorecards.Add(newScorecard);
+        //scorecards.Add(newScorecard);
         newScorecard.transform.SetParent(gamePanel[1].transform);
         newScorecard.transform.GetComponentInChildren<TextMeshProUGUI>().text = "0";
         newScorecard.transform.localScale = new Vector3(1,1,1);
         newScorecard.transform.GetComponent<Image>().color = player.GetComponent<TeamManager>().teamColor;
         newScorecard.SetActive(true);
+        return newScorecard;
     }
     public void updatePlayerScore(GameObject player)
     {
-        scores[players.IndexOf(player)]++;
-        scorecards[players.IndexOf(player)].transform.GetComponentInChildren<TextMeshProUGUI>().text = scores[players.IndexOf(player)].ToString();
-
+        data[IndexPlayers(player)].personalScore++;
+        data[IndexPlayers(player)].personalScorecard.transform.GetComponentInChildren<TextMeshProUGUI>().text = data[IndexPlayers(player)].personalScore.ToString();
+    }
+    public int IndexPlayers(GameObject targetObject)
+    {
+        for(int i = 0; i <= data.Count - 1; i++)
+        {
+            if(data[i].playerObject == targetObject)
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 }

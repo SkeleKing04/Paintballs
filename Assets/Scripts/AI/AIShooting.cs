@@ -60,7 +60,7 @@ public class AIShooting : MonoBehaviour
         if(Physics.Raycast(startPos, endPoint, out hit, 50f, layerMasks))
         {   
             Debug.DrawRay(startPos, fireTransform.forward * hit.distance, Color.green, 0.1f);
-            Debug.Log("Hit object" + hit.collider.name);
+//            Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer
             StartCoroutine(setLine(line, trailStartTransform.position, hit.point));
             try
@@ -94,7 +94,7 @@ public class AIShooting : MonoBehaviour
         try
         {
             teamColor = GetComponent<TeamManager>().teamColor;
-            Debug.Log(gameObject.name + "'s team colour is " + teamColor.ToString());
+//            Debug.Log(gameObject.name + "'s team colour is " + teamColor.ToString());
             line.startColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
             line.endColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
         }
