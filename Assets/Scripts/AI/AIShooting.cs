@@ -47,22 +47,22 @@ public class AIShooting : MonoBehaviour
     {
         state = gunState.ready;
     }
-    public void Shoot(Transform fireTransform, Transform trailStartTransform)
+    public void Shoot(Transform trueFireTransform, Transform falseFireTransform)
     {
         //Variables
         RaycastHit hit;
-        Vector3 startPos = fireTransform.position;
-        Vector3 endPoint = fireTransform.forward;
+        Vector3 startPos = trueFireTransform.position;
+        Vector3 endPoint = trueFireTransform.forward;
         //Creates the tracer line  
-        LineRenderer line = Instantiate(lineRenderer, trailStartTransform.position, Quaternion.identity);
+        LineRenderer line = Instantiate(lineRenderer, falseFireTransform.position, Quaternion.identity);
         // Raycast to see if object hit in range
         // The "50f" needs to be changed to the weapons range
         if(Physics.Raycast(startPos, endPoint, out hit, 50f, layerMasks))
         {   
-            Debug.DrawRay(startPos, fireTransform.forward * hit.distance, Color.green, 0.1f);
+            Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, 0.1f);
 //            Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer
-            StartCoroutine(setLine(line, trailStartTransform.position, hit.point));
+            StartCoroutine(setLine(line, falseFireTransform.position, hit.point));
             try
             {
                 hit.collider.gameObject.GetComponent<HealthHandler>().UpdateHealth(10, gameObject, true, false);
@@ -74,10 +74,10 @@ public class AIShooting : MonoBehaviour
         }
         else
         {
-            Debug.DrawRay(startPos, fireTransform.forward * 50f, Color.red, 0.1f);
+            Debug.DrawRay(startPos, trueFireTransform.forward * 50f, Color.red, 0.1f);
             Debug.Log("Missed object.");
             //Begins to set up the tracer
-            StartCoroutine(setLine(line, trailStartTransform.position, fireTransform.forward * 50f));
+            StartCoroutine(setLine(line, falseFireTransform.position, falseFireTransform.forward * 50f));
         }
         // stops the gun from firing stupidly
         state = gunState.firing;

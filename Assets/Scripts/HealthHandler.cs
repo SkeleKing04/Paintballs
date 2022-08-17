@@ -14,8 +14,13 @@ public class HealthHandler : MonoBehaviour
     private DeathmatchScript deathmatchScript;
     public void Awake()
     {
-        currentHealth = baseHealth;
+        resetHealth();
         deathmatchScript = FindObjectOfType<DeathmatchScript>();
+    }
+    public void resetHealth()
+    {
+        currentHealth = baseHealth;
+        currentPaint = 0;
     }
     public void UpdateHealth(float pointAmmount, GameObject sender, bool doPaint, bool doOverheal)
     {
@@ -46,6 +51,7 @@ public class HealthHandler : MonoBehaviour
         {
             Debug.Log(gameObject.name + " has been killed by " + sender.name);
             deathmatchScript.updatePlayerScore(sender);
+            deathmatchScript.deSpawnMe(gameObject, true, 5f);
         }
         if(currentHealth <= 0)
         {

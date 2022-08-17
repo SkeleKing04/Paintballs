@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using System;
 
 public class DeathmatchScript : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class DeathmatchScript : MonoBehaviour
     public Transform[] spawnPoints;
     [Header("Game Settings")]
     public bool teamDeathmatch;
-    public int teamSize, botCount;
+    public int soloScoreCap, teamScoreCap,teamSize, botCount;
     public GameObject botPrefab;
     public bool fillRoomWithBots;
     public Color teamAColour, teamBColour;
@@ -58,28 +59,7 @@ public class DeathmatchScript : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         state = gameState.setup;
-        teamAColour = new Color(Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,255f);
-        teamBColour = new Color(1f - teamAColour.r,1f - teamAColour.g, 1f - teamAColour.b,255f);
-        GameObject[] allCombatants = GameObject.FindGameObjectsWithTag("Combatant");
-        for(int i = 0; i <= allCombatants.Length - 1; i++)
-        {
-            Debug.Log(allCombatants[i].ToString());
-            //data[i].playerObject = new GameObject("dummyObject");
-            data.Add(new playerData());
-            addNewPlayer(data[i], allCombatants[i]);
-        }
-        if(fillRoomWithBots)
-        {
-            for(int i = 0; i < botCount; i++)
-            {
-                GameObject newBot = Instantiate(botPrefab, new Vector3(0,0,0), Quaternion.identity);
-                data.Add(new playerData());
-                addNewPlayer(data[data.Count - 1], newBot);
-                newBot.SetActive(false);
-            }
-        }
-        sortTeams();
-        startGame();
+        
     }
     private void addNewPlayer(playerData dataPoint, GameObject incomingObject)
     {
@@ -88,41 +68,7 @@ public class DeathmatchScript : MonoBehaviour
         dataPoint.personalScorecard = createScorecard(dataPoint.playerObject);
         dataPoint.personalScore = 0;
     }
-    private void sortTeams()
-    {
-        if(teamDeathmatch)
-        {
-            data = playerShuffle(data);
-            for(int i = 0; i < data.Count; i += 2)
-            {
-                data[i].playerObject.GetComponent<TeamManager>().teamColor = teamAColour;
-                data[i].playerObject.GetComponent<TeamManager>().UpdateColour();
-                data[i + 1].playerObject.GetComponent<TeamManager>().teamColor = teamBColour;
-                data[i + 1].playerObject.GetComponent<TeamManager>().UpdateColour();
-            }
-            for(int i = 0; i < spawnPoints.Length / 2; i++)
-            {
-                spawnPoints[i].GetComponent<TeamManager>().teamColor = teamAColour;
-                spawnPoints[i + spawnPoints.Length / 2].GetComponent<TeamManager>().teamColor = teamBColour;
-            }
-        }
-        else
-        {
-            foreach(playerData dataPoint in data)
-            {
-                dataPoint.playerObject.GetComponent<TeamManager>().teamColor = new Color(Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,Random.Range(0f, 256f)/255f,255f);
-                dataPoint.playerObject.GetComponent<TeamManager>().UpdateColour();
-            }
-        }
-        resetScorecards();
-    }
-    public void resetScorecards()
-    {
-        foreach(playerData dataPoint in data)
-        {
-            dataPoint.personalScorecard.transform.GetComponent<Image>().color = dataPoint.playerObject.GetComponent<TeamManager>().teamColor;
-        }
-    }
+
     public static List<playerData> playerShuffle (List<playerData> incomingList)
     {
         System.Random rnd = new System.Random ();
@@ -141,17 +87,6 @@ public class DeathmatchScript : MonoBehaviour
         }
  
         return incomingList;
-    }
-    private void startGame()
-    {
-        resetPlayerCam(false, mapCenter);
-        foreach(playerData dataPoint in data)
-        {
-            dataPoint.playerObject.SetActive(false);
-        }
-        timeTillStart = gameStartTime;
-        state = gameState.starting;
-
     }
     private void resetPlayerCam(bool toggle, Transform posToMove)
     {
@@ -172,6 +107,63 @@ public class DeathmatchScript : MonoBehaviour
     {
         switch(state)
         {
+            case gameState.setup:
+                teamAColour = new Color(UnityEngine.Random.Range(0f, 256f)/255f,UnityEngine.Random.Range(0f, 256f)/255f,UnityEngine.Random.Range(0f, 256f)/255f,255f);
+                teamBColour = new Color(1f - teamAColour.r,1f - teamAColour.g, 1f - teamAColour.b,255f);
+                GameObject[] allCombatants = GameObject.FindGameObjectsWithTag("Combatant");
+                Debug.Log("These are the found combantants");
+                for(int i = 0; i <= allCombatants.Length - 1; i++)
+                {
+                    Debug.Log(allCombatants[i].ToString());
+                    data.Add(new playerData());
+                    addNewPlayer(data[i], allCombatants[i]);
+                }
+                if(fillRoomWithBots)
+                {
+                    for(int i = 0; i < botCount; i++)
+                    {
+                        GameObject newBot = Instantiate(botPrefab, new Vector3(0,0,0), Quaternion.identity);
+                        data.Add(new playerData());
+                        addNewPlayer(data[data.Count - 1], newBot);
+                        newBot.SetActive(false);
+                    }
+                }
+                if(teamDeathmatch)
+                {
+                    data = playerShuffle(data);
+                    for(int i = 0; i < data.Count; i += 2)
+                    {
+                        data[i].playerObject.GetComponent<TeamManager>().teamColor = teamAColour;
+                        data[i].playerObject.GetComponent<TeamManager>().UpdateColour();
+                        data[i + 1].playerObject.GetComponent<TeamManager>().teamColor = teamBColour;
+                        data[i + 1].playerObject.GetComponent<TeamManager>().UpdateColour();
+                    }
+                    for(int i = 0; i < spawnPoints.Length / 2; i++)
+                    {
+                        spawnPoints[i].GetComponent<TeamManager>().teamColor = teamAColour;
+                        spawnPoints[i + spawnPoints.Length / 2].GetComponent<TeamManager>().teamColor = teamBColour;
+                    }
+                }
+                else
+                {
+                    foreach(playerData dataPoint in data)
+                    {
+                        dataPoint.playerObject.GetComponent<TeamManager>().teamColor = new Color(UnityEngine.Random.Range(0f, 256f)/255f,UnityEngine.Random.Range(0f, 256f)/255f,UnityEngine.Random.Range(0f, 256f)/255f,255f);
+                        dataPoint.playerObject.GetComponent<TeamManager>().UpdateColour();
+                    }
+                }
+                foreach(playerData dataPoint in data)
+                {
+                    dataPoint.personalScorecard.transform.GetComponent<Image>().color = dataPoint.playerObject.GetComponent<TeamManager>().teamColor;
+                }
+                resetPlayerCam(false, mapCenter);
+                foreach(playerData dataPoint in data)
+                {
+                    dataPoint.playerObject.SetActive(false);
+                }
+                timeTillStart = gameStartTime;
+                state = gameState.starting;
+                break;
             case gameState.starting:
                 ResetUIPanels(0);
                 if (timeTillStart >= 0)
@@ -190,7 +182,7 @@ public class DeathmatchScript : MonoBehaviour
                 ResetUIPanels(1);
                 for(int i = 0; i <= data.Count - 1; i++)
                 {
-                    spawnMe(data[i].playerObject);
+                    StartCoroutine(spawnMe(data[i].playerObject, 0f));
                     data[i].personalScore = 0;
                 }
                 foreach(EnemyAI enemyAI in FindObjectsOfType<EnemyAI>())
@@ -199,6 +191,39 @@ public class DeathmatchScript : MonoBehaviour
                     enemyAI.findEnemies();
                 }
                 state = gameState.playing;
+                break;
+            case gameState.ending:
+                foreach(playerData dataPoint in data)
+                {
+                    Debug.Log("despawning " + dataPoint.playerObject.name);
+                    deSpawnMe(dataPoint.playerObject, false, 0f);
+
+                }
+                state = gameState.restarting;
+                break;
+            case gameState.restarting:
+                int dataLength = data.Count;
+                for(int i = 0; i <= dataLength - 1; i++)
+                {
+                    Debug.Log("reseting " + data[i].playerObject.name);
+                    Destroy(data[i].personalScorecard);
+                    try
+                    {
+                        if(data[i].playerObject.GetComponent<EnemyAI>() == true)
+                        {   
+                            Debug.Log("destorying " + data[i].playerObject.name);
+                            data[i].playerObject.SetActive(true);
+                            Destroy(data[i].playerObject);
+                        }
+                        else Debug.Log("The player " + data[i].playerObject.name + " is real");
+                    }
+                    catch(Exception e)
+                    {
+                        Debug.Log("Failed to destroy object " + data[i].playerObject.name);
+                    }
+                    data.RemoveAt(i);
+                }
+                state = gameState.setup;
                 break;
         }
     }
@@ -210,8 +235,11 @@ public class DeathmatchScript : MonoBehaviour
         }
         gamePanel[index].SetActive(true);
     }
-    public void spawnMe(GameObject sender)
+    public IEnumerator spawnMe(GameObject sender, float spawnWait)
     {
+        //Debug.Log("SpawnMe called at " + Time.time + " and will wait " + spawnWait + " seconds.");
+        yield return new WaitForSeconds(spawnWait);
+        //Debug.Log("SpawnMe resumed");
         List<Transform> possibleSpawns = new List<Transform>();
         if(teamDeathmatch)
         {
@@ -235,9 +263,10 @@ public class DeathmatchScript : MonoBehaviour
         }
         bool isSpawned = false;
         int whileIteration = 0;
+        sender.GetComponent<HealthHandler>().resetHealth();
         while(!isSpawned && whileIteration < 10)
         {
-            int rnd = Random.Range(0, possibleSpawns.Count);
+            int rnd = UnityEngine.Random.Range(0, possibleSpawns.Count);
             if(!Physics.CheckSphere(possibleSpawns[rnd].position, spawnSafeZone, combatantLayer))
             {
                 sender.SetActive(true);
@@ -256,6 +285,15 @@ public class DeathmatchScript : MonoBehaviour
             whileIteration++;
         }
     }
+    public void deSpawnMe(GameObject sender, bool doRespawn, float deathCooldown)
+    {
+        if(sender.GetComponent<MovementScript>() == true)
+        {
+            resetPlayerCam(false, mapCenter);
+        }
+        data[IndexPlayers(sender)].playerObject.SetActive(false);
+        if(doRespawn) StartCoroutine(spawnMe(sender, deathCooldown));
+    }
     private GameObject createScorecard(GameObject player)
     {
         GameObject newScorecard = Instantiate<GameObject>(playerScorecard);
@@ -271,6 +309,47 @@ public class DeathmatchScript : MonoBehaviour
     {
         data[IndexPlayers(player)].personalScore++;
         data[IndexPlayers(player)].personalScorecard.transform.GetComponentInChildren<TextMeshProUGUI>().text = data[IndexPlayers(player)].personalScore.ToString();
+        checkScores();
+    }
+    public void checkScores()
+    {
+        List<playerData> teamA = new List<playerData>();
+        float teamAScore = 0;
+        List<playerData> teamB = new List<playerData>();
+        float teamBScore = 0;
+        foreach(playerData dataPoint in data)
+        {
+            if(teamDeathmatch)
+            {
+                if(dataPoint.playerObject.GetComponent<TeamManager>().teamColor == teamAColour)
+                {
+                    teamAScore += dataPoint.personalScore;
+                }
+                else if(dataPoint.playerObject.GetComponent<TeamManager>().teamColor == teamBColour)
+                {
+                    teamBScore += dataPoint.personalScore;
+                }
+                else
+                {
+                    Debug.Log("ERROR - This player isn't on either team");
+                }
+                if(teamAScore >= teamScoreCap)
+                {
+                    state = gameState.ending;
+                }
+                if(teamBScore >= teamScoreCap)
+                {
+                    state = gameState.ending;
+                }
+            }
+            else if (!teamDeathmatch)
+            {
+                if(dataPoint.personalScore >= soloScoreCap)
+                {
+                    state = gameState.ending;
+                }
+            }
+        }
     }
     public int IndexPlayers(GameObject targetObject)
     {

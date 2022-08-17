@@ -21,8 +21,7 @@ public class EnemyAI : MonoBehaviour
     public float sightRange, attackRange;
     public bool enemyInSightRange, enemyInAttackRange;
     [Header("Shooting")]
-    public Transform fireTransform;
-    public Transform trailTransform;
+    public Transform trueFireTransform, falseFireTransform;
     public Transform head;
 
     private void Awake()
@@ -103,7 +102,7 @@ public class EnemyAI : MonoBehaviour
 
         if(!alreadyAttacked)
         {
-            shooting.Shoot(fireTransform, trailTransform);
+            shooting.Shoot(trueFireTransform, falseFireTransform);
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }

@@ -5,10 +5,10 @@ using System;
 public class PlayerShooting : MonoBehaviour
 {
     [Header("Positions")]
-    public Transform fireTransform;
-    public Transform trailStartTransform;
+    public Transform trueFireTransform;
+    public Transform falseFireTransform;
     private int layerMasks;
-    public GunPointer gunPointer;
+    private GunPointer gunPointer;
     [Header("Tracer")]
     //public TrailRenderer tracer;
     public LineRenderer lineRenderer;
@@ -82,33 +82,33 @@ public class PlayerShooting : MonoBehaviour
     {
         //Variables
         RaycastHit hit;
-        Vector3 startPos = fireTransform.position;
-        Vector3 endPoint = fireTransform.forward;
+        Vector3 startPos = trueFireTransform.position;
+        Vector3 endPoint = trueFireTransform.forward;
         //Creates the tracer line  
-        LineRenderer line = Instantiate(lineRenderer, trailStartTransform.position, Quaternion.identity);
+        LineRenderer line = Instantiate(lineRenderer, falseFireTransform.position, Quaternion.identity);
         // Raycast to see if object hit in range
         // The "50f" needs to be changed to the weapons range
-        if(Physics.Raycast(startPos, endPoint, out hit, 50f, layerMasks))
+        if(Physics.Raycast(startPos, endPoint * 50f, out hit, 50f, layerMasks))
         {   
-            Debug.DrawRay(startPos, fireTransform.forward * hit.distance, Color.green, 0.1f);
+            Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, 0.1f);
             Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer
-            StartCoroutine(setLine(line, trailStartTransform.position, hit.point));
+            StartCoroutine(setLine(line, falseFireTransform.position, hit.point));
             try
             {
                 hit.collider.gameObject.GetComponent<HealthHandler>().UpdateHealth(10, gameObject, true, false);
             }
             catch (Exception e)
             {
-                //Debug.LogAssertion("Failed to Update Health of " + hit.collider.gameObject.name + ". Are you missing the component?\nThe error is " + e);
+                Debug.LogWarning("Failed to Update Health of " + hit.collider.gameObject.name + ". Are you missing the component?\nThe error is " + e);
             }
         }
         else
         {
-            Debug.DrawRay(startPos, fireTransform.forward * 50f, Color.red, 0.1f);
+            Debug.DrawRay(startPos, trueFireTransform.forward * 50f, Color.red, 0.1f);
             Debug.Log("Missed object.");
             //Begins to set up the tracer
-            StartCoroutine(setLine(line, trailStartTransform.position, fireTransform.forward * 50f));
+            StartCoroutine(setLine(line, falseFireTransform.position, falseFireTransform.forward * 50f));
         }
         // stops the gun from firing stupidly
         state = gunState.firing;
@@ -117,7 +117,7 @@ public class PlayerShooting : MonoBehaviour
     private IEnumerator setLine(LineRenderer line, Vector3 startPos, Vector3 endPoint)
     {
         //Sets the start and end positions of the tracers
-        line.SetPosition(0, trailStartTransform.position);
+        line.SetPosition(0, startPos);
         line.SetPosition(1, endPoint);
         // Sets how long the trail is visible for
         //this needs to be a different variable
