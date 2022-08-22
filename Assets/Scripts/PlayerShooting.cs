@@ -91,7 +91,7 @@ public class PlayerShooting : MonoBehaviour
         if(Physics.Raycast(startPos, endPoint * 50f, out hit, 50f, layerMasks))
         {   
             Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, 0.1f);
-            Debug.Log("Hit object" + hit.collider.name);
+            //Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer
             StartCoroutine(setLine(line, falseFireTransform.position, hit.point));
             try
@@ -106,7 +106,7 @@ public class PlayerShooting : MonoBehaviour
         else
         {
             Debug.DrawRay(startPos, trueFireTransform.forward * 50f, Color.red, 0.1f);
-            Debug.Log("Missed object.");
+            //Debug.Log("Missed object.");
             //Begins to set up the tracer
             StartCoroutine(setLine(line, falseFireTransform.position, falseFireTransform.forward * 50f));
         }

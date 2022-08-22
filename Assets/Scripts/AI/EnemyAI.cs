@@ -8,7 +8,7 @@ public class EnemyAI : MonoBehaviour
     public NavMeshAgent agent;
     private AIShooting shooting;
     public List<GameObject> enemies;
-    public Transform target;
+    public GameObject target;
     public LayerMask whatIsGround, whatIsEnemy;
     [Header("Patroling")]
     public Vector3 walkPoint;
@@ -19,7 +19,7 @@ public class EnemyAI : MonoBehaviour
     bool alreadyAttacked;
     [Header("States")]
     public float sightRange, attackRange;
-    public bool enemyInSightRange, enemyInAttackRange;
+    public bool enemyInSightRange, enemyInAttackRange, targetVisable;
     [Header("Shooting")]
     public Transform trueFireTransform, falseFireTransform;
     public Transform head;
@@ -32,11 +32,31 @@ public class EnemyAI : MonoBehaviour
     }
     private void Update()
     {
+        checkTarget();
+        enemyInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsEnemy);
         enemyInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsEnemy);
-
         if (target == null) Patorling();
-        if (target != null && (transform.position - target.transform.position).magnitude >= attackRange) ChasePlayer();
-        if(target != null && (transform.position - target.transform.position).magnitude <= attackRange) AttackPlayer();
+        if (target != null && (transform.position - target.transform.position).magnitude <= attackRange)
+        {   
+            Debug.Log(gameObject.name + " is attacking target " + target.name);
+            AttackPlayer();
+        }
+        else if (target != null && (transform.position - target.transform.position).magnitude <= sightRange)
+        {
+            Debug.Log(gameObject.name + " is chasing target " + target.name);
+            ChasePlayer();
+        }
+        else
+        {
+            target = null;
+        }
+    }
+    private void checkTarget()
+    {
+        if(target.activeSelf == false)
+        {
+            target = null;
+        }
     }
     public void findEnemies()
     {
@@ -49,19 +69,26 @@ public class EnemyAI : MonoBehaviour
         }
     }
     private void detectTarget()
-    {
+    {   
+        if(target != null)
+        {
+            if((transform.position - target.transform.position).magnitude >= sightRange)
+            {
+                target = null;
+            }
+        }
         foreach(GameObject enemy in enemies)
         {
             if(target != null)
             {
                 if((transform.position - enemy.transform.position).magnitude < (transform.position - target.transform.position).magnitude)
                 {
-                    if((transform.position - enemy.transform.position).magnitude <= sightRange) target = enemy.transform;
+                    if((transform.position - enemy.transform.position).magnitude <= sightRange) target = enemy;
                 }
             }
             else 
             {
-                if((transform.position - enemy.transform.position).magnitude <= sightRange) target = enemy.transform;
+                if((transform.position - enemy.transform.position).magnitude <= sightRange) target = enemy;
                 else target = null;
             }
         }
@@ -69,6 +96,7 @@ public class EnemyAI : MonoBehaviour
 
     private void Patorling()
     {   
+        //findEnemies();
         detectTarget();
         if(!walkPointSet) SearchWalkPoint();
 
@@ -91,14 +119,14 @@ public class EnemyAI : MonoBehaviour
     }
     private void ChasePlayer()
     {
-        agent.SetDestination(target.position);
+        agent.SetDestination(target.transform.position);
     }
     private void AttackPlayer()
     {
         Vector3 strafePos = transform.right * Random.Range(-50, 50);
         agent.SetDestination(strafePos);
 
-        head.LookAt(target);
+        head.LookAt(target.transform);
 
         if(!alreadyAttacked)
         {

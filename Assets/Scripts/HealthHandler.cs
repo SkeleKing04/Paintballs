@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class HealthHandler : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class HealthHandler : MonoBehaviour
     public float currentPaint;
     //private damageType type;
     private DeathmatchScript deathmatchScript;
+    public bool dead, despawned;
     public void Awake()
     {
         resetHealth();
@@ -21,17 +23,18 @@ public class HealthHandler : MonoBehaviour
     {
         currentHealth = baseHealth;
         currentPaint = 0;
+        dead = false;
     }
     public void UpdateHealth(float pointAmmount, GameObject sender, bool doPaint, bool doOverheal)
     {
         if(doPaint)
         {
-            Debug.Log(gameObject.name + " got " + pointAmmount.ToString() + " points of paint damage from " + sender.name);
+            //Debug.Log(gameObject.name + " got " + pointAmmount.ToString() + " points of paint damage from " + sender.name);
             currentPaint = Mathf.Clamp(currentPaint + pointAmmount, 0, maxPaint);
         }
         else if(!doPaint)
         {
-            Debug.Log(gameObject.name + " got " + pointAmmount.ToString() + " points of damage from " + sender.name);
+            //Debug.Log(gameObject.name + " got " + pointAmmount.ToString() + " points of damage from " + sender.name);
             if(doOverheal)
             {
                 currentHealth = Mathf.Clamp(currentHealth + pointAmmount, 0, Mathf.Infinity);
@@ -42,20 +45,21 @@ public class HealthHandler : MonoBehaviour
 
             }
         }
-
         DeathCheck(sender);
     }
     private void DeathCheck(GameObject sender)
     {
         if(currentPaint >= maxPaint)
         {
-            Debug.Log(gameObject.name + " has been killed by " + sender.name);
+            //Debug.Log(gameObject.name + " has been killed by " + sender.name);
+            dead = true;
             deathmatchScript.updatePlayerScore(sender);
             deathmatchScript.deSpawnMe(gameObject, true, 5f);
         }
         if(currentHealth <= 0)
         {
-            Debug.Log(gameObject.name + " has been knocked out by " + sender.name);
+            //Debug.Log(gameObject.name + " has been knocked out by " + sender.name);
         }
     }
+
 }

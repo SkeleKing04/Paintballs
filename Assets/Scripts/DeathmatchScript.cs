@@ -88,7 +88,7 @@ public class DeathmatchScript : MonoBehaviour
  
         return incomingList;
     }
-    private void resetPlayerCam(bool toggle, Transform posToMove)
+    public void resetPlayerCam(bool toggle, Transform posToMove)
     {
         camera.GetComponent<MoveCamera>().enabled = toggle;
         if(posToMove != null)
@@ -111,15 +111,16 @@ public class DeathmatchScript : MonoBehaviour
                 teamAColour = new Color(UnityEngine.Random.Range(0f, 256f)/255f,UnityEngine.Random.Range(0f, 256f)/255f,UnityEngine.Random.Range(0f, 256f)/255f,255f);
                 teamBColour = new Color(1f - teamAColour.r,1f - teamAColour.g, 1f - teamAColour.b,255f);
                 GameObject[] allCombatants = GameObject.FindGameObjectsWithTag("Combatant");
-                Debug.Log("These are the found combantants");
+                Debug.Log("Found combantants length @ " + allCombatants.Length.ToString());
                 for(int i = 0; i <= allCombatants.Length - 1; i++)
                 {
-                    Debug.Log(allCombatants[i].ToString());
+                    Debug.Log(allCombatants[i].name.ToString());
                     data.Add(new playerData());
                     addNewPlayer(data[i], allCombatants[i]);
                 }
                 if(fillRoomWithBots)
                 {
+                    botCount = Mathf.FloorToInt(teamSize * 2 - data.Count);
                     for(int i = 0; i < botCount; i++)
                     {
                         GameObject newBot = Instantiate(botPrefab, new Vector3(0,0,0), Quaternion.identity);
@@ -128,6 +129,7 @@ public class DeathmatchScript : MonoBehaviour
                         newBot.SetActive(false);
                     }
                 }
+                resetPlayerCam(false, mapCenter);
                 if(teamDeathmatch)
                 {
                     data = playerShuffle(data);
@@ -150,16 +152,9 @@ public class DeathmatchScript : MonoBehaviour
                     {
                         dataPoint.playerObject.GetComponent<TeamManager>().teamColor = new Color(UnityEngine.Random.Range(0f, 256f)/255f,UnityEngine.Random.Range(0f, 256f)/255f,UnityEngine.Random.Range(0f, 256f)/255f,255f);
                         dataPoint.playerObject.GetComponent<TeamManager>().UpdateColour();
+                        dataPoint.personalScorecard.transform.GetComponent<Image>().color = dataPoint.playerObject.GetComponent<TeamManager>().teamColor;
+                        dataPoint.playerObject.SetActive(false);
                     }
-                }
-                foreach(playerData dataPoint in data)
-                {
-                    dataPoint.personalScorecard.transform.GetComponent<Image>().color = dataPoint.playerObject.GetComponent<TeamManager>().teamColor;
-                }
-                resetPlayerCam(false, mapCenter);
-                foreach(playerData dataPoint in data)
-                {
-                    dataPoint.playerObject.SetActive(false);
                 }
                 timeTillStart = gameStartTime;
                 state = gameState.starting;
@@ -195,8 +190,12 @@ public class DeathmatchScript : MonoBehaviour
             case gameState.ending:
                 foreach(playerData dataPoint in data)
                 {
+                    if(dataPoint.playerObject.GetComponent<MovementScript>())
+                    {
+                        dataPoint.playerObject.SetActive(true);
+                    }
                     Debug.Log("despawning " + dataPoint.playerObject.name);
-                    deSpawnMe(dataPoint.playerObject, false, 0f);
+                    //deSpawnMe(dataPoint.playerObject, false, 0f);
 
                 }
                 state = gameState.restarting;
@@ -205,23 +204,23 @@ public class DeathmatchScript : MonoBehaviour
                 int dataLength = data.Count;
                 for(int i = 0; i <= dataLength - 1; i++)
                 {
-                    Debug.Log("reseting " + data[i].playerObject.name);
-                    Destroy(data[i].personalScorecard);
+                    Debug.Log("reseting " + data[0].playerObject.name);
+                    Destroy(data[0].personalScorecard);
                     try
                     {
-                        if(data[i].playerObject.GetComponent<EnemyAI>() == true)
+                        if(data[0].playerObject.GetComponent<EnemyAI>() == true)
                         {   
-                            Debug.Log("destorying " + data[i].playerObject.name);
-                            data[i].playerObject.SetActive(true);
-                            Destroy(data[i].playerObject);
+                            Debug.Log("destorying " + data[0].playerObject.name);
+                            data[0].playerObject.SetActive(true);
+                            Destroy(data[0].playerObject);
                         }
-                        else Debug.Log("The player " + data[i].playerObject.name + " is real");
+                        else Debug.Log("The player " + data[0].playerObject.name + " is real");
                     }
                     catch(Exception e)
                     {
-                        Debug.Log("Failed to destroy object " + data[i].playerObject.name);
+                        Debug.Log("Failed to destroy object " + data[0].playerObject.name);
                     }
-                    data.RemoveAt(i);
+                    data.RemoveAt(0);
                 }
                 state = gameState.setup;
                 break;
@@ -239,50 +238,57 @@ public class DeathmatchScript : MonoBehaviour
     {
         //Debug.Log("SpawnMe called at " + Time.time + " and will wait " + spawnWait + " seconds.");
         yield return new WaitForSeconds(spawnWait);
-        //Debug.Log("SpawnMe resumed");
-        List<Transform> possibleSpawns = new List<Transform>();
-        if(teamDeathmatch)
+        if(sender.active == false)
         {
-            foreach(Transform spawnPoint in spawnPoints)
+            //Debug.Log("SpawnMe resumed");
+            List<Transform> possibleSpawns = new List<Transform>();
+            if(teamDeathmatch)
             {
-                if(spawnPoint.GetComponent<TeamManager>().teamColor == sender.GetComponent<TeamManager>().teamColor && spawnPoint.GetComponent<SpawnPoint>().coolDown <= 0)
+                foreach(Transform spawnPoint in spawnPoints)
                 {
-                    possibleSpawns.Add(spawnPoint);
+                    if(spawnPoint.GetComponent<TeamManager>().teamColor == sender.GetComponent<TeamManager>().teamColor && spawnPoint.GetComponent<SpawnPoint>().coolDown <= 0)
+                    {
+                        possibleSpawns.Add(spawnPoint);
+                    }
                 }
+            }
+            else
+            {
+                foreach(Transform spawnPoint in spawnPoints)
+                {
+                    if(spawnPoint.GetComponent<SpawnPoint>().coolDown <= 0)
+                    {
+                        possibleSpawns.Add(spawnPoint);
+                    }
+                }
+            }
+            bool isSpawned = false;
+            int whileIteration = 0;
+            sender.GetComponent<HealthHandler>().resetHealth();
+            while(!isSpawned && whileIteration < 10)
+            {
+                int rnd = UnityEngine.Random.Range(0, possibleSpawns.Count);
+                if(!Physics.CheckSphere(possibleSpawns[rnd].position, spawnSafeZone, combatantLayer))
+                {
+                    sender.SetActive(true);
+                    if(sender.GetComponent<MovementScript>() == true)
+                    {
+                        resetPlayerCam(true, null);
+                        sender.transform.position = possibleSpawns[rnd].position;
+                    }
+                    else if(GetComponent<EnemyAI>() == true)
+                    {
+                        sender.GetComponent<EnemyAI>().findEnemies();
+                        sender.GetComponent<NavMeshAgent>().Warp(possibleSpawns[rnd].position);
+                    }
+                    isSpawned = true;
+                }
+                whileIteration++;
             }
         }
         else
         {
-            foreach(Transform spawnPoint in spawnPoints)
-            {
-                if(spawnPoint.GetComponent<SpawnPoint>().coolDown <= 0)
-                {
-                    possibleSpawns.Add(spawnPoint);
-                }
-            }
-        }
-        bool isSpawned = false;
-        int whileIteration = 0;
-        sender.GetComponent<HealthHandler>().resetHealth();
-        while(!isSpawned && whileIteration < 10)
-        {
-            int rnd = UnityEngine.Random.Range(0, possibleSpawns.Count);
-            if(!Physics.CheckSphere(possibleSpawns[rnd].position, spawnSafeZone, combatantLayer))
-            {
-                sender.SetActive(true);
-                if(sender.GetComponent<MovementScript>() == true)
-                {
-                    resetPlayerCam(true, null);
-                    sender.transform.position = possibleSpawns[rnd].position;
-                }
-                else if(sender.GetComponent<EnemyAI>() == true)
-                {
-                    sender.GetComponent<EnemyAI>().findEnemies();
-                    sender.GetComponent<NavMeshAgent>().Warp(possibleSpawns[rnd].position);
-                }
-                isSpawned = true;
-            }
-            whileIteration++;
+            Debug.Log(sender.name + " is already spawned");
         }
     }
     public void deSpawnMe(GameObject sender, bool doRespawn, float deathCooldown)
@@ -291,6 +297,7 @@ public class DeathmatchScript : MonoBehaviour
         {
             resetPlayerCam(false, mapCenter);
         }
+        data[IndexPlayers(sender)].playerObject.GetComponent<HealthHandler>().despawned = true;
         data[IndexPlayers(sender)].playerObject.SetActive(false);
         if(doRespawn) StartCoroutine(spawnMe(sender, deathCooldown));
     }
