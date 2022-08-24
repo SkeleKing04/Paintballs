@@ -7,7 +7,7 @@ public class PlayerShooting : MonoBehaviour
     [Header("Positions")]
     public Transform trueFireTransform;
     public Transform falseFireTransform;
-    private int layerMasks;
+    private LayerMask layerMasks;
     private GunPointer gunPointer;
     [Header("Tracer")]
     //public TrailRenderer tracer;

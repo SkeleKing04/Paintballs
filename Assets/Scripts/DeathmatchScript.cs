@@ -124,6 +124,8 @@ public class DeathmatchScript : MonoBehaviour
                     for(int i = 0; i < botCount; i++)
                     {
                         GameObject newBot = Instantiate(botPrefab, new Vector3(0,0,0), Quaternion.identity);
+                        newBot.GetComponent<NavMeshAgent>().enabled = false;
+                        newBot.GetComponent<EnemyAI>().enabled = false;
                         data.Add(new playerData());
                         addNewPlayer(data[data.Count - 1], newBot);
                         newBot.SetActive(false);
@@ -184,6 +186,7 @@ public class DeathmatchScript : MonoBehaviour
                 {
                     enemyAI.enemies.Clear();
                     enemyAI.findEnemies();
+                    //enemyAI.enabled = true;
                 }
                 state = gameState.playing;
                 break;
@@ -270,14 +273,19 @@ public class DeathmatchScript : MonoBehaviour
                 int rnd = UnityEngine.Random.Range(0, possibleSpawns.Count);
                 if(!Physics.CheckSphere(possibleSpawns[rnd].position, spawnSafeZone, combatantLayer))
                 {
+                    Debug.Log("Gate A Hit");
                     sender.SetActive(true);
+                    sender.GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
                     if(sender.GetComponent<MovementScript>() == true)
                     {
                         resetPlayerCam(true, null);
                         sender.transform.position = possibleSpawns[rnd].position;
                     }
-                    else if(GetComponent<EnemyAI>() == true)
+                    if(sender.GetComponent<EnemyAI>() == true)
                     {
+                        Debug.Log("Gate B Hit");
+                        sender.GetComponent<NavMeshAgent>().enabled = true;
+                        sender.GetComponent<EnemyAI>().enabled = true;
                         sender.GetComponent<EnemyAI>().findEnemies();
                         sender.GetComponent<NavMeshAgent>().Warp(possibleSpawns[rnd].position);
                     }

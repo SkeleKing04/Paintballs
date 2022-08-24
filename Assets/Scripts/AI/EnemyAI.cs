@@ -53,9 +53,12 @@ public class EnemyAI : MonoBehaviour
     }
     private void checkTarget()
     {
-        if(target.activeSelf == false)
+        if(target != null)
         {
-            target = null;
+            if((transform.position - target.transform.position).magnitude >= sightRange || !target.activeSelf)
+            {
+                target = null;
+            }
         }
     }
     public void findEnemies()
@@ -70,25 +73,18 @@ public class EnemyAI : MonoBehaviour
     }
     private void detectTarget()
     {   
-        if(target != null)
-        {
-            if((transform.position - target.transform.position).magnitude >= sightRange)
-            {
-                target = null;
-            }
-        }
         foreach(GameObject enemy in enemies)
         {
             if(target != null)
             {
                 if((transform.position - enemy.transform.position).magnitude < (transform.position - target.transform.position).magnitude)
                 {
-                    if((transform.position - enemy.transform.position).magnitude <= sightRange) target = enemy;
+                    if((transform.position - enemy.transform.position).magnitude <= sightRange && enemy.activeSelf) target = enemy;
                 }
             }
             else 
             {
-                if((transform.position - enemy.transform.position).magnitude <= sightRange) target = enemy;
+                if((transform.position - enemy.transform.position).magnitude <= sightRange && enemy.activeSelf) target = enemy;
                 else target = null;
             }
         }
