@@ -9,7 +9,7 @@ public class TestDummyScript : MonoBehaviour
     {
         try
         {
-            other.gameObject.GetComponent<HealthHandler>().UpdateHealth(-10, gameObject, false, false);
+            other.gameObject.GetComponent<HealthHandler>().UpdateHealth(10, 10, gameObject);
             Debug.Log("health - " + other.gameObject.GetComponent<HealthHandler>().currentHealth.ToString());
         }
         catch (Exception e)

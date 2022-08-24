@@ -12,6 +12,7 @@ public class AIShooting : MonoBehaviour
     public float trailTime;
     public float trailWidth;
     private Color teamColor;
+    private GunHandler HeldGun;
 
     public enum gunState
     {
@@ -42,6 +43,7 @@ public class AIShooting : MonoBehaviour
         {
             Debug.LogError("Failed to find team color in team manager! Did you forget to attach the component to this object? (" + gameObject.name + ")\nThe error is " + e);
         }
+        HeldGun = GetComponent<GunHandler>();
     }
     public void readyWeapon()
     {
@@ -57,15 +59,15 @@ public class AIShooting : MonoBehaviour
         LineRenderer line = Instantiate(lineRenderer, falseFireTransform.position, Quaternion.identity);
         // Raycast to see if object hit in range
         // The "50f" needs to be changed to the weapons range
-        if(Physics.Raycast(startPos, endPoint, out hit, 50f, layerMasks))
+        if(Physics.Raycast(startPos, endPoint, out hit, HeldGun.gun.range, layerMasks))
         {   
-            Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, 0.1f);
+            Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, HeldGun.gun.range);
 //            Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer
             StartCoroutine(setLine(line, falseFireTransform.position, hit.point));
             try
             {
-                hit.collider.gameObject.GetComponent<HealthHandler>().UpdateHealth(10, gameObject, true, false);
+                hit.collider.gameObject.GetComponent<HealthHandler>().UpdateHealth(HeldGun.gun.damage, HeldGun.gun.paintDamage, gameObject);
             }
             catch (Exception e)
             {
@@ -74,14 +76,14 @@ public class AIShooting : MonoBehaviour
         }
         else
         {
-            Debug.DrawRay(startPos, trueFireTransform.forward * 50f, Color.red, 0.1f);
+            Debug.DrawRay(startPos, trueFireTransform.forward * HeldGun.gun.range, Color.red, HeldGun.gun.rateOfFire);
             Debug.Log("Missed object.");
             //Begins to set up the tracer
-            StartCoroutine(setLine(line, falseFireTransform.position, falseFireTransform.forward * 50f));
+            StartCoroutine(setLine(line, falseFireTransform.position, falseFireTransform.forward * HeldGun.gun.range));
         }
         // stops the gun from firing stupidly
         state = gunState.firing;
-        Invoke(nameof(readyWeapon), 0.1f);
+        Invoke(nameof(readyWeapon), HeldGun.gun.rateOfFire);
     }
     private IEnumerator setLine(LineRenderer line, Vector3 startPos, Vector3 endPoint)
     {

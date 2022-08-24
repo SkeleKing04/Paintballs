@@ -190,6 +190,7 @@ GameObject:
   - component: {fileID: 5416148545652274361}
   - component: {fileID: 5416148545652274360}
   - component: {fileID: 620764327896162997}
+  - component: {fileID: 6550374925776810487}
   m_Layer: 7
   m_Name: AI_Enemy
   m_TagString: Combatant
@@ -267,7 +268,7 @@ MonoBehaviour:
     m_Bits: 128
   walkPoint: {x: 0, y: 0, z: 0}
   walkPointRange: 5
-  timeBetweenAttacks: 0.5
+  timeBetweenAttacks: 0
   sightRange: 20
   attackRange: 12
   enemyInSightRange: 0
@@ -346,6 +347,19 @@ MonoBehaviour:
   currentPaint: 0
   dead: 0
   despawned: 0
+--- !u!114 &6550374925776810487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5416148545652274367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d14dc06af48fcd479b329f5686c042f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gun: {fileID: 11400000, guid: 28a9df0eda2ff07408694aa9abcfb86d, type: 2}
 --- !u!1 &6692221945892101103
 GameObject:
   m_ObjectHideFlags: 0

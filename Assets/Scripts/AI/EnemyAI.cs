@@ -124,7 +124,7 @@ public class EnemyAI : MonoBehaviour
 
         head.LookAt(target.transform);
 
-        if(!alreadyAttacked)
+        if(shooting.state == AIShooting.gunState.ready)
         {
             shooting.Shoot(trueFireTransform, falseFireTransform);
             alreadyAttacked = true;

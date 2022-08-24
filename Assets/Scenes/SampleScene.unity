@@ -125924,6 +125924,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6117013885210201343, guid: 08143d5af9b98ee4392c9d7e4f9c1a25, type: 3}
+      propertyPath: gun
+      value: 
+      objectReference: {fileID: 11400000, guid: 28a9df0eda2ff07408694aa9abcfb86d, type: 2}
     - target: {fileID: 6412462036860231513, guid: 08143d5af9b98ee4392c9d7e4f9c1a25, type: 3}
       propertyPath: teamColor.a
       value: 1

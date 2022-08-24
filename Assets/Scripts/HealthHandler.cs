@@ -25,26 +25,10 @@ public class HealthHandler : MonoBehaviour
         currentPaint = 0;
         dead = false;
     }
-    public void UpdateHealth(float pointAmmount, GameObject sender, bool doPaint, bool doOverheal)
+    public void UpdateHealth(float damageAmmount, float paintAmmount, GameObject sender)
     {
-        if(doPaint)
-        {
-            //Debug.Log(gameObject.name + " got " + pointAmmount.ToString() + " points of paint damage from " + sender.name);
-            currentPaint = Mathf.Clamp(currentPaint + pointAmmount, 0, maxPaint);
-        }
-        else if(!doPaint)
-        {
-            //Debug.Log(gameObject.name + " got " + pointAmmount.ToString() + " points of damage from " + sender.name);
-            if(doOverheal)
-            {
-                currentHealth = Mathf.Clamp(currentHealth + pointAmmount, 0, Mathf.Infinity);
-            }
-            else if (!doOverheal)
-            {
-                currentHealth = Mathf.Clamp(currentHealth + pointAmmount, 0, baseHealth);
-
-            }
-        }
+        currentHealth = Mathf.Clamp(currentHealth - damageAmmount, 0, baseHealth);
+        currentPaint = Mathf.Clamp(currentPaint + paintAmmount, 0, maxPaint);
         DeathCheck(sender);
     }
     private void DeathCheck(GameObject sender)

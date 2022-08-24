@@ -59,7 +59,6 @@ public class DeathmatchScript : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         state = gameState.setup;
-        
     }
     private void addNewPlayer(playerData dataPoint, GameObject incomingObject)
     {
@@ -124,8 +123,6 @@ public class DeathmatchScript : MonoBehaviour
                     for(int i = 0; i < botCount; i++)
                     {
                         GameObject newBot = Instantiate(botPrefab, new Vector3(0,0,0), Quaternion.identity);
-                        newBot.GetComponent<NavMeshAgent>().enabled = false;
-                        newBot.GetComponent<EnemyAI>().enabled = false;
                         data.Add(new playerData());
                         addNewPlayer(data[data.Count - 1], newBot);
                         newBot.SetActive(false);
@@ -186,7 +183,6 @@ public class DeathmatchScript : MonoBehaviour
                 {
                     enemyAI.enemies.Clear();
                     enemyAI.findEnemies();
-                    //enemyAI.enabled = true;
                 }
                 state = gameState.playing;
                 break;
@@ -284,8 +280,6 @@ public class DeathmatchScript : MonoBehaviour
                     if(sender.GetComponent<EnemyAI>() == true)
                     {
                         Debug.Log("Gate B Hit");
-                        sender.GetComponent<NavMeshAgent>().enabled = true;
-                        sender.GetComponent<EnemyAI>().enabled = true;
                         sender.GetComponent<EnemyAI>().findEnemies();
                         sender.GetComponent<NavMeshAgent>().Warp(possibleSpawns[rnd].position);
                     }

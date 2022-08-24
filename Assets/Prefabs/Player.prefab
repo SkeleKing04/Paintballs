@@ -205,6 +205,7 @@ GameObject:
   - component: {fileID: 4993881104809740752}
   - component: {fileID: 6412462036860231513}
   - component: {fileID: 5551147818230728758}
+  - component: {fileID: 6117013885210201343}
   m_Layer: 7
   m_Name: Player
   m_TagString: Combatant
@@ -370,6 +371,19 @@ MonoBehaviour:
   currentPaint: 0
   dead: 0
   despawned: 0
+--- !u!114 &6117013885210201343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4993881104809740758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d14dc06af48fcd479b329f5686c042f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gun: {fileID: 0}
 --- !u!1 &8002535863890251545
 GameObject:
   m_ObjectHideFlags: 0
