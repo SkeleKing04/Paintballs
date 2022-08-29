@@ -33,9 +33,11 @@ public class PlayerShooting : MonoBehaviour
     public KeyCode switchWeaponKey;
     private List<KeyCode> inputBuffer;
     private GunHandler HeldGun;
+    private UIHandler UI;
     // Start is called before the first frame update
     void Start()
     {
+        UI = FindObjectOfType<UIHandler>();
         layerMasks = 1 << 8;
         layerMasks = ~layerMasks;
         try
@@ -69,6 +71,7 @@ public class PlayerShooting : MonoBehaviour
         }
         if(Input.GetKeyDown(switchWeaponKey) && state == gunState.ready)
         {
+            UI.updateTextBox(new int[] {2}, new string[] {"Gun: " + HeldGun.gun.name});
             //Switch to next weapon
         }
     }
@@ -95,7 +98,7 @@ public class PlayerShooting : MonoBehaviour
             Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, HeldGun.gun.rateOfFire);
             //Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer
-            StartCoroutine(setLine(line, falseFireTransform.position, hit.point));
+            StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, hit.point, teamColor, trailTime, trailWidth, gameObject));
             try
             {
                 hit.collider.gameObject.GetComponent<HealthHandler>().UpdateHealth(HeldGun.gun.damage, HeldGun.gun.paintDamage, gameObject);
@@ -110,40 +113,10 @@ public class PlayerShooting : MonoBehaviour
             Debug.DrawRay(startPos, trueFireTransform.forward * HeldGun.gun.range, Color.red, 0.1f);
             //Debug.Log("Missed object.");
             //Begins to set up the tracer
-            StartCoroutine(setLine(line, falseFireTransform.position, falseFireTransform.forward * HeldGun.gun.range));
+            StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, falseFireTransform.forward * HeldGun.gun.range, teamColor, trailTime, trailWidth, gameObject));
         }
         // stops the gun from firing stupidly
         state = gunState.firing;
         Invoke(nameof(readyWeapon), HeldGun.gun.rateOfFire);
-    }
-    private IEnumerator setLine(LineRenderer line, Vector3 startPos, Vector3 endPoint)
-    {
-        //Sets the start and end positions of the tracers
-        line.SetPosition(0, startPos);
-        line.SetPosition(1, endPoint);
-        // Sets how long the trail is visible for
-        //this needs to be a different variable
-        // the colour here should corespond to the colour of the player's team/paint
-        try
-        {
-            teamColor = GetComponent<TeamManager>().teamColor;
-//            Debug.Log(gameObject.name + "'s team colour is " + teamColor.ToString());
-            line.startColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
-            line.endColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
-        }
-        catch (Exception e)
-        {
-            Debug.Log("Failed to update the colour of the line. Does the sender have team manager attached?\nThe error is " + e);
-        }
-
-        float time = trailTime;
-        while (time > 0)
-        {
-            line.startWidth = trailWidth * time;
-            line.endWidth = line.startWidth;
-            time -= Time.deltaTime;
-            yield return null;
-        }
-        Destroy(line.gameObject);
     }
 }

@@ -36,13 +36,12 @@ public class DeathmatchScript : MonoBehaviour
     [Header("Unsorted")]
     public Transform mapCenter;
     public new Transform camera;
-    public GameObject[] gamePanel;
-    public TextMeshProUGUI timerText;
     public GameObject playerScorecard;
     //private List<GameObject> scorecards;
     //private List<float> scores;
     public float timeTillStart;
     public List<playerData> data;
+    private UIHandler UI;
     [System.Serializable]
     public class playerData
     {
@@ -55,6 +54,7 @@ public class DeathmatchScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {   
+        UI = FindObjectOfType<UIHandler>();
         //data = new playerData[teamSize * 2];
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -159,13 +159,13 @@ public class DeathmatchScript : MonoBehaviour
                 state = gameState.starting;
                 break;
             case gameState.starting:
-                ResetUIPanels(0);
+                UI.ResetUIPanels(new int[] {0});
                 if (timeTillStart >= 0)
                 {
                     timeTillStart -= Time.deltaTime;
                     float minutes = Mathf.FloorToInt(timeTillStart / 60);
                     float seconds = Mathf.FloorToInt(timeTillStart % 60);
-                    timerText.text = string.Format("{0:00} : {1:00}", minutes, seconds);
+                    UI.timerText.text = string.Format("{0:00} : {1:00}", minutes, seconds);
                 }
                 else
                 {
@@ -173,7 +173,7 @@ public class DeathmatchScript : MonoBehaviour
                 }
                 break;
             case gameState.loading:
-                ResetUIPanels(1);
+                UI.ResetUIPanels(new int[] {1,2});
                 for(int i = 0; i <= data.Count - 1; i++)
                 {
                     StartCoroutine(spawnMe(data[i].playerObject, 0f));
@@ -225,14 +225,7 @@ public class DeathmatchScript : MonoBehaviour
                 break;
         }
     }
-    private void ResetUIPanels(int index)
-    {
-        foreach(GameObject panel in gamePanel)
-        {
-            panel.SetActive(false);
-        }
-        gamePanel[index].SetActive(true);
-    }
+
     public IEnumerator spawnMe(GameObject sender, float spawnWait)
     {
         //Debug.Log("SpawnMe called at " + Time.time + " and will wait " + spawnWait + " seconds.");
@@ -267,7 +260,7 @@ public class DeathmatchScript : MonoBehaviour
             while(!isSpawned && whileIteration < 10)
             {
                 int rnd = UnityEngine.Random.Range(0, possibleSpawns.Count);
-                if(!Physics.CheckSphere(possibleSpawns[rnd].position, spawnSafeZone, combatantLayer))
+                if(!Physics.CheckSphere(possibleSpawns[rnd].position, spawnSafeZone, combatantLayer) && possibleSpawns[rnd].GetComponent<SpawnPoint>().spawnAvalible)
                 {
                     Debug.Log("Gate A Hit");
                     sender.SetActive(true);
@@ -284,6 +277,7 @@ public class DeathmatchScript : MonoBehaviour
                         sender.GetComponent<NavMeshAgent>().Warp(possibleSpawns[rnd].position);
                     }
                     isSpawned = true;
+                    possibleSpawns[rnd].GetComponent<SpawnPoint>().doCoolDown(10);
                 }
                 whileIteration++;
             }
@@ -307,9 +301,11 @@ public class DeathmatchScript : MonoBehaviour
     {
         GameObject newScorecard = Instantiate<GameObject>(playerScorecard);
         //scorecards.Add(newScorecard);
-        newScorecard.transform.SetParent(gamePanel[1].transform);
+        newScorecard.transform.SetParent(UI.gamePanel[1].transform);
         newScorecard.transform.GetComponentInChildren<TextMeshProUGUI>().text = "0";
-        newScorecard.transform.localScale = new Vector3(1,1,1);
+        newScorecard.transform.localPosition = new Vector3(newScorecard.transform.position.x, newScorecard.transform.position.y, 0);
+        newScorecard.transform.localRotation = Quaternion.Euler(0,0,0);
+        newScorecard.transform.localScale = UI.gamePanel[1].transform.localScale;
         newScorecard.transform.GetComponent<Image>().color = player.GetComponent<TeamManager>().teamColor;
         newScorecard.SetActive(true);
         return newScorecard;
