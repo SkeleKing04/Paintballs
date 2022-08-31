@@ -17,20 +17,7 @@ public class SpawnPoint : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach(GameObject player in GameObject.FindGameObjectsWithTag("Combatant"))
-        {
-            if(Physics.CheckSphere(transform.position, spawnSafeZone, combatantLayer) && )
-            {
-                if(FindObjectOfType<DeathmatchScript>().teamDeathmatch && player.GetComponent<TeamManager>().teamColor != teamManager.teamColor)
-                {
-                    spawnAvalible = false;
-                }
-                else if(!FindObjectOfType<DeathmatchScript>().teamDeathmatch)
-                {
-                    spawnAvalible = false;
-                }
-            }
-        }
+        
     }
     public void doCoolDown(float time)
     {
@@ -40,6 +27,36 @@ public class SpawnPoint : MonoBehaviour
         {
             coolDown -= Time.deltaTime;
         }    
+    }
+    public bool CheckSpawn(GameObject sender)
+    {
+        bool current = false;
+        if(coolDown > 0)
+        {
+            Debug.Log("The spawn, " + gameObject.name + " is currently on cooldown. Please wait " + coolDown.ToString() + " more seconds.");
+            current = false;
+        }
+        else
+        {
+                Debug.Log(sender.name + " is " + (sender.transform.position - gameObject.transform.position).magnitude + " units from this spawn point, " + gameObject.name);
+                if(DeathmatchScript.teamDeathmatch)
+                {
+                    if(sender.GetComponent<TeamManager>().teamColor != gameObject.GetComponent<TeamManager>().teamColor && (sender.transform.position - gameObject.transform.position).magnitude <= spawnSafeZone)
+                    {
+                        current = false;
+                    }
+
+                }
+                else if((sender.transform.position - gameObject.transform.position).magnitude <= spawnSafeZone)
+                {
+                    current = false;
+                }
+                else
+                {
+                    current = true;
+                }
+        }
+        return current;
     }
 
 }

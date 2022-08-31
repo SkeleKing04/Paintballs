@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.AI;
 using UnityEngine.UI;
 using System;
+using UnityEngine.SceneManagement;
 
 public class DeathmatchScript : MonoBehaviour
 {
@@ -16,9 +17,12 @@ public class DeathmatchScript : MonoBehaviour
         playing,
         ending,
         restarting,
-        leaving
+        leaving,
+        mainMenu
     };
-    public gameState state;
+
+    public static gameState state;
+
     [Header("Players")]
     //public List<GameObject> players;
     [Header("Spawning")]
@@ -27,10 +31,11 @@ public class DeathmatchScript : MonoBehaviour
     public LayerMask combatantLayer;
     public Transform[] spawnPoints;
     [Header("Game Settings")]
-    public bool teamDeathmatch;
-    public int soloScoreCap, teamScoreCap,teamSize, botCount;
+    public static bool teamDeathmatch;
+    public static int scoreCap,teamSize;
+    private int botCount;
     public GameObject botPrefab;
-    public bool fillRoomWithBots;
+    static public bool fillRoomWithBots;
     public Color teamAColour, teamBColour;
     public float gameStartTime;
     [Header("Unsorted")]
@@ -42,6 +47,7 @@ public class DeathmatchScript : MonoBehaviour
     public float timeTillStart;
     public List<playerData> data;
     private UIHandler UI;
+    public string exitScene;
     [System.Serializable]
     public class playerData
     {
@@ -54,8 +60,17 @@ public class DeathmatchScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {   
+        Debug.Log("Starting DM\nIncoming settings are:\nScore Cap: " + scoreCap.ToString() + "\nBots?: " +fillRoomWithBots.ToString() + "\nTeamDM?: " + teamDeathmatch.ToString() + "\nTeam Size: " + teamSize.ToString());
         UI = FindObjectOfType<UIHandler>();
         //data = new playerData[teamSize * 2];
+        if(state != gameState.mainMenu)
+        {
+            startGate();
+        }
+    }
+    public static void startGate()
+    {
+        Debug.Log("Start Gate hit");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         state = gameState.setup;
@@ -197,6 +212,7 @@ public class DeathmatchScript : MonoBehaviour
                     //deSpawnMe(dataPoint.playerObject, false, 0f);
 
                 }
+                SceneManager.LoadScene(exitScene);
                 state = gameState.restarting;
                 break;
             case gameState.restarting:
@@ -223,6 +239,8 @@ public class DeathmatchScript : MonoBehaviour
                 }
                 state = gameState.setup;
                 break;
+            case gameState.mainMenu:
+                break;
         }
     }
 
@@ -230,29 +248,31 @@ public class DeathmatchScript : MonoBehaviour
     {
         //Debug.Log("SpawnMe called at " + Time.time + " and will wait " + spawnWait + " seconds.");
         yield return new WaitForSeconds(spawnWait);
-        if(sender.active == false)
+        if(sender.activeSelf == false)
         {
             //Debug.Log("SpawnMe resumed");
             List<Transform> possibleSpawns = new List<Transform>();
-            if(teamDeathmatch)
+            for (int i = 0; i < 3; i++)
             {
                 foreach(Transform spawnPoint in spawnPoints)
                 {
-                    if(spawnPoint.GetComponent<TeamManager>().teamColor == sender.GetComponent<TeamManager>().teamColor && spawnPoint.GetComponent<SpawnPoint>().coolDown <= 0)
+                    if(spawnPoint.GetComponent<SpawnPoint>().CheckSpawn(sender))
                     {
+                        Debug.Log("Added " + spawnPoint.name + " to possible spawns");
                         possibleSpawns.Add(spawnPoint);
                     }
+                    else Debug.Log("Didnt add " + spawnPoint.name + " to possible spawns");
                 }
-            }
-            else
-            {
-                foreach(Transform spawnPoint in spawnPoints)
+                if(possibleSpawns.Count >= 1)
                 {
-                    if(spawnPoint.GetComponent<SpawnPoint>().coolDown <= 0)
-                    {
-                        possibleSpawns.Add(spawnPoint);
-                    }
+                    Debug.Log(sender + " has found spawns");
+                    i = 3;
                 }
+                else if(i == 2)
+                {
+                    Debug.Log("No spawns found after 3 loops, something went wrong");
+                }
+                else Debug.Log("No spawns found this loop");
             }
             bool isSpawned = false;
             int whileIteration = 0;
@@ -260,8 +280,6 @@ public class DeathmatchScript : MonoBehaviour
             while(!isSpawned && whileIteration < 10)
             {
                 int rnd = UnityEngine.Random.Range(0, possibleSpawns.Count);
-                if(!Physics.CheckSphere(possibleSpawns[rnd].position, spawnSafeZone, combatantLayer) && possibleSpawns[rnd].GetComponent<SpawnPoint>().spawnAvalible)
-                {
                     Debug.Log("Gate A Hit");
                     sender.SetActive(true);
                     sender.GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
@@ -278,7 +296,6 @@ public class DeathmatchScript : MonoBehaviour
                     }
                     isSpawned = true;
                     possibleSpawns[rnd].GetComponent<SpawnPoint>().doCoolDown(10);
-                }
                 whileIteration++;
             }
         }
@@ -338,18 +355,18 @@ public class DeathmatchScript : MonoBehaviour
                 {
                     Debug.Log("ERROR - This player isn't on either team");
                 }
-                if(teamAScore >= teamScoreCap)
+                if(teamAScore >= scoreCap)
                 {
                     state = gameState.ending;
                 }
-                if(teamBScore >= teamScoreCap)
+                if(teamBScore >= scoreCap)
                 {
                     state = gameState.ending;
                 }
             }
             else if (!teamDeathmatch)
             {
-                if(dataPoint.personalScore >= soloScoreCap)
+                if(dataPoint.personalScore >= scoreCap)
                 {
                     state = gameState.ending;
                 }
