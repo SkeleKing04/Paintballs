@@ -27,7 +27,7 @@ public class MenuHandler : MonoBehaviour
     {
         int value = (int)sender.GetComponent<Slider>().value;
         DeathmatchScript.scoreCap = value;
-        textBoxes[0].text = "Score to win: " + value;
+        textBoxes[0].text = "Score to win (Per Player): " + value;
     }
     public void ToggleBots(GameObject sender)
     {
@@ -53,5 +53,9 @@ public class MenuHandler : MonoBehaviour
     void Update()
     {
         startingState = DeathmatchScript.state;
+    }
+    public void Quit()
+    {
+        Application.Quit();
     }
 }

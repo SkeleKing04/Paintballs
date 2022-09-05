@@ -292,6 +292,7 @@ MonoBehaviour:
   lineRenderer: {fileID: 8727200555337586795, guid: 032123c27f1152f4fb0d38bdeca25025, type: 3}
   trailTime: 0.1
   trailWidth: 1
+  shootingOffest: {x: 0.1, y: 0, z: 0.1}
   state: 0
 --- !u!114 &5416148545652274361
 MonoBehaviour:

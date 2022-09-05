@@ -9,8 +9,8 @@ public class AIShooting : MonoBehaviour
     [Header("Tracer")]
     //public TrailRenderer tracer;
     public LineRenderer lineRenderer;
-    public float trailTime;
-    public float trailWidth;
+    public float trailTime, trailWidth;
+    public Vector3 shootingOffest;
     private Color teamColor;
     private GunHandler HeldGun;
 
@@ -54,14 +54,14 @@ public class AIShooting : MonoBehaviour
         //Variables
         RaycastHit hit;
         Vector3 startPos = trueFireTransform.position;
-        Vector3 endPoint = trueFireTransform.forward;
+        Vector3 endPoint = trueFireTransform.forward * HeldGun.gun.range + new Vector3(genRand(-shootingOffest.x, shootingOffest.x),genRand(-shootingOffest.y, shootingOffest.y),genRand(0, shootingOffest.z));
         //Creates the tracer line  
         LineRenderer line = Instantiate(lineRenderer, falseFireTransform.position, Quaternion.identity);
         // Raycast to see if object hit in range
         // The "50f" needs to be changed to the weapons range
         if(Physics.Raycast(startPos, endPoint, out hit, HeldGun.gun.range, layerMasks))
         {   
-            Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, HeldGun.gun.range);
+            Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, 1f);
 //            Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer
             StartCoroutine(setLine(line, falseFireTransform.position, hit.point));
@@ -84,6 +84,11 @@ public class AIShooting : MonoBehaviour
         // stops the gun from firing stupidly
         state = gunState.firing;
         Invoke(nameof(readyWeapon), HeldGun.gun.rateOfFire);
+    }
+    private float genRand(float min, float max)
+    {
+        float rnd = UnityEngine.Random.Range(min, max);
+        return rnd;
     }
     private IEnumerator setLine(LineRenderer line, Vector3 startPos, Vector3 endPoint)
     {

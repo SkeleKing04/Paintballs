@@ -40,9 +40,13 @@ public class BulletTracer : MonoBehaviour
     }
     void Update()
     {
+        if(Parent != null)
+        {
         if(Parent.activeSelf == false)
         {
             Destroy(gameObject);
+        }
+
         }
     }
 }

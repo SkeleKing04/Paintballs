@@ -91,6 +91,7 @@ public class PlayerShooting : MonoBehaviour
         Vector3 endPoint = trueFireTransform.forward;
         //Creates the tracer line  
         LineRenderer line = Instantiate(lineRenderer, falseFireTransform.position, Quaternion.identity);
+        teamColor = GetComponent<TeamManager>().teamColor;
         // Raycast to see if object hit in range
         // The "50f" needs to be changed to the weapons range
         if(Physics.Raycast(startPos, endPoint * HeldGun.gun.range, out hit, HeldGun.gun.range, layerMasks))
@@ -98,7 +99,7 @@ public class PlayerShooting : MonoBehaviour
             Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, HeldGun.gun.rateOfFire);
             //Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer
-            StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, hit.point, teamColor, trailTime, trailWidth, gameObject));
+            StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, hit.point, GetComponent<TeamManager>().teamColor, trailTime, trailWidth, gameObject));
             try
             {
                 hit.collider.gameObject.GetComponent<HealthHandler>().UpdateHealth(HeldGun.gun.damage, HeldGun.gun.paintDamage, gameObject);
@@ -113,7 +114,7 @@ public class PlayerShooting : MonoBehaviour
             Debug.DrawRay(startPos, trueFireTransform.forward * HeldGun.gun.range, Color.red, 0.1f);
             //Debug.Log("Missed object.");
             //Begins to set up the tracer
-            StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, falseFireTransform.forward * HeldGun.gun.range, teamColor, trailTime, trailWidth, gameObject));
+            StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, falseFireTransform.forward * HeldGun.gun.range, GetComponent<TeamManager>().teamColor, trailTime, trailWidth, gameObject));
         }
         // stops the gun from firing stupidly
         state = gunState.firing;

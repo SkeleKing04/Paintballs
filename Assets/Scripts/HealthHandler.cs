@@ -37,7 +37,10 @@ public class HealthHandler : MonoBehaviour
         {
             //Debug.Log(gameObject.name + " has been killed by " + sender.name);
             dead = true;
-            deathmatchScript.updatePlayerScore(sender);
+            if(sender.GetComponent<TeamManager>().teamColor != GetComponent<TeamManager>().teamColor)
+            {
+                deathmatchScript.updatePlayerScore(sender);
+            }
             deathmatchScript.deSpawnMe(gameObject, true, 5f);
         }
         if(currentHealth <= 0)

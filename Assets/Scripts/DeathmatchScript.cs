@@ -151,8 +151,12 @@ public class DeathmatchScript : MonoBehaviour
                     {
                         data[i].playerObject.GetComponent<TeamManager>().teamColor = teamAColour;
                         data[i].playerObject.GetComponent<TeamManager>().UpdateColour();
+                        data[i].personalScorecard.transform.GetComponent<Image>().color = data[i].playerObject.GetComponent<TeamManager>().teamColor;
+                        data[i].playerObject.SetActive(false);
                         data[i + 1].playerObject.GetComponent<TeamManager>().teamColor = teamBColour;
                         data[i + 1].playerObject.GetComponent<TeamManager>().UpdateColour();
+                        data[i + 1].personalScorecard.transform.GetComponent<Image>().color = data[i + 1].playerObject.GetComponent<TeamManager>().teamColor;
+                        data[i + 1].playerObject.SetActive(false);
                     }
                     for(int i = 0; i < spawnPoints.Length / 2; i++)
                     {
@@ -233,7 +237,7 @@ public class DeathmatchScript : MonoBehaviour
                     }
                     catch(Exception e)
                     {
-                        Debug.Log("Failed to destroy object " + data[0].playerObject.name);
+                        Debug.Log("Failed to destroy object " + data[0].playerObject.name + "\nError " + e.ToString());
                     }
                     data.RemoveAt(0);
                 }
@@ -355,11 +359,11 @@ public class DeathmatchScript : MonoBehaviour
                 {
                     Debug.Log("ERROR - This player isn't on either team");
                 }
-                if(teamAScore >= scoreCap)
+                if(teamAScore >= scoreCap * teamSize)
                 {
                     state = gameState.ending;
                 }
-                if(teamBScore >= scoreCap)
+                if(teamBScore >= scoreCap * teamSize)
                 {
                     state = gameState.ending;
                 }

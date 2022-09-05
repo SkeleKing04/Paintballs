@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AutoRifle
   m_EditorClassIdentifier: 
   range: 50
-  rateOfFire: 0.1
+  rateOfFire: 0.5
   reloadSpeed: 2
   damage: 10
   paintDamage: 10

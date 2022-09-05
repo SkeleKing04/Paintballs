@@ -55,7 +55,7 @@ public class EnemyAI : MonoBehaviour
     {
         if(target != null)
         {
-            if((transform.position - target.transform.position).magnitude >= sightRange || !target.activeSelf)
+            if((transform.position - target.transform.position).magnitude >= sightRange || !target.activeSelf || target.GetComponent<TeamManager>().teamColor == GetComponent<TeamManager>().teamColor)
             {
                 target = null;
             }
@@ -68,6 +68,17 @@ public class EnemyAI : MonoBehaviour
             if(combatant.GetComponent<TeamManager>().teamColor != gameObject.GetComponent<TeamManager>().teamColor)
             {
                 enemies.Add(combatant);
+            }
+        }
+        CheckEnemyTeam();
+    }
+    public void CheckEnemyTeam()
+    {
+        foreach(GameObject enemy in enemies)
+        {
+            if(enemy.GetComponent<TeamManager>().teamColor == GetComponent<TeamManager>().teamColor)
+            {
+                enemies.Remove(enemy);
             }
         }
     }
