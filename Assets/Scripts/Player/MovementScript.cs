@@ -137,13 +137,13 @@ public class MovementScript : MonoBehaviour
         {
             state = MovementStates.sprinting;
             desiredMoveSpeed = sprintSpeed;
-            camera.DoFov(75f);
+            //camera.DoFov(75f);
         }
         else if (grounded)
         {
             state = MovementStates.walking;
             desiredMoveSpeed = walkSpeed;
-            camera.DoFov(60f);
+            //camera.DoFov(60f);
         }
         else
         {

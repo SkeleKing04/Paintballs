@@ -112389,11 +112389,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!4 &1429819345 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4993881104605103204, guid: 08143d5af9b98ee4392c9d7e4f9c1a25, type: 3}
-  m_PrefabInstance: {fileID: 4993881103887272885}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1434091630
 GameObject:
   m_ObjectHideFlags: 0
@@ -115083,6 +115078,11 @@ MonoBehaviour:
 --- !u!1 &1546702003 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4993881104809740758, guid: 08143d5af9b98ee4392c9d7e4f9c1a25, type: 3}
+  m_PrefabInstance: {fileID: 4993881103887272885}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1546702004 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4993881104809740754, guid: 08143d5af9b98ee4392c9d7e4f9c1a25, type: 3}
   m_PrefabInstance: {fileID: 4993881103887272885}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1568162807
@@ -126654,10 +126654,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4466822924455411641, guid: cef18481c2437a548aa269fe74069b02, type: 3}
-      propertyPath: cameraPosition
+    - target: {fileID: 7626802004032367696, guid: cef18481c2437a548aa269fe74069b02, type: 3}
+      propertyPath: camSpeed
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 7626802004032367696, guid: cef18481c2437a548aa269fe74069b02, type: 3}
+      propertyPath: camRotSpeed
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 7626802004032367696, guid: cef18481c2437a548aa269fe74069b02, type: 3}
+      propertyPath: sensitivity.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7626802004032367696, guid: cef18481c2437a548aa269fe74069b02, type: 3}
+      propertyPath: sensitivity.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7626802004032367696, guid: cef18481c2437a548aa269fe74069b02, type: 3}
+      propertyPath: doMouseMovement
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7626802004032367696, guid: cef18481c2437a548aa269fe74069b02, type: 3}
+      propertyPath: objectToFollow.Array.data[0].objectTransform
       value: 
-      objectReference: {fileID: 1429819345}
+      objectReference: {fileID: 1546702004}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cef18481c2437a548aa269fe74069b02, type: 3}
 --- !u!1001 &4993881103887272885
