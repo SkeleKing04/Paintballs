@@ -5,42 +5,6 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    /*public float sensX;
-    public float sensY;
-
-    public Transform playerOrient;
-    public Transform camHolder;
-    public Transform eyeToMove;
-
-    float xRotation;
-    float yRotation;
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        float mouseX = Input.GetAxisRaw("Mouse X")* Time.deltaTime * sensX;
-        float mouseY = Input.GetAxisRaw("Mouse Y")* Time.deltaTime * sensY;
-
-        yRotation += mouseX;
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
-        camHolder.rotation = Quaternion.Euler(xRotation,yRotation,0);
-        playerOrient.rotation = Quaternion.Euler(0, yRotation,0 );
-        eyeToMove.rotation = Quaternion.Euler(xRotation,yRotation,0);
-    }
-    public void DoFov(float endValue)
-    {
-        //GetComponent<Camera>().DOFieldOfView(endValue, 0.25f);
-    }
-    public void DoTilt(float zTilt)
-    {
-        //transform.DOLocalRotate(new Vector3(0, 0, zTilt), 0.25f);
-    }*/
     [Header("Positioning")]
     //public Transform objectToFollow;
     public float camSpeed, camRotSpeed, camDistance;
@@ -56,25 +20,46 @@ public class CameraController : MonoBehaviour
     {
         public Transform objectTransform;
         //Set only one object to be head, first object will be selected
-        public bool followCameraRotation, controlXRot, controlYRot, controlZRot, headObject;
+        public bool followCameraRotation, controlXRot, controlYRot, controlZRot;
     }
     public objectsToControl[] objectToFollow;
     private int mainIndex;
     // Start is called before the first frame update
     void Start()
     {
-        updateMainIndex();
+        setMainIndex(0);
     }
-    public void updateMainIndex()
+    public void setMainIndex(int index)
     {
-        for(int i = 0; i < objectToFollow.Length; i++)
+        if(index >= 0 && index < objectToFollow.Length)
         {
-            if(objectToFollow[i].headObject)
-            {
-                mainIndex = i;
-                Debug.Log("Main index set at " + mainIndex.ToString());
-                break;
-            }
+            mainIndex = index;
+        }
+        else
+        {
+            Debug.LogError("Given index (" + index + ") is greater then array bounds.");
+        }
+    }
+    public void increaseMainIndex(int amount)
+    {
+        if(mainIndex + amount >= objectToFollow.Length)
+        {
+            mainIndex = mainIndex - objectToFollow.Length + amount;
+        }
+        else
+        {
+            mainIndex += amount;
+        }
+    }
+    public void decreaseMainIndex(int amount)
+    {
+        if(mainIndex - amount < 0)
+        {
+            mainIndex = mainIndex + objectToFollow.Length - amount;
+        }
+        else
+        {
+            mainIndex -= amount;
         }
     }
     // Update is called once per frame
@@ -87,7 +72,7 @@ public class CameraController : MonoBehaviour
         Vector3 lookPos = objectToFollow[mainIndex].objectTransform.position;
         if(!doMouseMovement)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, objectToFollow[0].objectTransform.rotation , Time.deltaTime * camRotSpeed);
+            transform.rotation = Quaternion.Slerp(transform.rotation, objectToFollow[mainIndex].objectTransform.rotation , Time.deltaTime * camRotSpeed);
         }
         else if (doMouseMovement)
         {

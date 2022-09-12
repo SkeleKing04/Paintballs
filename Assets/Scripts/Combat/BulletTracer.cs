@@ -13,21 +13,10 @@ public class BulletTracer : MonoBehaviour
         //Sets the start and end positions of the tracers
         line.SetPosition(0, startPos);
         line.SetPosition(1, endPoint);
-        // Sets how long the trail is visible for
-        //this needs to be a different variable
-        // the colour here should corespond to the colour of the player's team/paint
-        try
-        {
-            teamColor = GetComponent<TeamManager>().teamColor;
-            //Debug.Log(gameObject.name + "'s team colour is " + teamColor.ToString());
-            line.startColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
-            line.endColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
-        }
-        catch (Exception e)
-        {
-            Debug.Log("Failed to update the colour of the line. Does the sender have team manager attached?\nThe error is " + e);
-        }
-
+        //Sets the tracer's colour
+        line.startColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
+        line.endColor = new Color(teamColor.r, teamColor.g, teamColor.b, 1);
+        //Reduces the width of the tracer over time
         float time = trailTime;
         while (time > 0)
         {
@@ -42,11 +31,10 @@ public class BulletTracer : MonoBehaviour
     {
         if(Parent != null)
         {
-        if(Parent.activeSelf == false)
-        {
-            Destroy(gameObject);
-        }
-
+            if(Parent.activeSelf == false)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

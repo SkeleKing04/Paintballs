@@ -2,37 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class UIHandler : MonoBehaviour
 {
     public GameObject[] gamePanel;
-    public GameObject clientGameObject;
-    private HealthHandler clientHealth;
-    public TextMeshProUGUI[] textBoxes;
-    public TextMeshProUGUI timerText;
-    // Start is called before the first frame update
-    void Start()
-    {
-        clientHealth = clientGameObject.GetComponent<HealthHandler>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        updateTextBox(new int[] {0,1}, new string[] {"Health: " + clientHealth.currentHealth.ToString(), "Paint: " + clientHealth.currentPaint.ToString()});
-    }
-    public void updateTextBox(int[] indexes, string[] text)
-    {
-        for(int i = 0; i < indexes.Length; i++)
-        {
-            if(indexes[i] < textBoxes.Length)
-            {
-                textBoxes[indexes[i]].text = text[i];
-            }
-
-        }
-    }
-    public void ResetUIPanels(int[] indexes)
+    public void selectUIPanels(int[] indexes)
     {
         foreach(GameObject panel in gamePanel)
         {
@@ -44,7 +19,33 @@ public class UIHandler : MonoBehaviour
             {
                 gamePanel[index].SetActive(true);
             }
-
         }
     }
+    public void updateTextBox(TextMeshProUGUI[] textBoxes, string[] texts)
+    {
+        for (int i = 0; i < textBoxes.Length; i++)
+        {
+            textBoxes[i].text = texts[i];
+        }
+    }
+    public void updateTogglable(Toggle[] toggles, bool[] values, bool[] changeToggle)
+    {
+        for (int i = 0; i < toggles.Length; i++)
+        {
+            if(changeToggle[i]) toggles[i].isOn = values[i];
+            else if(!changeToggle[i]) values[i] = toggles[i].isOn;
+        }
+    }
+    public void updateSlider(Slider[] sliders, float[] values, bool[] changeSlider, bool[] phaseAsInt)
+    {
+        for (int i = 0; i < sliders.Length; i++)
+        {
+            if(changeSlider[i])
+            {
+                if(values[i] >= sliders[i].minValue && values[i] <= sliders[i].maxValue) sliders[i].value = values[i];
+            }
+            else if(!changeSlider[i]) values[i] = sliders[i].value;
+        }
+    }
+    
 }

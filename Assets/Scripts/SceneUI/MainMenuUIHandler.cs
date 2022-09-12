@@ -5,8 +5,9 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 
-public class MenuHandler : MonoBehaviour
+public class MainMenuUIHandler : MonoBehaviour
 {
+    public UIHandler mainHandler;
     public Slider[] sliders;
     public Toggle[] toggles;
     public TextMeshProUGUI[] textBoxes;
@@ -17,6 +18,7 @@ public class MenuHandler : MonoBehaviour
         DeathmatchScript.state = startingState; 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        mainHandler.updateSlider(new Slider[] {sliders[0]},new float[] {DeathmatchScript.scoreCap},new bool[] {false});
         UpdateScoreCap(sliders[0].gameObject);
         ToggleBots(toggles[0].gameObject);
         ToggleTeams(toggles[1].gameObject);
@@ -25,8 +27,8 @@ public class MenuHandler : MonoBehaviour
     }
     public void UpdateScoreCap(GameObject sender)
     {
-        int value = (int)sender.GetComponent<Slider>().value;
-        DeathmatchScript.scoreCap = value;
+        mainHandler.updateSlider(new Slider[] {sliders[0]},new float[] {DeathmatchScript.scoreCap},new bool[] {false});
+        mainHandler.updateTextBox(new TextMeshProUGUI[] {textBoxes[0]},new string[]{"Score to win (Per Player): " + sliders[0].value});
         textBoxes[0].text = "Score to win (Per Player): " + value;
     }
     public void ToggleBots(GameObject sender)

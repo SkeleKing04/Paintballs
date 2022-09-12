@@ -178,13 +178,13 @@ public class DeathmatchScript : MonoBehaviour
                 state = gameState.starting;
                 break;
             case gameState.starting:
-                UI.ResetUIPanels(new int[] {0});
+                //UI.ResetUIPanels(new int[] {0});
                 if (timeTillStart >= 0)
                 {
                     timeTillStart -= Time.deltaTime;
                     float minutes = Mathf.FloorToInt(timeTillStart / 60);
                     float seconds = Mathf.FloorToInt(timeTillStart % 60);
-                    UI.timerText.text = string.Format("{0:00} : {1:00}", minutes, seconds);
+                    //UI.timerText.text = string.Format("{0:00} : {1:00}", minutes, seconds);
                 }
                 else
                 {
@@ -192,7 +192,7 @@ public class DeathmatchScript : MonoBehaviour
                 }
                 break;
             case gameState.loading:
-                UI.ResetUIPanels(new int[] {1,2});
+                //UI.ResetUIPanels(new int[] {1,2});
                 for(int i = 0; i <= data.Count - 1; i++)
                 {
                     StartCoroutine(spawnMe(data[i].playerObject, 0f));

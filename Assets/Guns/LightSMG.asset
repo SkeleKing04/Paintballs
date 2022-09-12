@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3acf2b9fd7e32744af0b3e96dd2bd5e, type: 3}
-  m_Name: AutoRifle
+  m_Name: LightSMG
   m_EditorClassIdentifier: 
-  range: 50
-  rateOfFire: 0.5
-  reloadSpeed: 2
-  damage: 10
-  paintDamage: 10
-  modelPrefab: {fileID: 5313856188506331232, guid: 7444562fe5798e846a4045a93e123308, type: 3}
+  range: 10
+  rateOfFire: 0.05
+  reloadSpeed: 1
+  damage: 1
+  paintDamage: 3
+  modelPrefab: {fileID: 7537985041024867378, guid: e79abd9230a6f0f47b4b6098d11e913e, type: 3}

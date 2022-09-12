@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3acf2b9fd7e32744af0b3e96dd2bd5e, type: 3}
-  m_Name: AutoRifle
+  m_Name: HeavyRifle
   m_EditorClassIdentifier: 
-  range: 50
-  rateOfFire: 0.5
+  range: 20
+  rateOfFire: 0.25
   reloadSpeed: 2
-  damage: 10
-  paintDamage: 10
-  modelPrefab: {fileID: 5313856188506331232, guid: 7444562fe5798e846a4045a93e123308, type: 3}
+  damage: 25
+  paintDamage: 60
+  modelPrefab: {fileID: 2292674143187265876, guid: ad4af7a378c328b479efaa42f7756c12, type: 3}

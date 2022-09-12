@@ -71,7 +71,7 @@ public class PlayerShooting : MonoBehaviour
         }
         if(Input.GetKeyDown(switchWeaponKey) && state == gunState.ready)
         {
-            UI.updateTextBox(new int[] {2}, new string[] {"Gun: " + HeldGun.gun.name});
+            //UI.updateTextBox(new int[] {2}, new string[] {"Gun: " + HeldGun.gun.name});
             //Switch to next weapon
         }
     }
