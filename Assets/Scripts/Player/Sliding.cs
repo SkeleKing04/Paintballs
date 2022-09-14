@@ -5,71 +5,64 @@ using UnityEngine;
 public class Sliding : MonoBehaviour
 {
     [Header("References")]
-    public Transform _orientation;
-    public Transform _playerObj;
-    private Rigidbody _rigidbody;
-    private MovementScript _movementScript;
+    public Transform orientation;
+    public Transform playerObj;
+    private new Rigidbody rigidbody;
+    private MovementScript movementScript;
     [Header("Sliding")]
-    public float _maxSlideTime;
-    public float _slideForce;
-    private float _slideTimer;
-    public float _slideYScale;
-    public float _startYScale;
+    public float maxSlideTime;
+    public float slideForce;
+    private float slideTimer;
+    public float slideYScale;
+    public float startYScale;
     [Header("Input")]
-    public KeyCode _slideKey = KeyCode.LeftControl;
-    private float _horizontalInput;
-    private float _verticalInput;
+    public KeyCode slideKey = KeyCode.LeftControl;
+    private float horizontalInput;
+    private float verticalInput;
 
-    // Start is called before the first frame update
     void Start()
     {
-        _rigidbody = GetComponent<Rigidbody>();
-        _movementScript = GetComponent<MovementScript>();
-        _startYScale = _playerObj.localScale.y;
+        rigidbody = GetComponent<Rigidbody>();
+        movementScript = GetComponent<MovementScript>();
+        startYScale = playerObj.localScale.y;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        _horizontalInput = Input.GetAxisRaw("Horizontal");
-        _verticalInput = Input.GetAxisRaw("Vertical");
-
-        if (Input.GetKeyDown(_slideKey) && (_horizontalInput != 0 || _verticalInput != 0)) StartSlide();
-        if (Input.GetKeyUp(_slideKey) && _movementScript.sliding) StopSlide();
-
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
     }
     private void FixedUpdate()
     {
-        if (_movementScript.sliding) SlidingMovement();
+        //if (movementScript.state == MovementScript.MovementStates.sliding)
     }
-    private void StartSlide()
+    /*public void StartSlide()
     {
-        _movementScript.sliding = true;
-        _playerObj.localScale = new Vector3(_playerObj.localScale.x, _slideYScale, _playerObj.localScale.z);
-        _rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+        movementScript.sliding = true;
+        playerObj.localScale = new Vector3(playerObj.localScale.x, slideYScale, playerObj.localScale.z);
+        rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
 
-        _slideTimer = _maxSlideTime * _movementScript.healthMultiplier;
-        //Debug.Log(_slideTimer);
+        slideTimer = maxSlideTime * movementScript.healthMultiplier;
     }
     private void SlidingMovement()
     {
-        Vector3 inputDirection = _orientation.forward * _verticalInput + _orientation.right * _horizontalInput;
-        if(!_movementScript.OnSlope() || _rigidbody.velocity.y > -0.1f)
+        Vector3 inputDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        if(!movementScript.OnSlope() || rigidbody.velocity.y > -0.1f)
         {
-            _rigidbody.AddForce(inputDirection.normalized * _slideForce * (_movementScript.healthMultiplier / (_movementScript.healthMultiplier * 10)), ForceMode.Force);
-            _slideTimer -= Time.deltaTime;
+            rigidbody.AddForce(inputDirection.normalized * slideForce * (movementScript.healthMultiplier / (movementScript.healthMultiplier * 10)), ForceMode.Force);
+            slideTimer -= Time.deltaTime;
         }
         else
         {
-            _rigidbody.AddForce(_movementScript.GetSlopeMoveDirection(inputDirection).normalized * _slideForce * (_movementScript.healthMultiplier / (_movementScript.healthMultiplier * 10)), ForceMode.Force);
+            rigidbody.AddForce(movementScript.GetSlopeMoveDirection(inputDirection).normalized * slideForce * (movementScript.healthMultiplier / (movementScript.healthMultiplier * 10)), ForceMode.Force);
 
         }
 
-        if (_slideTimer <= 0) StopSlide();
+        if (slideTimer <= 0) StopSlide();
     }
-    private void StopSlide()
+    public void StopSlide()
     {
-        _movementScript.sliding = false;
-        _playerObj.localScale = new Vector3(_playerObj.localScale.x, _startYScale, _playerObj.localScale.z);
-    }
+        movementScript.sliding = false;
+        playerObj.localScale = new Vector3(playerObj.localScale.x, startYScale, playerObj.localScale.z);
+    }*/
 }

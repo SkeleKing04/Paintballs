@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class MovementScript : MonoBehaviour
 {    
-    private float moveSpeed;
-    [Header("Movement")]
+    [Header("Movement Values")]
     public float walkSpeed;
     public float sprintSpeed;
     public float slideSpeed;
+    private float moveSpeed;
     private float desiredMoveSpeed;
     private float lastDesiredMoveSpeed;
     public float groundDrag;
-    private HealthHandler playerHealth;
+    public float airDrag;
+    [Header("Health")]
     public float healthMultiplier;
+    private HealthHandler playerHealth;
     [Header("Smooth Speed")]
     public float speedIncreaseMultiplier;
     public float slopeIncreaseMultiplier;
@@ -26,6 +28,11 @@ public class MovementScript : MonoBehaviour
     public float crouchSpeed;
     public float crouchYScale;
     private float startYScale;
+    [Header("Sliding")]
+    public float maxSlideTime;
+    public float slideForce;
+    private float slideTimer;
+    public bool sliding;
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode sprintKey = KeyCode.LeftShift;
@@ -34,34 +41,18 @@ public class MovementScript : MonoBehaviour
     public float playerHeight;
     public LayerMask whatIsGround;
     private bool grounded;
-    //private int jumpLeeway;
-    //public float jumpLeewayTimer;
-    //private bool jumpLeewayStart;
     [Header("Slope Handling")]
     public float maxSlopeAngle;
     private RaycastHit slopeHit;
     private bool exitingSlope;
     public Transform playerOrient;
-    [Header("General")]
+    [Header("Input")]
     float horizontalInput;
     float verticalInput;
     Vector3 moveDirection;
     [Header("General")]
     public new Rigidbody rigidbody;
-    public new CameraController camera;
     public Transform playerObj;
-
-    public MovementStates state;
-    public enum MovementStates
-    {
-        walking,
-        sprinting,
-        crouching,
-        sliding,
-        air
-    }
-    public bool sliding;
-    // Start is called before the first frame update
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
@@ -71,7 +62,6 @@ public class MovementScript : MonoBehaviour
         startYScale = playerObj.localScale.y;
     }
 
-    // Update is called once per frame
     void Update()
     {
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
@@ -81,16 +71,10 @@ public class MovementScript : MonoBehaviour
         if(grounded)
         {
             rigidbody.drag = groundDrag;
-            //jumpLeeway = 0;
         }
         else
         {
-            rigidbody.drag = 0;
-            //if(jumpLeeway == 0 && readyToJump)
-            //{
-            //   jumpLeeway = 1;
-            //    Invoke(nameof(RemoveLeeway), jumpLeewayTimer);
-            //}
+            rigidbody.drag = airDrag;
         }
     }
     void FixedUpdate()
@@ -98,6 +82,7 @@ public class MovementScript : MonoBehaviour
         healthMultiplier = Mathf.Clamp(Mathf.Pow(1.6f, playerHealth.currentHealth / 100) -0.6f, 0.5f, 1);
         movePlayer();
     }
+    // I would like to move this to its own script, so that the movement script can be applied to the AI
     private void userInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -105,12 +90,12 @@ public class MovementScript : MonoBehaviour
 
         if(Input.GetKey(jumpKey) && readyToJump && grounded)
         {
-            //jumpLeeway = 2;
             readyToJump = false;
             Jump();
             Invoke(nameof(ResetJump), jumpCooldown);
         }
-        if(Input.GetKeyDown(crouchKey))
+        if (Input.GetKeyDown(crouchKey) && (horizontalInput != 0 || verticalInput != 0)) StartSlide();
+        else if(Input.GetKeyDown(crouchKey))
         {
             playerObj.localScale = new Vector3(playerObj.localScale.x, crouchYScale, playerObj.localScale.z);
             rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
@@ -119,35 +104,30 @@ public class MovementScript : MonoBehaviour
         {
             playerObj.localScale = new Vector3(playerObj.localScale.x, startYScale, playerObj.localScale.z);
         }
+        if (Input.GetKeyUp(crouchKey) && sliding) StopSlide();
     }
     private void StateHandler()
     {
         if (sliding)
         {
-            state = MovementStates.sliding;
             if (OnSlope() && rigidbody.velocity.y < 0.1f) desiredMoveSpeed = slideSpeed;
             else desiredMoveSpeed = sprintSpeed;
         }
         else if(Input.GetKey(crouchKey))
         {
-            state = MovementStates.crouching;
             desiredMoveSpeed = crouchSpeed;
         }
         else if(grounded && Input.GetKey(sprintKey))
         {
-            state = MovementStates.sprinting;
             desiredMoveSpeed = sprintSpeed;
-            //camera.DoFov(75f);
         }
         else if (grounded)
         {
-            state = MovementStates.walking;
             desiredMoveSpeed = walkSpeed;
-            //camera.DoFov(60f);
         }
         else
         {
-            state = MovementStates.air;
+            //In the air
         }
         if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 4f && moveSpeed != 0)
         {
@@ -233,10 +213,35 @@ public class MovementScript : MonoBehaviour
         readyToJump = true;
         exitingSlope = false;
     }
-    /*private void RemoveLeeway()
+    public void StartSlide()
     {
-        jumpLeeway = 2;
-    }*/
+        sliding = true;
+        playerObj.localScale = new Vector3(playerObj.localScale.x, crouchYScale, playerObj.localScale.z);
+        rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+
+        slideTimer = maxSlideTime * healthMultiplier;
+    }
+    private void SlidingMovement()
+    {
+        Vector3 inputDirection = playerOrient.forward * verticalInput + playerOrient.right * horizontalInput;
+        if(!OnSlope() || rigidbody.velocity.y > -0.1f)
+        {
+            rigidbody.AddForce(inputDirection.normalized * slideForce * (healthMultiplier / (healthMultiplier * 10)), ForceMode.Force);
+            slideTimer -= Time.deltaTime;
+        }
+        else
+        {
+            rigidbody.AddForce(GetSlopeMoveDirection(inputDirection).normalized * slideForce * (healthMultiplier / (healthMultiplier * 10)), ForceMode.Force);
+
+        }
+
+        if (slideTimer <= 0) StopSlide();
+    }
+    public void StopSlide()
+    {
+        sliding = false;
+        playerObj.localScale = new Vector3(playerObj.localScale.x, startYScale, playerObj.localScale.z);
+    }
     public bool OnSlope()
     {
         Debug.DrawRay(transform.position, Vector3.down * (playerHeight * 0.5f + 0.3f), Color.cyan, 0.01f);

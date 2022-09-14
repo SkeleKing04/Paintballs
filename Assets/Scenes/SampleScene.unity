@@ -103769,7 +103769,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1564
+  m_Name: pb_Mesh-1948
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -106293,17 +106293,6 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
---- !u!114 &963194229 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4466822924230954829, guid: cef18481c2437a548aa269fe74069b02, type: 3}
-  m_PrefabInstance: {fileID: 4466822924882584120}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b27ae4053cf036a40b504544d2ca5eb6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &985205659
 GameObject:
   m_ObjectHideFlags: 0
@@ -111328,11 +111317,6 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
---- !u!20 &1389797061 stripped
-Camera:
-  m_CorrespondingSourceObject: {fileID: 3797009814540713837, guid: cef18481c2437a548aa269fe74069b02, type: 3}
-  m_PrefabInstance: {fileID: 4466822924882584120}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1404864448
 GameObject:
   m_ObjectHideFlags: 0
@@ -115075,11 +115059,6 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
---- !u!1 &1546702003 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4993881104809740758, guid: 08143d5af9b98ee4392c9d7e4f9c1a25, type: 3}
-  m_PrefabInstance: {fileID: 4993881103887272885}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1546702004 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4993881104809740754, guid: 08143d5af9b98ee4392c9d7e4f9c1a25, type: 3}
@@ -116335,7 +116314,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 1
-  m_Camera: {fileID: 1389797061}
+  m_Camera: {fileID: 0}
   m_PlaneDistance: 10
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -116385,12 +116364,6 @@ MonoBehaviour:
   - {fileID: 261181335}
   - {fileID: 927659734}
   - {fileID: 989236760}
-  clientGameObject: {fileID: 1546702003}
-  textBoxes:
-  - {fileID: 1726354843}
-  - {fileID: 1749799165}
-  - {fileID: 1462439513}
-  timerText: {fileID: 314789108}
 --- !u!4 &1671165534 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5819435862296502180, guid: 08143d5af9b98ee4392c9d7e4f9c1a25, type: 3}
@@ -126758,7 +126731,7 @@ PrefabInstance:
     - target: {fileID: 4993881104809740753, guid: 08143d5af9b98ee4392c9d7e4f9c1a25, type: 3}
       propertyPath: camera
       value: 
-      objectReference: {fileID: 963194229}
+      objectReference: {fileID: 0}
     - target: {fileID: 4993881104809740753, guid: 08143d5af9b98ee4392c9d7e4f9c1a25, type: 3}
       propertyPath: slideSpeed
       value: 300

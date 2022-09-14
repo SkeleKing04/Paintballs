@@ -21,31 +21,41 @@ public class UIHandler : MonoBehaviour
             }
         }
     }
-    public void updateTextBox(TextMeshProUGUI[] textBoxes, string[] texts)
+    public void updateTextBox(TextMeshProUGUI textBox, string text)
     {
-        for (int i = 0; i < textBoxes.Length; i++)
-        {
-            textBoxes[i].text = texts[i];
-        }
+        textBox.text = text;
     }
-    public void updateTogglable(Toggle[] toggles, bool[] values, bool[] changeToggle)
+    public void updateTogglable(Toggle toggles, bool values, bool changeToggle)
     {
-        for (int i = 0; i < toggles.Length; i++)
-        {
-            if(changeToggle[i]) toggles[i].isOn = values[i];
-            else if(!changeToggle[i]) values[i] = toggles[i].isOn;
-        }
+        if(changeToggle) toggles.isOn = values;
+        else if(!changeToggle) values = toggles.isOn;
     }
-    public void updateSlider(Slider[] sliders, float[] values, bool[] changeSlider, bool[] phaseAsInt)
+    public void updateSlider(Slider slider, float value, bool changeSlider, bool phaseAsInt)
     {
-        for (int i = 0; i < sliders.Length; i++)
+        if(changeSlider)
         {
-            if(changeSlider[i])
+            if(value >= slider.minValue && value <= slider.maxValue)
             {
-                if(values[i] >= sliders[i].minValue && values[i] <= sliders[i].maxValue) sliders[i].value = values[i];
+                if(!phaseAsInt)
+                {
+                    slider.value = value;
+                }
+                else if(phaseAsInt)
+                {
+                    slider.value = (int)value;
+                }
             }
-            else if(!changeSlider[i]) values[i] = sliders[i].value;
+        }
+        else if(!changeSlider) 
+        {
+            if(!phaseAsInt)
+            {
+                value = slider.value;
+            }
+            else if(phaseAsInt)
+            {
+                value = (int)slider.value;
+            }
         }
     }
-    
 }

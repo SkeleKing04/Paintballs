@@ -10,9 +10,8 @@ public class CameraController : MonoBehaviour
     public float camSpeed, camRotSpeed, camDistance;
     public Vector2 camPos, sensitivity;
     public Vector3 originOffset;
-    private Vector3 rotation;
-    public bool doMouseMovement;
-    private Vector3 velocity;
+    private Vector3 rotation, velocity;
+    public bool doMouseMovement, lookAtTarget;
     // The first object in this class will be the object followed
     // Any other objects that need to be visible to the camera must be a child of this first object
     [System.Serializable]
@@ -65,25 +64,28 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Position of the camera
         Transform mainTransform = objectToFollow[mainIndex].objectTransform;
-        Ray ray = new Ray(mainTransform.position + originOffset.x * mainTransform.right + originOffset.y * mainTransform.up, mainTransform.forward * camPos.x  +  mainTransform.up * camPos.y);
-        Debug.DrawRay(objectToFollow[mainIndex].objectTransform.position + originOffset, ray.GetPoint(camDistance), Color.green, 0.1f);
-        transform.position = Vector3.SmoothDamp(transform.position, ray.GetPoint(camDistance), ref velocity, camSpeed);
-        Vector3 lookPos = objectToFollow[mainIndex].objectTransform.position;
-        if(!doMouseMovement)
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, objectToFollow[mainIndex].objectTransform.rotation , Time.deltaTime * camRotSpeed);
-        }
-        else if (doMouseMovement)
-        {
-            float mouseX = Input.GetAxisRaw("Mouse X")* Time.deltaTime * sensitivity.x;
-            float mouseY = Input.GetAxisRaw("Mouse Y")* Time.deltaTime * sensitivity.y;
+        Vector3 startPos = mainTransform.position + originOffset.x * mainTransform.right + originOffset.y * mainTransform.up;
+        Gizmos.DrawSphere(startPos, 1);
+        Vector3 camDir = mainTransform.forward * camPos.x + mainTransform.up * camPos.y;
+        Ray ray = new Ray(startPos, camDir);
+        Debug.DrawRay(startPos, camDir, Color.green, 0.1f);
+        Gizmos.DrawSphere(ray.GetPoint(originOffset.z),1);
+        transform.position = Vector3.SmoothDamp(transform.position, ray.GetPoint(originOffset.z), ref velocity, camSpeed);
+        Debug.DrawRay(transform.position, transform.forward*Mathf.Infinity,Color.magenta,0.01f);
 
-            rotation.y += mouseX;
-            rotation.x -= mouseY;
-            rotation.x = Mathf.Clamp(rotation.x, -90f, 90f);
+        //Rotation of the camera
+        float mouseX = Input.GetAxisRaw("Mouse X")* Time.deltaTime * sensitivity.x;
+        float mouseY = Input.GetAxisRaw("Mouse Y")* Time.deltaTime * sensitivity.y;
+        rotation.y += mouseX;
+        rotation.x -= mouseY;
+        rotation.x = Mathf.Clamp(rotation.x, -90f, 90f);
 
-            transform.rotation = Quaternion.Euler(rotation.x,rotation.y,0);
+        Transform lookPos = objectToFollow[mainIndex].objectTransform;
+        if(lookAtTarget) transform.LookAt(objectToFollow[mainIndex].objectTransform, objectToFollow[mainIndex].objectTransform.up);
+        else transform.rotation = Quaternion.Euler(rotation.x,rotation.y,0);  
+
         for(int i = 0; i < objectToFollow.Length; i++)
         {
             if(objectToFollow[i].followCameraRotation)
@@ -93,7 +95,6 @@ public class CameraController : MonoBehaviour
                 {
                     tempRotation = objectToFollow[i].objectTransform.transform.eulerAngles;
                 }
-
                 if(objectToFollow[i].controlXRot)
                 {
                     tempRotation = new Vector3(rotation.x, tempRotation.y, tempRotation.z);
@@ -108,7 +109,6 @@ public class CameraController : MonoBehaviour
                 }                
                 objectToFollow[i].objectTransform.eulerAngles = tempRotation;
             }
-        }
         }
     }
 }

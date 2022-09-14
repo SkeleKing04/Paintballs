@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 
-public class MainMenuUIHandler : MonoBehaviour
+public class MainMenuUIFunctions : MonoBehaviour
 {
     public UIHandler mainHandler;
     public Slider[] sliders;
@@ -18,34 +18,29 @@ public class MainMenuUIHandler : MonoBehaviour
         DeathmatchScript.state = startingState; 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        mainHandler.updateSlider(new Slider[] {sliders[0]},new float[] {DeathmatchScript.scoreCap},new bool[] {false});
+        mainHandler.updateSlider(sliders[0],DeathmatchScript.scoreCap,false,true);
         UpdateScoreCap(sliders[0].gameObject);
         ToggleBots(toggles[0].gameObject);
         ToggleTeams(toggles[1].gameObject);
         UpdateTeamSize(sliders[1].gameObject);
-
     }
     public void UpdateScoreCap(GameObject sender)
     {
-        mainHandler.updateSlider(new Slider[] {sliders[0]},new float[] {DeathmatchScript.scoreCap},new bool[] {false});
-        mainHandler.updateTextBox(new TextMeshProUGUI[] {textBoxes[0]},new string[]{"Score to win (Per Player): " + sliders[0].value});
-        textBoxes[0].text = "Score to win (Per Player): " + value;
+        mainHandler.updateSlider(sender.GetComponent<Slider>(),DeathmatchScript.scoreCap,false,true);
+        mainHandler.updateTextBox(textBoxes[0],"Score to win (Per Player): " + sliders[0].value);
     }
     public void ToggleBots(GameObject sender)
     {
-        bool value = sender.GetComponent<Toggle>().isOn;
-        DeathmatchScript.fillRoomWithBots = value;
+        mainHandler.updateTogglable(sender.GetComponent<Toggle>(),DeathmatchScript.fillRoomWithBots,false);
     }
     public void ToggleTeams(GameObject sender)
     {
-        bool value = sender.GetComponent<Toggle>().isOn;
-        DeathmatchScript.teamDeathmatch = value;
+        mainHandler.updateTogglable(sender.GetComponent<Toggle>(),DeathmatchScript.teamDeathmatch, false);
     }
     public void UpdateTeamSize(GameObject sender)
     {
-        int value = (int)sender.GetComponent<Slider>().value;
-        DeathmatchScript.teamSize = value;
-        textBoxes[1].text = "Team Size: " + value;
+        mainHandler.updateSlider(sender.GetComponent<Slider>(),DeathmatchScript.teamSize,false,true);
+        mainHandler.updateTextBox(sender.GetComponent<TextMeshProUGUI>(),"Team Size: " + DeathmatchScript.teamSize);
     }
     public void LoadNextScene(string sceneToLoad)
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class PlayerUIHandler : MonoBehaviour
+public class PlayerUIFunctions : MonoBehaviour
 {   
     public UIHandler mainHandler;
     public GameObject clientGameObject;
@@ -19,6 +19,7 @@ public class PlayerUIHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        mainHandler.updateTextBox(new TextMeshProUGUI[] {textBoxes[0],textBoxes[1]}, new string[] {"Health: " + clientHealth.currentHealth.ToString(), "Paint: " + clientHealth.currentPaint.ToString()});
+        mainHandler.updateTextBox(textBoxes[0], "Health: " + clientHealth.currentHealth.ToString());
+        mainHandler.updateTextBox(textBoxes[1], "Paint: " + clientHealth.currentPaint.ToString());
     }
 }

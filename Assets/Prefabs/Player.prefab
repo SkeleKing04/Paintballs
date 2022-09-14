@@ -276,6 +276,7 @@ MonoBehaviour:
   sprintSpeed: 10
   slideSpeed: 30
   groundDrag: 4
+  airDrag: 0
   healthMultiplier: 0
   speedIncreaseMultiplier: 1.5
   slopeIncreaseMultiplier: 2.5
@@ -284,6 +285,9 @@ MonoBehaviour:
   airMultiplier: 0.4
   crouchSpeed: 3.5
   crouchYScale: 0.5
+  maxSlideTime: 0
+  slideForce: 0
+  sliding: 0
   jumpKey: 32
   sprintKey: 304
   crouchKey: 99
@@ -294,10 +298,7 @@ MonoBehaviour:
   maxSlopeAngle: 50
   playerOrient: {fileID: 4993881103670140355}
   rigidbody: {fileID: 4993881104809740755}
-  camera: {fileID: 0}
   playerObj: {fileID: 4993881103358442342}
-  state: 0
-  sliding: 0
 --- !u!114 &4993881104809740765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -305,18 +306,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4993881104809740758}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ccddc57773c658842aef1da33a5536f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _orientation: {fileID: 4993881103670140355}
-  _playerObj: {fileID: 4993881103358442342}
-  _maxSlideTime: 0.75
-  _slideForce: 400
-  _slideYScale: 0.5
-  _startYScale: 0
-  _slideKey: 306
+  orientation: {fileID: 0}
+  playerObj: {fileID: 0}
+  maxSlideTime: 0
+  slideForce: 0
+  slideYScale: 0
+  startYScale: 0
+  slideKey: 306
 --- !u!114 &4993881104809740752
 MonoBehaviour:
   m_ObjectHideFlags: 0

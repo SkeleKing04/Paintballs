@@ -3852,12 +3852,13 @@ MonoBehaviour:
   sensitivity: {x: 100, y: 100}
   originOffset: {x: 0, y: 0, z: 0}
   doMouseMovement: 1
+  lookAtTarget: 0
   objectToFollow:
   - objectTransform: {fileID: 1694420856}
-    followCameraRotation: 0
-    controlXRot: 0
-    controlYRot: 0
-    controlZRot: 0
+    followCameraRotation: 1
+    controlXRot: 1
+    controlYRot: 1
+    controlZRot: 1
   - objectTransform: {fileID: 1994898560}
     followCameraRotation: 0
     controlXRot: 0
