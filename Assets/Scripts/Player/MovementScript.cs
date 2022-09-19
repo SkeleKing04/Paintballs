@@ -9,7 +9,7 @@ public class MovementScript : MonoBehaviour
     public float sprintSpeed;
     public float slideSpeed;
     private float moveSpeed;
-    private float desiredMoveSpeed;
+    public float desiredMoveSpeed;
     private float lastDesiredMoveSpeed;
     public float groundDrag;
     public float airDrag;
@@ -31,8 +31,9 @@ public class MovementScript : MonoBehaviour
     [Header("Sliding")]
     public float maxSlideTime;
     public float slideForce;
-    private float slideTimer;
+    public float slideTimer;
     public bool sliding;
+    private Vector3 slideDirection;
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode sprintKey = KeyCode.LeftShift;
@@ -47,8 +48,8 @@ public class MovementScript : MonoBehaviour
     private bool exitingSlope;
     public Transform playerOrient;
     [Header("Input")]
-    float horizontalInput;
-    float verticalInput;
+    public float horizontalInput;
+    public float verticalInput;
     Vector3 moveDirection;
     [Header("General")]
     public new Rigidbody rigidbody;
@@ -79,8 +80,11 @@ public class MovementScript : MonoBehaviour
     }
     void FixedUpdate()
     {
-        healthMultiplier = Mathf.Clamp(Mathf.Pow(1.6f, playerHealth.currentHealth / 100) -0.6f, 0.5f, 1);
-        movePlayer();
+        if(playerHealth != null)
+        {
+            healthMultiplier = Mathf.Clamp(Mathf.Pow(1.6f, playerHealth.currentHealth / 100) -0.6f, 0.5f, 1);
+        }
+        if(!sliding) movePlayer();
     }
     // I would like to move this to its own script, so that the movement script can be applied to the AI
     private void userInput()
@@ -94,7 +98,7 @@ public class MovementScript : MonoBehaviour
             Jump();
             Invoke(nameof(ResetJump), jumpCooldown);
         }
-        if (Input.GetKeyDown(crouchKey) && (horizontalInput != 0 || verticalInput != 0)) StartSlide();
+        if (Input.GetKeyDown(crouchKey) && (horizontalInput != 0 || verticalInput != 0) && !sliding) StartSlide();
         else if(Input.GetKeyDown(crouchKey))
         {
             playerObj.localScale = new Vector3(playerObj.localScale.x, crouchYScale, playerObj.localScale.z);
@@ -110,8 +114,8 @@ public class MovementScript : MonoBehaviour
     {
         if (sliding)
         {
+            SlidingMovement();
             if (OnSlope() && rigidbody.velocity.y < 0.1f) desiredMoveSpeed = slideSpeed;
-            else desiredMoveSpeed = sprintSpeed;
         }
         else if(Input.GetKey(crouchKey))
         {
@@ -164,10 +168,10 @@ public class MovementScript : MonoBehaviour
     }
     private void movePlayer()
     {
-        moveDirection = playerOrient.forward * verticalInput + playerOrient.right * horizontalInput;
+        moveDirection = rigidbody.transform.forward * verticalInput + rigidbody.transform.right * horizontalInput;
         if(OnSlope() && !exitingSlope)
         {
-            rigidbody.AddForce(GetSlopeMoveDirection(moveDirection) * moveSpeed * 20f * healthMultiplier, ForceMode.Force);
+            rigidbody.AddForce(GetSlopeMoveDirection(moveDirection) * moveSpeed * healthMultiplier, ForceMode.Force);
             if(rigidbody.velocity.y > 0)
             {
                 rigidbody.AddForce(Vector3.down * 80f, ForceMode.Force);
@@ -175,11 +179,11 @@ public class MovementScript : MonoBehaviour
         }
         if(grounded)
         {
-            rigidbody.AddForce(moveDirection.normalized * moveSpeed * 10f * healthMultiplier, ForceMode.Force);
+            rigidbody.AddForce(moveDirection.normalized * moveSpeed * healthMultiplier, ForceMode.Force);
         }
         else if(!grounded)
         {
-            rigidbody.AddForce(moveDirection.normalized * moveSpeed * 10f * (healthMultiplier / 5) * airMultiplier, ForceMode.Force);
+            rigidbody.AddForce(moveDirection.normalized * moveSpeed * (healthMultiplier / 5) * airMultiplier, ForceMode.Force);
         }
     }
     private void SpeedControl()
@@ -216,6 +220,7 @@ public class MovementScript : MonoBehaviour
     public void StartSlide()
     {
         sliding = true;
+        slideDirection = rigidbody.transform.forward * verticalInput + rigidbody.transform.right * horizontalInput;
         playerObj.localScale = new Vector3(playerObj.localScale.x, crouchYScale, playerObj.localScale.z);
         rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
 
@@ -223,15 +228,14 @@ public class MovementScript : MonoBehaviour
     }
     private void SlidingMovement()
     {
-        Vector3 inputDirection = playerOrient.forward * verticalInput + playerOrient.right * horizontalInput;
         if(!OnSlope() || rigidbody.velocity.y > -0.1f)
         {
-            rigidbody.AddForce(inputDirection.normalized * slideForce * (healthMultiplier / (healthMultiplier * 10)), ForceMode.Force);
+            rigidbody.AddForce(slideDirection.normalized * slideForce * (healthMultiplier / (healthMultiplier * 10)), ForceMode.Force);
             slideTimer -= Time.deltaTime;
         }
         else
         {
-            rigidbody.AddForce(GetSlopeMoveDirection(inputDirection).normalized * slideForce * (healthMultiplier / (healthMultiplier * 10)), ForceMode.Force);
+            rigidbody.AddForce(GetSlopeMoveDirection(slideDirection).normalized * slideForce * (healthMultiplier / (healthMultiplier * 10)), ForceMode.Force);
 
         }
 

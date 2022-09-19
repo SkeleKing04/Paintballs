@@ -1,17 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using DG.Tweening;
+using System.Linq;
 
 public class CameraController : MonoBehaviour
 {
-    [Header("Positioning")]
+     [Header("Positioning")]
     //public Transform objectToFollow;
-    public float camSpeed, camRotSpeed, camDistance;
+    public float camSpeed, camRotSpeed;
     public Vector2 camPos, sensitivity;
     public Vector3 originOffset;
-    private Vector3 rotation, velocity;
+    private Vector3 rotation;
+    private Vector3 velocity;
     public bool doMouseMovement, lookAtTarget;
+    public int mainIndex;
     // The first object in this class will be the object followed
     // Any other objects that need to be visible to the camera must be a child of this first object
     [System.Serializable]
@@ -22,93 +24,93 @@ public class CameraController : MonoBehaviour
         public bool followCameraRotation, controlXRot, controlYRot, controlZRot;
     }
     public objectsToControl[] objectToFollow;
-    private int mainIndex;
-    // Start is called before the first frame update
+    private new Camera camera;
     void Start()
     {
-        setMainIndex(0);
+        camera = GetComponent<Camera>();
     }
     public void setMainIndex(int index)
     {
-        if(index >= 0 && index < objectToFollow.Length)
-        {
-            mainIndex = index;
-        }
-        else
-        {
-            Debug.LogError("Given index (" + index + ") is greater then array bounds.");
-        }
+        mainIndex = index;
+        Debug.Log("Main index set at " + mainIndex.ToString());
     }
-    public void increaseMainIndex(int amount)
+    public void increaseMainIndex(int index)
     {
-        if(mainIndex + amount >= objectToFollow.Length)
-        {
-            mainIndex = mainIndex - objectToFollow.Length + amount;
-        }
-        else
-        {
-            mainIndex += amount;
-        }
-    }
-    public void decreaseMainIndex(int amount)
-    {
-        if(mainIndex - amount < 0)
-        {
-            mainIndex = mainIndex + objectToFollow.Length - amount;
-        }
-        else
-        {
-            mainIndex -= amount;
-        }
+        mainIndex += index;
+        if(mainIndex < 0) mainIndex = objectToFollow.Length - 1;
+        if(mainIndex >= objectToFollow.Length) mainIndex = 0;
+        Debug.Log("Main index increased by " + index + ". Now set at " + mainIndex.ToString());
     }
     // Update is called once per frame
     void Update()
     {
-        // Position of the camera
-        Transform mainTransform = objectToFollow[mainIndex].objectTransform;
-        Vector3 startPos = mainTransform.position + originOffset.x * mainTransform.right + originOffset.y * mainTransform.up;
-        Gizmos.DrawSphere(startPos, 1);
-        Vector3 camDir = mainTransform.forward * camPos.x + mainTransform.up * camPos.y;
-        Ray ray = new Ray(startPos, camDir);
-        Debug.DrawRay(startPos, camDir, Color.green, 0.1f);
-        Gizmos.DrawSphere(ray.GetPoint(originOffset.z),1);
-        transform.position = Vector3.SmoothDamp(transform.position, ray.GetPoint(originOffset.z), ref velocity, camSpeed);
-        Debug.DrawRay(transform.position, transform.forward*Mathf.Infinity,Color.magenta,0.01f);
-
-        //Rotation of the camera
-        float mouseX = Input.GetAxisRaw("Mouse X")* Time.deltaTime * sensitivity.x;
-        float mouseY = Input.GetAxisRaw("Mouse Y")* Time.deltaTime * sensitivity.y;
-        rotation.y += mouseX;
-        rotation.x -= mouseY;
-        rotation.x = Mathf.Clamp(rotation.x, -90f, 90f);
-
-        Transform lookPos = objectToFollow[mainIndex].objectTransform;
-        if(lookAtTarget) transform.LookAt(objectToFollow[mainIndex].objectTransform, objectToFollow[mainIndex].objectTransform.up);
-        else transform.rotation = Quaternion.Euler(rotation.x,rotation.y,0);  
-
-        for(int i = 0; i < objectToFollow.Length; i++)
+        if(mainIndex >= 0 && mainIndex < objectToFollow.Length)
         {
-            if(objectToFollow[i].followCameraRotation)
+            Transform mainTransform = objectToFollow[mainIndex].objectTransform;
+            Ray ray = new Ray(mainTransform.position + originOffset.x * mainTransform.right + originOffset.y * mainTransform.up, mainTransform.forward * camPos.x  +  mainTransform.up * camPos.y);
+            Debug.DrawRay(objectToFollow[mainIndex].objectTransform.position + originOffset, ray.GetPoint(originOffset.z), Color.green, 0.1f);
+            /*if(camera.orthographic)
             {
-                Vector3 tempRotation = new Vector3(0,0,0);
-                if(objectToFollow[i].objectTransform.parent != null)
+                camera.orthographicSize = Vector3.SmoothDamp(transform.position, ray.GetPoint(camDistance), ref velocity, camSpeed).z;
+            }
+            else
+            {*/
+                transform.position = Vector3.SmoothDamp(transform.position, ray.GetPoint(originOffset.z), ref velocity, camSpeed);
+            //}
+            Vector3 lookPos = objectToFollow[mainIndex].objectTransform.position;
+
+            if(!doMouseMovement)
+            {
+                if(lookAtTarget)
                 {
-                    tempRotation = objectToFollow[i].objectTransform.transform.eulerAngles;
+                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.Normalize(objectToFollow[mainIndex].objectTransform.position - transform.position)), Time.deltaTime * camRotSpeed);
                 }
-                if(objectToFollow[i].controlXRot)
+                else
                 {
-                    tempRotation = new Vector3(rotation.x, tempRotation.y, tempRotation.z);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, objectToFollow[mainIndex].objectTransform.rotation, Time.deltaTime * camRotSpeed);
                 }
-                if(objectToFollow[i].controlYRot)
+            }
+            else if (doMouseMovement)
+            {
+                float mouseX = Input.GetAxisRaw("Mouse X")* Time.deltaTime * sensitivity.x;
+                float mouseY = Input.GetAxisRaw("Mouse Y")* Time.deltaTime * sensitivity.y;
+
+                rotation.y += mouseX;
+                rotation.x -= mouseY;
+                rotation.x = Mathf.Clamp(rotation.x, -90f, 90f);
+
+                transform.rotation = Quaternion.Euler(rotation.x,rotation.y,0);
+                for(int i = 0; i < objectToFollow.Length; i++)
                 {
-                    tempRotation = new Vector3(tempRotation.x, rotation.y, tempRotation.z);
+                    if(objectToFollow[i].followCameraRotation)
+                    {
+                        Vector3 tempRotation = new Vector3(0,0,0);
+                        if(objectToFollow[i].objectTransform.parent != null)
+                        {
+                            tempRotation = objectToFollow[i].objectTransform.transform.eulerAngles;
+                        }
+
+                        if(objectToFollow[i].controlXRot)
+                        {
+                            tempRotation = new Vector3(rotation.x, tempRotation.y, tempRotation.z);
+                        }
+                        if(objectToFollow[i].controlYRot)
+                        {
+                            tempRotation = new Vector3(tempRotation.x, rotation.y, tempRotation.z);
+                        }
+                        if(objectToFollow[i].controlZRot)
+                        {
+                            tempRotation = new Vector3(tempRotation.x, tempRotation.y, rotation.z);
+                        }                
+                        objectToFollow[i].objectTransform.eulerAngles = tempRotation;
+                    }
                 }
-                if(objectToFollow[i].controlZRot)
-                {
-                    tempRotation = new Vector3(tempRotation.x, tempRotation.y, rotation.z);
-                }                
-                objectToFollow[i].objectTransform.eulerAngles = tempRotation;
             }
         }
+        else
+        {
+            Debug.LogError("The main index does not exist! Is the main index less then the length of objects to follows and a non-negative? Are there targets in objects to follow?");
+        }
     }
+    
 }
