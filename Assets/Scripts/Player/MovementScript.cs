@@ -2,14 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(HealthHandler))]
 public class MovementScript : MonoBehaviour
 {    
     [Header("Movement Values")]
     public float walkSpeed;
-    public float sprintSpeed;
-    public float slideSpeed;
+    //public float sprintSpeed;
+    //public float slideSpeed;
     private float moveSpeed;
-    public float desiredMoveSpeed;
+    private float desiredMoveSpeed;
     private float lastDesiredMoveSpeed;
     public float groundDrag;
     public float airDrag;
@@ -24,32 +26,37 @@ public class MovementScript : MonoBehaviour
     public float jumpCooldown;
     public float airMultiplier;
     bool readyToJump;
-    [Header("Crouching")]
+    [Header("Dashing")]
+    public float dashForce;
+    public int dashCount;
+    public float dashCooldown;
+    /*[Header("Crouching")]
     public float crouchSpeed;
     public float crouchYScale;
     private float startYScale;
     [Header("Sliding")]
     public float maxSlideTime;
     public float slideForce;
-    public float slideTimer;
-    public bool sliding;
-    private Vector3 slideDirection;
+    private float slideTimer;
+    private bool sliding;
+    private Vector3 slideDirection;*/
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
-    public KeyCode sprintKey = KeyCode.LeftShift;
-    public KeyCode crouchKey = KeyCode.LeftControl;
+    public KeyCode dashKey = KeyCode.LeftShift;
+    //public KeyCode crouchKey = KeyCode.LeftControl;
     [Header("Ground Check")]
     public float playerHeight;
+    public Vector2 legSize;
     public LayerMask whatIsGround;
     private bool grounded;
     [Header("Slope Handling")]
     public float maxSlopeAngle;
     private RaycastHit slopeHit;
     private bool exitingSlope;
-    public Transform playerOrient;
     [Header("Input")]
-    public float horizontalInput;
-    public float verticalInput;
+    public bool isClient = false;
+    private float horizontalInput;
+    private float verticalInput;
     Vector3 moveDirection;
     [Header("General")]
     public new Rigidbody rigidbody;
@@ -60,13 +67,23 @@ public class MovementScript : MonoBehaviour
         playerHealth = GetComponent<HealthHandler>();
         rigidbody.freezeRotation = true;
         readyToJump = true;
-        startYScale = playerObj.localScale.y;
+        //startYScale = playerObj.localScale.y;
     }
 
     void Update()
     {
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
-        userInput();
+        Vector3 startPos = playerObj.position + playerObj.forward * legSize.x;
+        Vector3 rayDir = Vector3.down * playerHeight * 0.5f;
+        RaycastHit ray;
+        grounded = Physics.Raycast(playerObj.position + playerObj.forward * legSize.x, rayDir, out ray, playerHeight * 0.5f, whatIsGround);
+        grounded = Physics.Raycast(playerObj.position - playerObj.forward * legSize.x, rayDir, out ray, playerHeight * 0.5f, whatIsGround);
+        grounded = Physics.Raycast(playerObj.position + playerObj.right * legSize.y, rayDir, out ray, playerHeight * 0.5f, whatIsGround);
+        grounded = Physics.Raycast(playerObj.position - playerObj.right * legSize.y, rayDir, out ray, playerHeight * 0.5f, whatIsGround);
+        Debug.DrawRay(playerObj.position + playerObj.forward * legSize.x, rayDir, Color.blue, 0.01f);
+        Debug.DrawRay(playerObj.position - playerObj.forward * legSize.x, rayDir, Color.blue, 0.01f);
+        Debug.DrawRay(playerObj.position + playerObj.right * legSize.y, rayDir, Color.blue, 0.01f);
+        Debug.DrawRay(playerObj.position - playerObj.right * legSize.y, rayDir, Color.blue, 0.01f);
+        if(isClient) userInput();
         SpeedControl();
         StateHandler();
         if(grounded)
@@ -84,7 +101,7 @@ public class MovementScript : MonoBehaviour
         {
             healthMultiplier = Mathf.Clamp(Mathf.Pow(1.6f, playerHealth.currentHealth / 100) -0.6f, 0.5f, 1);
         }
-        if(!sliding) movePlayer();
+        movePlayer();
     }
     // I would like to move this to its own script, so that the movement script can be applied to the AI
     private void userInput()
@@ -94,43 +111,36 @@ public class MovementScript : MonoBehaviour
 
         if(Input.GetKey(jumpKey) && readyToJump && grounded)
         {
+            doJump();
+        }
+        if(Input.GetKeyDown(dashKey) && dashCount > 0)
+        {
+            doDash();
+        }
+    }
+    public void doJump()
+    {
             readyToJump = false;
             Jump();
             Invoke(nameof(ResetJump), jumpCooldown);
-        }
-        if (Input.GetKeyDown(crouchKey) && (horizontalInput != 0 || verticalInput != 0) && !sliding) StartSlide();
-        else if(Input.GetKeyDown(crouchKey))
-        {
-            playerObj.localScale = new Vector3(playerObj.localScale.x, crouchYScale, playerObj.localScale.z);
-            rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
-        }
-        if(Input.GetKeyUp(crouchKey))
-        {
-            playerObj.localScale = new Vector3(playerObj.localScale.x, startYScale, playerObj.localScale.z);
-        }
-        if (Input.GetKeyUp(crouchKey) && sliding) StopSlide();
+
+    }
+    public void doDash()
+    {
+            dashCount--;
+            Dash();
+            Invoke(nameof(ResetDash), dashCooldown);
     }
     private void StateHandler()
     {
-        if (sliding)
+        if (grounded)
         {
-            SlidingMovement();
-            if (OnSlope() && rigidbody.velocity.y < 0.1f) desiredMoveSpeed = slideSpeed;
-        }
-        else if(Input.GetKey(crouchKey))
-        {
-            desiredMoveSpeed = crouchSpeed;
-        }
-        else if(grounded && Input.GetKey(sprintKey))
-        {
-            desiredMoveSpeed = sprintSpeed;
-        }
-        else if (grounded)
-        {
+            Debug.Log("Walking");
             desiredMoveSpeed = walkSpeed;
         }
         else
         {
+            Debug.Log("Air");
             //In the air
         }
         if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 4f && moveSpeed != 0)
@@ -217,34 +227,16 @@ public class MovementScript : MonoBehaviour
         readyToJump = true;
         exitingSlope = false;
     }
-    public void StartSlide()
+    private void Dash()
     {
-        sliding = true;
-        slideDirection = rigidbody.transform.forward * verticalInput + rigidbody.transform.right * horizontalInput;
-        playerObj.localScale = new Vector3(playerObj.localScale.x, crouchYScale, playerObj.localScale.z);
-        rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
-
-        slideTimer = maxSlideTime * healthMultiplier;
+        exitingSlope = true;
+        rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
+        rigidbody.AddForce(moveDirection * dashForce * healthMultiplier, ForceMode.Impulse);
     }
-    private void SlidingMovement()
+    private void ResetDash()
     {
-        if(!OnSlope() || rigidbody.velocity.y > -0.1f)
-        {
-            rigidbody.AddForce(slideDirection.normalized * slideForce * (healthMultiplier / (healthMultiplier * 10)), ForceMode.Force);
-            slideTimer -= Time.deltaTime;
-        }
-        else
-        {
-            rigidbody.AddForce(GetSlopeMoveDirection(slideDirection).normalized * slideForce * (healthMultiplier / (healthMultiplier * 10)), ForceMode.Force);
-
-        }
-
-        if (slideTimer <= 0) StopSlide();
-    }
-    public void StopSlide()
-    {
-        sliding = false;
-        playerObj.localScale = new Vector3(playerObj.localScale.x, startYScale, playerObj.localScale.z);
+        dashCount++;
+        exitingSlope =false;
     }
     public bool OnSlope()
     {
