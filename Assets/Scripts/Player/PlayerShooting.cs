@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+
+[RequireComponent(typeof(GunHandler))]
 public class PlayerShooting : MonoBehaviour
 {
     [Header("Positions")]
@@ -11,6 +13,7 @@ public class PlayerShooting : MonoBehaviour
     private GunPointer gunPointer;
     [Header("Tracer")]
     //public TrailRenderer tracer;
+    public bool doTracer;
     public LineRenderer lineRenderer;
     public float trailTime;
     public float trailWidth;
@@ -31,7 +34,8 @@ public class PlayerShooting : MonoBehaviour
     public KeyCode secondaryActionKey;
     public KeyCode reloadKey;
     public KeyCode switchWeaponKey;
-    private List<KeyCode> inputBuffer;
+    [Header("Extras")]
+    public bool isClientOBJ;
     private GunHandler HeldGun;
     private UIHandler UI;
     // Start is called before the first frame update
@@ -48,36 +52,34 @@ public class PlayerShooting : MonoBehaviour
         {
             Debug.LogError("Failed to find team color in team manager! Did you forget to attach the component to this object? (" + gameObject.name + ")\nThe error is " + e);
         }
-        gunPointer = GetComponentInChildren<GunPointer>();
+        if(isClientOBJ) gunPointer = GetComponentInChildren<GunPointer>();
         HeldGun = GetComponent<GunHandler>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        gunPointer.pointGun(Camera.main.transform);
-        stateCheck();
-        if(Input.GetKey(fireKey) && state == gunState.ready)
+        if(isClientOBJ)
         {
-            Shoot();
+            gunPointer.pointGun(Camera.main.transform);
+            if(Input.GetKey(fireKey) && state == gunState.ready)
+            {
+                Shoot();
+            }
+            if(Input.GetKey(secondaryActionKey))
+            {
+                //Not used ATM
+            }
+            if(Input.GetKeyDown(reloadKey) && state == gunState.ready)
+            {
+                //Reload();
+            }
+            if(Input.GetKeyDown(switchWeaponKey) && state == gunState.ready)
+            {
+                //UI.updateTextBox(new int[] {2}, new string[] {"Gun: " + HeldGun.gun.name});
+                //Switch to next weapon
+            }
         }
-        if(Input.GetKey(secondaryActionKey))
-        {
-            //Not used ATM
-        }
-        if(Input.GetKeyDown(reloadKey) && state == gunState.ready)
-        {
-            //Reload();
-        }
-        if(Input.GetKeyDown(switchWeaponKey) && state == gunState.ready)
-        {
-            //UI.updateTextBox(new int[] {2}, new string[] {"Gun: " + HeldGun.gun.name});
-            //Switch to next weapon
-        }
-    }
-    public void stateCheck()
-    {
-        
     }
     public void readyWeapon()
     {
@@ -90,7 +92,8 @@ public class PlayerShooting : MonoBehaviour
         Vector3 startPos = trueFireTransform.position;
         Vector3 endPoint = trueFireTransform.forward;
         //Creates the tracer line  
-        LineRenderer line = Instantiate(lineRenderer, falseFireTransform.position, Quaternion.identity);
+        LineRenderer line = new LineRenderer();
+        if(doTracer) line = Instantiate(lineRenderer, falseFireTransform.position, Quaternion.identity);
         teamColor = GetComponent<TeamManager>().teamColor;
         // Raycast to see if object hit in range
         // The "50f" needs to be changed to the weapons range
@@ -99,10 +102,10 @@ public class PlayerShooting : MonoBehaviour
             Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, HeldGun.gun.rateOfFire);
             //Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer
-            StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, hit.point, GetComponent<TeamManager>().teamColor, trailTime, trailWidth, gameObject));
+            if(doTracer) StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, hit.point, GetComponent<TeamManager>().teamColor, trailTime, trailWidth, gameObject));
             try
             {
-                hit.collider.gameObject.GetComponent<HealthHandler>().UpdateHealth(HeldGun.gun.damage, HeldGun.gun.paintDamage, gameObject);
+                hit.collider.gameObject.GetComponentInParent<HealthHandler>().UpdateHealth(HeldGun.gun.damage, HeldGun.gun.paintDamage, gameObject);
             }
             catch (Exception e)
             {
@@ -114,7 +117,7 @@ public class PlayerShooting : MonoBehaviour
             Debug.DrawRay(startPos, trueFireTransform.forward * HeldGun.gun.range, Color.red, 0.1f);
             //Debug.Log("Missed object.");
             //Begins to set up the tracer
-            StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, falseFireTransform.forward * HeldGun.gun.range, GetComponent<TeamManager>().teamColor, trailTime, trailWidth, gameObject));
+            if(doTracer) StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, falseFireTransform.forward * HeldGun.gun.range, GetComponent<TeamManager>().teamColor, trailTime, trailWidth, gameObject));
         }
         // stops the gun from firing stupidly
         state = gunState.firing;

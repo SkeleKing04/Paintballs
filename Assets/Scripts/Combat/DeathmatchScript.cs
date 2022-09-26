@@ -201,7 +201,7 @@ public class DeathmatchScript : MonoBehaviour
                 foreach(EnemyAI enemyAI in FindObjectsOfType<EnemyAI>())
                 {
                     enemyAI.enemies.Clear();
-                    enemyAI.findEnemies();
+                    //enemyAI.findEnemies();
                 }
                 state = gameState.playing;
                 break;
@@ -295,7 +295,7 @@ public class DeathmatchScript : MonoBehaviour
                     if(sender.GetComponent<EnemyAI>() == true)
                     {
                         Debug.Log("Gate B Hit");
-                        sender.GetComponent<EnemyAI>().findEnemies();
+                        //sender.GetComponent<EnemyAI>().findEnemies();
                         sender.GetComponent<NavMeshAgent>().Warp(possibleSpawns[rnd].position);
                     }
                     isSpawned = true;
