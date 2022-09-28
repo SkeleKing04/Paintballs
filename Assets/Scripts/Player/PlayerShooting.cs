@@ -52,7 +52,8 @@ public class PlayerShooting : MonoBehaviour
         {
             Debug.LogError("Failed to find team color in team manager! Did you forget to attach the component to this object? (" + gameObject.name + ")\nThe error is " + e);
         }
-        if(isClientOBJ) gunPointer = GetComponentInChildren<GunPointer>();
+
+        if (isClientOBJ) gunPointer = GetComponent<GunPointer>();
         HeldGun = GetComponent<GunHandler>();
     }
 
@@ -61,7 +62,7 @@ public class PlayerShooting : MonoBehaviour
     {
         if(isClientOBJ)
         {
-            gunPointer.pointGun(Camera.main.transform);
+            gunPointer.pointGun(trueFireTransform);
             if(Input.GetKey(fireKey) && state == gunState.ready)
             {
                 Shoot();

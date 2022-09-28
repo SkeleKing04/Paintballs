@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using TMPro;
+using UnityEngine.UI;
 
 public class HealthHandler : MonoBehaviour
 {
@@ -13,11 +15,15 @@ public class HealthHandler : MonoBehaviour
     public float currentPaint;
     //private damageType type;
     private DeathmatchScript deathmatchScript;
-    public bool dead, despawned;
+    public bool dead, despawned, isClient;
+    [Header("UI")]
+    public TextMeshProUGUI damageText;
+    public Image paintImage; 
     public void Awake()
     {
         resetHealth();
         deathmatchScript = FindObjectOfType<DeathmatchScript>();
+        UpdateHealth(0,0,gameObject);
     }
     public void resetHealth()
     {
@@ -29,6 +35,11 @@ public class HealthHandler : MonoBehaviour
     {
         currentHealth = Mathf.Clamp(currentHealth - damageAmmount, 0, baseHealth);
         currentPaint = Mathf.Clamp(currentPaint + paintAmmount, 0, maxPaint);
+        if (isClient)
+        { 
+            damageText.text = currentHealth.ToString();
+            paintImage.fillAmount = currentPaint/ maxPaint; 
+        }
         DeathCheck(sender);
     }
     private void DeathCheck(GameObject sender)

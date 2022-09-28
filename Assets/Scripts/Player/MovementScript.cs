@@ -25,7 +25,7 @@ public class MovementScript : MonoBehaviour
     public float jumpForce;
     public float jumpCooldown;
     public float airMultiplier;
-    bool readyToJump;
+    public bool readyToJump;
     [Header("Dashing")]
     public float dashForce;
     public int dashCount;
@@ -48,15 +48,15 @@ public class MovementScript : MonoBehaviour
     public float playerHeight;
     public Vector2 legSize;
     public LayerMask whatIsGround;
-    private bool grounded;
+    public bool grounded;
     [Header("Slope Handling")]
     public float maxSlopeAngle;
     private RaycastHit slopeHit;
     private bool exitingSlope;
     [Header("Input")]
     public bool isClient = false;
-    private float horizontalInput;
-    private float verticalInput;
+    public float horizontalInput;
+    public float verticalInput;
     Vector3 moveDirection;
     [Header("General")]
     public new Rigidbody rigidbody;
