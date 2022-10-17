@@ -6,5 +6,6 @@ using UnityEngine;
 public class GunSO : ScriptableObject
 {
     public float range, rateOfFire, reloadSpeed, damage, paintDamage;
+    public int ammo;
     public GameObject modelPrefab;
 }

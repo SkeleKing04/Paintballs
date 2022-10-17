@@ -135,12 +135,12 @@ public class MovementScript : MonoBehaviour
     {
         if (grounded)
         {
-            Debug.Log("Walking");
+            //Debug.Log("Walking");
             desiredMoveSpeed = walkSpeed;
         }
         else
         {
-            Debug.Log("Air");
+            //Debug.Log("Air");
             //In the air
         }
         if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 4f && moveSpeed != 0)

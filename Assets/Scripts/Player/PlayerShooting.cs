@@ -63,7 +63,7 @@ public class PlayerShooting : MonoBehaviour
         if(isClientOBJ)
         {
             gunPointer.pointGun(trueFireTransform);
-            if(Input.GetKey(fireKey) && state == gunState.ready)
+            if(Input.GetKey(fireKey) && state == gunState.ready && HeldGun.ammoInWeapon[HeldGun.gunIndex] > 0)
             {
                 Shoot();
             }
@@ -98,15 +98,15 @@ public class PlayerShooting : MonoBehaviour
         teamColor = GetComponent<TeamManager>().teamColor;
         // Raycast to see if object hit in range
         // The "50f" needs to be changed to the weapons range
-        if(Physics.Raycast(startPos, endPoint * HeldGun.gun.range, out hit, HeldGun.gun.range, layerMasks))
+        if(Physics.Raycast(startPos, endPoint * HeldGun.gunList[HeldGun.gunIndex].range, out hit, HeldGun.gunList[HeldGun.gunIndex].range, layerMasks))
         {   
-            Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, HeldGun.gun.rateOfFire);
+            Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, HeldGun.gunList[HeldGun.gunIndex].rateOfFire);
             //Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer
             if(doTracer) StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, hit.point, GetComponent<TeamManager>().teamColor, trailTime, trailWidth, gameObject));
             try
             {
-                hit.collider.gameObject.GetComponentInParent<HealthHandler>().UpdateHealth(HeldGun.gun.damage, HeldGun.gun.paintDamage, gameObject);
+                hit.collider.gameObject.GetComponentInParent<HealthHandler>().UpdateHealth(HeldGun.gunList[HeldGun.gunIndex].damage, HeldGun.gunList[HeldGun.gunIndex].paintDamage, gameObject);
             }
             catch (Exception e)
             {
@@ -115,13 +115,14 @@ public class PlayerShooting : MonoBehaviour
         }
         else
         {
-            Debug.DrawRay(startPos, trueFireTransform.forward * HeldGun.gun.range, Color.red, 0.1f);
+            Debug.DrawRay(startPos, trueFireTransform.forward * HeldGun.gunList[HeldGun.gunIndex].range, Color.red, 0.1f);
             //Debug.Log("Missed object.");
             //Begins to set up the tracer
-            if(doTracer) StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, falseFireTransform.forward * HeldGun.gun.range, GetComponent<TeamManager>().teamColor, trailTime, trailWidth, gameObject));
+            if(doTracer) StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, falseFireTransform.forward * HeldGun.gunList[HeldGun.gunIndex].range, GetComponent<TeamManager>().teamColor, trailTime, trailWidth, gameObject));
         }
         // stops the gun from firing stupidly
         state = gunState.firing;
-        Invoke(nameof(readyWeapon), HeldGun.gun.rateOfFire);
+        HeldGun.shootWeapon();
+        Invoke(nameof(readyWeapon), HeldGun.gunList[HeldGun.gunIndex].rateOfFire);
     }
 }

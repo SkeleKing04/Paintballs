@@ -17,4 +17,6 @@ MonoBehaviour:
   reloadSpeed: 1
   damage: 1
   paintDamage: 3
+  ammo: 36
+  remainingAmmo: 36
   modelPrefab: {fileID: 7537985041024867378, guid: e79abd9230a6f0f47b4b6098d11e913e, type: 3}

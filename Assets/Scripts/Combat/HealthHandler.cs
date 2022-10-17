@@ -17,8 +17,8 @@ public class HealthHandler : MonoBehaviour
     private DeathmatchScript deathmatchScript;
     public bool dead, despawned, isClient;
     [Header("UI")]
-    public TextMeshProUGUI damageText;
-    public Image paintImage; 
+    public TextMeshProUGUI damageText, paintText;
+    public Image damageImage, paintImage; 
     public void Awake()
     {
         resetHealth();
@@ -37,8 +37,10 @@ public class HealthHandler : MonoBehaviour
         currentPaint = Mathf.Clamp(currentPaint + paintAmmount, 0, maxPaint);
         if (isClient)
         { 
+            paintText.text = currentPaint.ToString();
+            paintImage.fillAmount = currentPaint/maxPaint; 
             damageText.text = currentHealth.ToString();
-            paintImage.fillAmount = currentPaint/ maxPaint; 
+            damageImage.fillAmount = currentHealth / baseHealth;
         }
         DeathCheck(sender);
     }

@@ -33,7 +33,7 @@ public class ItemPickupScript : MonoBehaviour
         switch(type)
         {
             case pickupType.gun:
-                try {other.GetComponentInParent<GunHandler>().gun = gunType;} catch (Exception e) {}
+                try {other.GetComponentInParent<GunHandler>().giveGun(gunType,true);} catch (Exception e) {}
                 break;
             case pickupType.ammo:
                 //ammo not yet added | 28/9/22

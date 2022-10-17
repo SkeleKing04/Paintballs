@@ -40,7 +40,7 @@ public class EnemyAI : MonoBehaviour
         else if ((transform.position - target.transform.position).magnitude <= attackRange)
         //target in attack range
         {
-            Debug.Log("Target object is in attacking range");
+            //Debug.Log("Target object is in attacking range");
             lookAtTarget();
             checkTarget();
             tryAttackTarget();
@@ -49,7 +49,7 @@ public class EnemyAI : MonoBehaviour
         else if ((transform.position - target.transform.position).magnitude <= sightRange)
         //target in sight
         {
-            Debug.Log("Target object is in sight");
+            //Debug.Log("Target object is in sight");
             findTarget();
             lookAtTarget();
             checkTarget();
