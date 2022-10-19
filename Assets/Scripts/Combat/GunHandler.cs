@@ -19,7 +19,7 @@ public class GunHandler : MonoBehaviour
     void Start()
     {
         changeGun(0);
-        updateUIElements();
+        if(isClient) updateUIElements();
     }
     public void giveGun(GunSO GivenGun, bool forceSwitch)
     {
@@ -70,6 +70,6 @@ public class GunHandler : MonoBehaviour
         if(newIndex > gunList.Count - 1) newIndex = 0;
         gunIndex = newIndex;
         gunMeshDisplay.mesh = gunList[gunIndex].modelPrefab.GetComponent<MeshFilter>().sharedMesh;
-        updateUIElements();
+        if(isClient) updateUIElements();
     }
 }

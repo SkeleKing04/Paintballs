@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(GunHandler))]
 public class PlayerShooting : MonoBehaviour
@@ -38,6 +39,7 @@ public class PlayerShooting : MonoBehaviour
     public bool isClientOBJ;
     private GunHandler HeldGun;
     private UIHandler UI;
+    public Image hitMarker;
     // Start is called before the first frame update
     void Start()
     {
@@ -88,6 +90,7 @@ public class PlayerShooting : MonoBehaviour
     }
     public void Shoot()
     {
+        //Debug.Log(gameObject.name + " is shooting");
         //Variables
         RaycastHit hit;
         Vector3 startPos = trueFireTransform.position;
@@ -107,6 +110,10 @@ public class PlayerShooting : MonoBehaviour
             try
             {
                 hit.collider.gameObject.GetComponentInParent<HealthHandler>().UpdateHealth(HeldGun.gunList[HeldGun.gunIndex].damage, HeldGun.gunList[HeldGun.gunIndex].paintDamage, gameObject);
+                if(isClientOBJ)
+                {
+                    hitMarker.GetComponent<Animator>().SetTrigger("hit");
+                }
             }
             catch (Exception e)
             {

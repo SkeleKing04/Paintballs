@@ -10,6 +10,7 @@ public class CameraController : MonoBehaviour
     public float camSpeed, camRotSpeed;
     public Vector2 camPos, sensitivity;
     public Vector3 originOffset;
+    public bool useWorldX, useWorldY, useWorldZ;
     private Vector3 rotation;
     private Vector3 velocity;
     public bool doMouseMovement, lookAtTarget;
@@ -28,6 +29,8 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         camera = GetComponent<Camera>();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
     public void setMainIndex(int index)
     {
@@ -48,15 +51,13 @@ public class CameraController : MonoBehaviour
         {
             Transform mainTransform = objectToFollow[mainIndex].objectTransform;
             Ray ray = new Ray(mainTransform.position + originOffset.x * mainTransform.right + originOffset.y * mainTransform.up, mainTransform.forward * camPos.x  +  mainTransform.up * camPos.y);
-            Debug.DrawRay(objectToFollow[mainIndex].objectTransform.position + originOffset, ray.GetPoint(originOffset.z), Color.green, 0.1f);
-            /*if(camera.orthographic)
-            {
-                camera.orthographicSize = Vector3.SmoothDamp(transform.position, ray.GetPoint(camDistance), ref velocity, camSpeed).z;
-            }
-            else
-            {*/
-                transform.position = Vector3.SmoothDamp(transform.position, ray.GetPoint(originOffset.z), ref velocity, camSpeed);
-            //}
+            Vector3 rayPoint = ray.GetPoint(originOffset.z);
+            Debug.DrawRay(objectToFollow[mainIndex].objectTransform.position + originOffset, rayPoint, Color.green, 0.1f);
+            if(useWorldX) rayPoint.x = objectToFollow[mainIndex].objectTransform.position.x + originOffset.x;
+            if(useWorldY) rayPoint.y = objectToFollow[mainIndex].objectTransform.position.y + originOffset.y;
+            if(useWorldZ) rayPoint.z = objectToFollow[mainIndex].objectTransform.position.z + originOffset.z;
+
+            transform.position = Vector3.SmoothDamp(transform.position, rayPoint, ref velocity, camSpeed);
             Vector3 lookPos = objectToFollow[mainIndex].objectTransform.position;
 
             if(!doMouseMovement)

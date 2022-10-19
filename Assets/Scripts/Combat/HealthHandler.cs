@@ -19,11 +19,27 @@ public class HealthHandler : MonoBehaviour
     [Header("UI")]
     public TextMeshProUGUI damageText, paintText;
     public Image damageImage, paintImage; 
+    [Header("DeathJump")]
+    public float jumpForce;
+    public float positionOffset, range, vertical;
+
     public void Awake()
     {
         resetHealth();
         deathmatchScript = FindObjectOfType<DeathmatchScript>();
-        UpdateHealth(0,0,gameObject);
+        UpdateHealth(-baseHealth,0,gameObject);
+        if(gameObject.GetComponent<EnemyAI>()) gameObject.GetComponent<EnemyAI>().enabled = true;
+        if(isClient)
+        {
+            CameraController camControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
+            camControl.originOffset = new Vector3(0,0,0);
+            camControl.doMouseMovement = true;
+            camControl.lookAtTarget = false;
+            camControl.useWorldY = false;
+        }
+        gameObject.GetComponent<MovementScript>().enabled = true;
+        gameObject.GetComponent<Transform>().rotation = new Quaternion(0,0,0,0);
+        gameObject.GetComponent<Rigidbody>().freezeRotation = true;
     }
     public void resetHealth()
     {
@@ -48,13 +64,28 @@ public class HealthHandler : MonoBehaviour
     {
         if(currentPaint >= maxPaint)
         {
-            //Debug.Log(gameObject.name + " has been killed by " + sender.name);
-            dead = true;
+            Debug.Log(gameObject.name + " has been killed by " + sender.name);
             if(sender.GetComponent<TeamManager>().teamColor != GetComponent<TeamManager>().teamColor)
             {
-                deathmatchScript.updatePlayerScore(sender);
+                //deathmatchScript.updatePlayerScore(sender);
             }
-            deathmatchScript.deSpawnMe(gameObject, true, 5f);
+            //deathmatchScript.deSpawnMe(gameObject, true, 5f);
+            if(gameObject.GetComponent<EnemyAI>()) gameObject.GetComponent<EnemyAI>().enabled = false;
+            gameObject.GetComponent<MovementScript>().enabled = false;
+            gameObject.GetComponent<Rigidbody>().freezeRotation = false;
+            if(!dead)
+            {
+                gameObject.GetComponent<Rigidbody>().AddExplosionForce(jumpForce,transform.position - (transform.position - sender.transform.position),(transform.position - sender.transform.position).magnitude,vertical,ForceMode.Impulse);
+            }
+            if(isClient)
+            {
+                CameraController camControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
+                camControl.originOffset = new Vector3(0,5,-5);
+                camControl.useWorldY = true;
+                camControl.doMouseMovement = false;
+                camControl.lookAtTarget = true;
+            }
+            dead = true;
         }
         if(currentHealth <= 0)
         {
