@@ -36,7 +36,6 @@ public class ItemPickupScript : MonoBehaviour
                 try {other.GetComponentInParent<GunHandler>().giveGun(gunType,true);} catch (Exception e) {}
                 break;
             case pickupType.ammo:
-                //ammo not yet added | 28/9/22
                 break;
             case pickupType.heal:
                 try {other.GetComponentInParent<HealthHandler>().UpdateHealth(damagePaintValue.x,damagePaintValue.y,gameObject);} catch (Exception e) {}

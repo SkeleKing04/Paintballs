@@ -36,6 +36,7 @@ public class HealthHandler : MonoBehaviour
             camControl.doMouseMovement = true;
             camControl.lookAtTarget = false;
             camControl.useWorldY = false;
+            //paintText.GetComponentInParent<GameObject>().GetComponentInChildren<Image>().color = gameObject.GetComponent<TeamManager>().teamColor;
         }
         gameObject.GetComponent<MovementScript>().enabled = true;
         gameObject.GetComponent<Transform>().rotation = new Quaternion(0,0,0,0);
@@ -67,9 +68,9 @@ public class HealthHandler : MonoBehaviour
             Debug.Log(gameObject.name + " has been killed by " + sender.name);
             if(sender.GetComponent<TeamManager>().teamColor != GetComponent<TeamManager>().teamColor)
             {
-                //deathmatchScript.updatePlayerScore(sender);
+                deathmatchScript.updatePlayerScore(sender);
             }
-            //deathmatchScript.deSpawnMe(gameObject, true, 5f);
+            deathmatchScript.deSpawnMe(gameObject, true, 5f);
             if(gameObject.GetComponent<EnemyAI>()) gameObject.GetComponent<EnemyAI>().enabled = false;
             gameObject.GetComponent<MovementScript>().enabled = false;
             gameObject.GetComponent<Rigidbody>().freezeRotation = false;

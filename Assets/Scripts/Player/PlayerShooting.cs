@@ -19,6 +19,7 @@ public class PlayerShooting : MonoBehaviour
     public float trailTime;
     public float trailWidth;
     private Color teamColor;
+    public Animator animator;
 
     public enum gunState
     {
@@ -69,13 +70,17 @@ public class PlayerShooting : MonoBehaviour
             {
                 Shoot();
             }
+            else if(HeldGun.ammoInWeapon[HeldGun.gunIndex] <= 0 && state == gunState.ready)
+            {
+                Reload();
+            }
             if(Input.GetKey(secondaryActionKey))
             {
                 //Not used ATM
             }
             if(Input.GetKeyDown(reloadKey) && state == gunState.ready)
             {
-                //Reload();
+                Reload();
             }
             if(Input.GetKeyDown(switchWeaponKey) && state == gunState.ready)
             {
@@ -83,6 +88,7 @@ public class PlayerShooting : MonoBehaviour
                 //Switch to next weapon
             }
         }
+
     }
     public void readyWeapon()
     {
@@ -104,9 +110,15 @@ public class PlayerShooting : MonoBehaviour
         if(Physics.Raycast(startPos, endPoint * HeldGun.gunList[HeldGun.gunIndex].range, out hit, HeldGun.gunList[HeldGun.gunIndex].range, layerMasks))
         {   
             Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, HeldGun.gunList[HeldGun.gunIndex].rateOfFire);
+            Debug.DrawRay(startPos, trueFireTransform.forward * HeldGun.gunList[HeldGun.gunIndex].range, Color.blue, HeldGun.gunList[HeldGun.gunIndex].rateOfFire);
+            if(hit.collider == null)
+            {
+                Ray ray = new Ray(startPos, trueFireTransform.forward * HeldGun.gunList[HeldGun.gunIndex].range);
+                hit.point = (ray.GetPoint(HeldGun.gunList[HeldGun.gunIndex].range));
+            }
             //Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer
-            if(doTracer) StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, hit.point, GetComponent<TeamManager>().teamColor, trailTime, trailWidth, gameObject));
+            if(doTracer) StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, hit.point, GetComponent<TeamManager>().teamColor, HeldGun.gunList[HeldGun.gunIndex].rateOfFire, trailWidth, gameObject));
             try
             {
                 hit.collider.gameObject.GetComponentInParent<HealthHandler>().UpdateHealth(HeldGun.gunList[HeldGun.gunIndex].damage, HeldGun.gunList[HeldGun.gunIndex].paintDamage, gameObject);
@@ -131,5 +143,14 @@ public class PlayerShooting : MonoBehaviour
         state = gunState.firing;
         HeldGun.shootWeapon();
         Invoke(nameof(readyWeapon), HeldGun.gunList[HeldGun.gunIndex].rateOfFire);
+    }
+    private void Reload()
+    {
+        animator.SetFloat("AnimSpeed", 1/HeldGun.gunList[HeldGun.gunIndex].reloadSpeed);
+        animator.SetTrigger("ReloadSpin");
+        
+        state = gunState.reloading;
+        HeldGun.Invoke(nameof(HeldGun.reloadWeapon),HeldGun.gunList[HeldGun.gunIndex].reloadSpeed);
+        Invoke(nameof(readyWeapon), HeldGun.gunList[HeldGun.gunIndex].reloadSpeed);
     }
 }

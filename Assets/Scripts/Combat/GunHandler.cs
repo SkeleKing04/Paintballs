@@ -14,8 +14,7 @@ public class GunHandler : MonoBehaviour
     public Image gunAmmoFill;
     public float scrollChangeThreashhold;
     public bool invertScroll;
-    public MeshFilter gunMeshDisplay;
-    
+    public MeshFilter gunMeshDisplay;    
     void Start()
     {
         changeGun(0);
@@ -46,6 +45,12 @@ public class GunHandler : MonoBehaviour
     public void shootWeapon()
     {
         ammoInWeapon[gunIndex]--;
+        if(isClient) updateUIElements();
+        if(ammoInWeapon[gunIndex] <= 0) Invoke(nameof(reloadWeapon), gunList[gunIndex].reloadSpeed);
+    }
+    public void reloadWeapon()
+    {
+        ammoInWeapon[gunIndex] = gunList[gunIndex].ammo;
         if(isClient) updateUIElements();
     }
     public void updateUIElements()

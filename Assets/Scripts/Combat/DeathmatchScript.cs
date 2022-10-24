@@ -104,7 +104,7 @@ public class DeathmatchScript : MonoBehaviour
     }
     public void resetPlayerCam(bool toggle, Transform posToMove)
     {
-        camera.GetComponent<MoveCamera>().enabled = toggle;
+        camera.GetComponent<CameraController>().enabled = toggle;
         if(posToMove != null)
         {
             camera.GetComponent<Transform>().position = posToMove.position;

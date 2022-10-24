@@ -18,5 +18,4 @@ MonoBehaviour:
   damage: 10
   paintDamage: 10
   ammo: 30
-  remainingAmmo: 30
   modelPrefab: {fileID: 5313856188506331232, guid: 7444562fe5798e846a4045a93e123308, type: 3}
