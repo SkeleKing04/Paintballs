@@ -14,7 +14,6 @@ public class DeathmatchScript : MonoBehaviour
         starting,
         playing,
         leaving,
-        mainMenu
     };
 
     public static gameState state;
@@ -44,6 +43,8 @@ public class DeathmatchScript : MonoBehaviour
     public List<playerData> data;
     private UIHandler UI;
     public string exitScene;
+    static public bool newSceneTrip = false;
+    public bool doStart = false;
     [System.Serializable]
     public class playerData
     {
@@ -59,7 +60,7 @@ public class DeathmatchScript : MonoBehaviour
         Debug.Log("Starting DM\nIncoming settings are:\nScore Cap: " + scoreCap.ToString() + "\nBots?: " +fillRoomWithBots.ToString() + "\nTeamDM?: " + teamDeathmatch.ToString() + "\nTeam Size: " + teamSize.ToString());
         UI = FindObjectOfType<UIHandler>();
         //data = new playerData[teamSize * 2];
-        if(state != gameState.mainMenu)
+        if(doStart)
         {
             startGate();
         }
@@ -120,7 +121,7 @@ public class DeathmatchScript : MonoBehaviour
             foreach(playerData dataPoint in data)
             {
                 dataPoint.playerObject.GetComponent<TeamManager>().teamColor = new Color(UnityEngine.Random.Range(0f, 256f)/255f,UnityEngine.Random.Range(0f, 256f)/255f,UnityEngine.Random.Range(0f, 256f)/255f,255f);
-                dataPoint.playerObject.GetComponent<TeamManager>().UpdateColour();
+                //dataPoint.playerObject.GetComponent<TeamManager>().UpdateColour();
                 dataPoint.personalScorecard.transform.GetComponent<Image>().color = dataPoint.playerObject.GetComponent<TeamManager>().teamColor;
                 dataPoint.playerObject.SetActive(false);
             }
@@ -201,8 +202,11 @@ public class DeathmatchScript : MonoBehaviour
                     state = gameState.playing;
                 }
                 break;
-            case gameState.mainMenu:
-                break;
+        }
+        if(newSceneTrip)
+        {
+            startGate();
+            newSceneTrip = false;
         }
     }
     public IEnumerator spawnMe(GameObject sender, float spawnWait)

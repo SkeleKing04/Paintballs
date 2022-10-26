@@ -670,8 +670,9 @@ GameObject:
   - component: {fileID: 261229738}
   - component: {fileID: 261229737}
   - component: {fileID: 261229736}
-  - component: {fileID: 261229740}
   - component: {fileID: 261229739}
+  - component: {fileID: 261229740}
+  - component: {fileID: 261229741}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -753,9 +754,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 261229735}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4014c7c4aa39eb54788c1312fb0dd2e4, type: 3}
+  m_Script: {fileID: 11500000, guid: c9be1e0e8d0e7474087b4f0c13db4e07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainHandler: {fileID: 261229740}
   sliders:
   - {fileID: 1281074072}
   - {fileID: 2028542078}
@@ -765,8 +767,21 @@ MonoBehaviour:
   textBoxes:
   - {fileID: 1148975482}
   - {fileID: 604780879}
-  startingState: 7
+  startingState: 3
 --- !u!114 &261229740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 261229735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5aa5f4cbfb5ccf4aa90657413d33c56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gamePanel: []
+--- !u!114 &261229741
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -794,6 +809,7 @@ MonoBehaviour:
   timeTillStart: 0
   data: []
   exitScene: 
+  doStart: 0
 --- !u!1 &268279743
 GameObject:
   m_ObjectHideFlags: 0
@@ -1446,7 +1462,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 261229739}
-        m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
+        m_TargetAssemblyTypeName: MainMenuUIFunctions, Assembly-CSharp
         m_MethodName: Quit
         m_Mode: 1
         m_Arguments:
@@ -1715,7 +1731,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 261229739}
-        m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
+        m_TargetAssemblyTypeName: MainMenuUIFunctions, Assembly-CSharp
         m_MethodName: ToggleBots
         m_Mode: 2
         m_Arguments:
@@ -1888,7 +1904,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 261229739}
-        m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
+        m_TargetAssemblyTypeName: MainMenuUIFunctions, Assembly-CSharp
         m_MethodName: ToggleTeams
         m_Mode: 2
         m_Arguments:
@@ -2478,7 +2494,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 261229739}
-        m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
+        m_TargetAssemblyTypeName: MainMenuUIFunctions, Assembly-CSharp
         m_MethodName: UpdateScoreCap
         m_Mode: 2
         m_Arguments:
@@ -3092,7 +3108,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 261229739}
-        m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
+        m_TargetAssemblyTypeName: MainMenuUIFunctions, Assembly-CSharp
         m_MethodName: LoadNextScene
         m_Mode: 5
         m_Arguments:
@@ -3100,7 +3116,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: SampleScene
+          m_StringArgument: DebugAndTesting
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1819621411
@@ -3659,7 +3675,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 261229739}
-        m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
+        m_TargetAssemblyTypeName: MainMenuUIFunctions, Assembly-CSharp
         m_MethodName: UpdateTeamSize
         m_Mode: 2
         m_Arguments:

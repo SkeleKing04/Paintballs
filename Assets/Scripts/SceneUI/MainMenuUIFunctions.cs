@@ -18,16 +18,15 @@ public class MainMenuUIFunctions : MonoBehaviour
         DeathmatchScript.state = startingState; 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        mainHandler.updateSlider(sliders[0],DeathmatchScript.scoreCap,false,true);
-        UpdateScoreCap(sliders[0].gameObject);
         ToggleBots(toggles[0].gameObject);
         ToggleTeams(toggles[1].gameObject);
         UpdateTeamSize(sliders[1].gameObject);
+        UpdateScoreCap(sliders[0].gameObject);
     }
     public void UpdateScoreCap(GameObject sender)
     {
         mainHandler.updateSlider(sender.GetComponent<Slider>(),DeathmatchScript.scoreCap,false,true);
-        mainHandler.updateTextBox(textBoxes[0],"Score to win (Per Player): " + sliders[0].value);
+        mainHandler.updateTextBox(textBoxes[0],"Score to win (Per Player): " + DeathmatchScript.scoreCap);
     }
     public void ToggleBots(GameObject sender)
     {
@@ -40,12 +39,12 @@ public class MainMenuUIFunctions : MonoBehaviour
     public void UpdateTeamSize(GameObject sender)
     {
         mainHandler.updateSlider(sender.GetComponent<Slider>(),DeathmatchScript.teamSize,false,true);
-        mainHandler.updateTextBox(sender.GetComponent<TextMeshProUGUI>(),"Team Size: " + DeathmatchScript.teamSize);
+        mainHandler.updateTextBox(textBoxes[1],"Team Size: " + DeathmatchScript.teamSize);
     }
     public void LoadNextScene(string sceneToLoad)
     {
         SceneManager.LoadScene(sceneToLoad);
-        //DeathmatchScript.startGate();
+        DeathmatchScript.newSceneTrip = true;
     }
     void Update()
     {

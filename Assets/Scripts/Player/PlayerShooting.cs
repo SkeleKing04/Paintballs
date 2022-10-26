@@ -92,7 +92,7 @@ public class PlayerShooting : MonoBehaviour
     }
     public void readyWeapon()
     {
-        animator.SetTrigger("ReadyWeapon");
+        if(isClientOBJ) animator.SetTrigger("ReadyWeapon");
         state = gunState.ready;
     }
     public void Shoot()
@@ -147,8 +147,7 @@ public class PlayerShooting : MonoBehaviour
     }
     private void Reload()
     {
-        animator.SetFloat("AnimSpeed", 1/HeldGun.gunList[HeldGun.gunIndex].reloadSpeed);
-        animator.SetTrigger("ReloadSpin");
+        if(isClientOBJ)animator.SetTrigger("ReloadSpin");
         
         state = gunState.reloading;
         HeldGun.Invoke(nameof(HeldGun.reloadWeapon),HeldGun.gunList[HeldGun.gunIndex].reloadSpeed);
