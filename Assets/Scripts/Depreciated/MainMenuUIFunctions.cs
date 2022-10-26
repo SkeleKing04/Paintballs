@@ -45,7 +45,7 @@ public class MainMenuUIFunctions : MonoBehaviour
     public void LoadNextScene(string sceneToLoad)
     {
         SceneManager.LoadScene(sceneToLoad);
-        DeathmatchScript.startGate();
+        //DeathmatchScript.startGate();
     }
     void Update()
     {

@@ -92,6 +92,7 @@ public class PlayerShooting : MonoBehaviour
     }
     public void readyWeapon()
     {
+        animator.SetTrigger("ReadyWeapon");
         state = gunState.ready;
     }
     public void Shoot()

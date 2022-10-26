@@ -24,7 +24,7 @@ public class CameraController : MonoBehaviour
         //Set only one object to be head, first object will be selected
         public bool followCameraRotation, controlXRot, controlYRot, controlZRot;
     }
-    public objectsToControl[] objectToFollow;
+    public List<objectsToControl> objectToFollow;
     private new Camera camera;
     void Start()
     {
@@ -40,14 +40,14 @@ public class CameraController : MonoBehaviour
     public void increaseMainIndex(int index)
     {
         mainIndex += index;
-        if(mainIndex < 0) mainIndex = objectToFollow.Length - 1;
-        if(mainIndex >= objectToFollow.Length) mainIndex = 0;
+        if(mainIndex < 0) mainIndex = objectToFollow.Count - 1;
+        if(mainIndex >= objectToFollow.Count) mainIndex = 0;
         Debug.Log("Main index increased by " + index + ". Now set at " + mainIndex.ToString());
     }
     // Update is called once per frame
     void Update()
     {
-        if(mainIndex >= 0 && mainIndex < objectToFollow.Length)
+        if(mainIndex >= 0 && mainIndex < objectToFollow.Count)
         {
             Transform mainTransform = objectToFollow[mainIndex].objectTransform;
             Ray ray = new Ray(mainTransform.position + originOffset.x * mainTransform.right + originOffset.y * mainTransform.up, mainTransform.forward * camPos.x  +  mainTransform.up * camPos.y);
@@ -81,7 +81,7 @@ public class CameraController : MonoBehaviour
                 rotation.x = Mathf.Clamp(rotation.x, -90f, 90f);
 
                 transform.rotation = Quaternion.Euler(rotation.x,rotation.y,0);
-                for(int i = 0; i < objectToFollow.Length; i++)
+                for(int i = 0; i < objectToFollow.Count; i++)
                 {
                     if(objectToFollow[i].followCameraRotation)
                     {
