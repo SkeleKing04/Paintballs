@@ -113,9 +113,6 @@ public class EnemyAI : MonoBehaviour
             if((target.transform.position - transform.position).magnitude > targetStopDist - (targetStopDist * 0.1) && (target.transform.position - transform.position).magnitude < targetStopDist) movement.verticalInput = 0;
             else if((target.transform.position - transform.position).magnitude > targetStopDist - (targetStopDist * 0.1)) movement.verticalInput = 1;
             else if((target.transform.position - transform.position).magnitude < targetStopDist + (targetStopDist * 0.1)) movement.verticalInput = -1;
-        }    
-        //movement.verticalInput = Input.GetAxisRaw("Vertical");
-
         if(Mathf.Abs(target.transform.position.y - transform.position.y) > jumpTreashhold && movement.readyToJump && movement.grounded)
         {
             movement.doJump();
@@ -124,6 +121,9 @@ public class EnemyAI : MonoBehaviour
         {
             movement.doDash();
         }
+        }    
+        //movement.verticalInput = Input.GetAxisRaw("Vertical");
+
         
     }
 }

@@ -5,7 +5,6 @@ using TMPro;
 
 public class PlayerUIFunctions : MonoBehaviour
 {   
-    public UIHandler mainHandler;
     public GameObject clientGameObject;
     private HealthHandler clientHealth;
     public TextMeshProUGUI[] textBoxes;
@@ -19,7 +18,7 @@ public class PlayerUIFunctions : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        mainHandler.updateTextBox(textBoxes[0], "Health: " + clientHealth.currentHealth.ToString());
-        mainHandler.updateTextBox(textBoxes[1], "Paint: " + clientHealth.currentPaint.ToString());
+        textBoxes[0].text = "Health: " + clientHealth.currentHealth.ToString();
+        textBoxes[1].text = "Paint: " + clientHealth.currentPaint.ToString();
     }
 }

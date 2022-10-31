@@ -12,6 +12,7 @@ public class SpawnPoint : MonoBehaviour
     void Start()
     {
         teamManager = GetComponent<TeamManager>();
+        doCoolDown(coolDown);
     }
 
     // Update is called once per frame
@@ -41,13 +42,13 @@ public class SpawnPoint : MonoBehaviour
                 Debug.Log(sender.name + " is " + (sender.transform.position - gameObject.transform.position).magnitude + " units from this spawn point, " + gameObject.name);
                 if(DeathmatchScript.teamDeathmatch)
                 {
-                    if(sender.GetComponent<TeamManager>().teamColor != gameObject.GetComponent<TeamManager>().teamColor && (sender.transform.position - gameObject.transform.position).magnitude <= spawnSafeZone)
+                    if(sender.GetComponent<TeamManager>().teamColor == gameObject.GetComponent<TeamManager>().teamColor)
                     {
-                        current = false;
+                        current = true;
                     }
 
                 }
-                else if((sender.transform.position - gameObject.transform.position).magnitude <= spawnSafeZone)
+                else if(Physics.CheckSphere(transform.position, spawnSafeZone, combatantLayer))
                 {
                     current = false;
                 }

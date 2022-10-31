@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+// DEPRECATED
 public class UIHandler : MonoBehaviour
 {
     public GameObject[] gamePanel;

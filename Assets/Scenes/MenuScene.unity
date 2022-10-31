@@ -672,7 +672,6 @@ GameObject:
   - component: {fileID: 261229736}
   - component: {fileID: 261229739}
   - component: {fileID: 261229740}
-  - component: {fileID: 261229741}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -757,7 +756,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9be1e0e8d0e7474087b4f0c13db4e07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainHandler: {fileID: 261229740}
+  maxScoreCap: 100
+  maxTeamSize: 12
   sliders:
   - {fileID: 1281074072}
   - {fileID: 2028542078}
@@ -767,7 +767,6 @@ MonoBehaviour:
   textBoxes:
   - {fileID: 1148975482}
   - {fileID: 604780879}
-  startingState: 3
 --- !u!114 &261229740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -781,35 +780,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamePanel: []
---- !u!114 &261229741
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 261229735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c32356cc1955d14a8e8286f7de5b724, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnSize: 0
-  spawnSafeZone: 0
-  combatantLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  spawnPoints: []
-  botPrefab: {fileID: 0}
-  teamAColour: {r: 0, g: 0, b: 0, a: 0}
-  teamBColour: {r: 0, g: 0, b: 0, a: 0}
-  gameStartTime: 0
-  mapCenter: {fileID: 0}
-  camera: {fileID: 0}
-  playerScorecard: {fileID: 0}
-  timeTillStart: 0
-  data: []
-  exitScene: 
-  doStart: 0
 --- !u!1 &268279743
 GameObject:
   m_ObjectHideFlags: 0

@@ -27,10 +27,10 @@ public class DeathmatchScript : MonoBehaviour
     public Transform[] spawnPoints;
     [Header("Game Settings")]
     public static bool teamDeathmatch;
-    public static int scoreCap,teamSize;
+    public static int scoreCap = 10,teamSize = 3;
     private int botCount;
     public GameObject botPrefab;
-    static public bool fillRoomWithBots;
+    static public bool fillRoomWithBots = true;
     public Color teamAColour, teamBColour;
     public float gameStartTime;
     [Header("Unsorted")]
@@ -41,7 +41,6 @@ public class DeathmatchScript : MonoBehaviour
     //private List<float> scores;
     public float timeTillStart;
     public List<playerData> data;
-    private UIHandler UI;
     public string exitScene;
     static public bool newSceneTrip = false;
     public bool doStart = false;
@@ -53,12 +52,12 @@ public class DeathmatchScript : MonoBehaviour
         public GameObject personalScorecard;
         public float personalScore;
     }
+    public GameObject[] gamePanels;
 
     // Start is called before the first frame update
     void Start()
     {   
         Debug.Log("Starting DM\nIncoming settings are:\nScore Cap: " + scoreCap.ToString() + "\nBots?: " +fillRoomWithBots.ToString() + "\nTeamDM?: " + teamDeathmatch.ToString() + "\nTeam Size: " + teamSize.ToString());
-        UI = FindObjectOfType<UIHandler>();
         //data = new playerData[teamSize * 2];
         if(doStart)
         {
@@ -140,11 +139,11 @@ public class DeathmatchScript : MonoBehaviour
     {
         GameObject newScorecard = Instantiate<GameObject>(playerScorecard);
         //scorecards.Add(newScorecard);
-        newScorecard.transform.SetParent(UI.gamePanel[1].transform);
+        newScorecard.transform.SetParent(gamePanels[1].transform);
         newScorecard.transform.GetComponentInChildren<TextMeshProUGUI>().text = "0";
         newScorecard.transform.localPosition = new Vector3(newScorecard.transform.position.x, newScorecard.transform.position.y, 0);
         newScorecard.transform.localRotation = Quaternion.Euler(0,0,0);
-        newScorecard.transform.localScale = UI.gamePanel[1].transform.localScale;
+        newScorecard.transform.localScale = gamePanels[1].transform.localScale;
         newScorecard.transform.GetComponent<Image>().color = player.GetComponent<TeamManager>().teamColor;
         newScorecard.SetActive(true);
         return newScorecard;
@@ -213,7 +212,7 @@ public class DeathmatchScript : MonoBehaviour
     {
         //Debug.Log("SpawnMe called at " + Time.time + " and will wait " + spawnWait + " seconds.");
         yield return new WaitForSeconds(spawnWait);
-        if(sender.activeSelf == false)
+        if(sender.activeSelf == false && sender)
         {
             //Debug.Log("SpawnMe resumed");
             List<Transform> possibleSpawns = new List<Transform>();
@@ -248,17 +247,16 @@ public class DeathmatchScript : MonoBehaviour
                     Debug.Log("Gate A Hit");
                     sender.SetActive(true);
                     sender.GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
-                    if(sender.GetComponent<MovementScript>() == true)
+                    if(sender.GetComponent<MovementScript>().isClient == true)
                     {
                         resetPlayerCam(1);
-                        sender.transform.position = possibleSpawns[rnd].position;
                     }
-                    if(sender.GetComponent<EnemyAI>() == true)
-                    {
-                        Debug.Log("Gate B Hit");
-                        //sender.GetComponent<EnemyAI>().findEnemies();
-                        sender.GetComponent<NavMeshAgent>().Warp(possibleSpawns[rnd].position);
-                    }
+                    sender.transform.position = possibleSpawns[rnd].position;
+                    sender.GetComponent<HealthHandler>().UpdateHealth(-255, -255,null);
+                    sender.GetComponent<PlayerShooting>().Reload();
+                    if(sender.GetComponent<EnemyAI>()) sender.GetComponent<EnemyAI>().enabled = true;
+                    sender.GetComponent<MovementScript>().enabled = true;
+                    sender.GetComponent<Rigidbody>().freezeRotation = true;
                     isSpawned = true;
                     possibleSpawns[rnd].GetComponent<SpawnPoint>().doCoolDown(10);
                 whileIteration++;
@@ -285,7 +283,7 @@ public class DeathmatchScript : MonoBehaviour
     }
     public void deSpawnMe(GameObject sender, bool doRespawn, float deathCooldown)
     {
-        if(sender.GetComponent<MovementScript>() == true)
+        if(sender.GetComponent<MovementScript>().isClient == true)
         {
             resetPlayerCam(2);
         }

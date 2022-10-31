@@ -66,7 +66,7 @@ public class HealthHandler : MonoBehaviour
         if(currentPaint >= maxPaint)
         {
             Debug.Log(gameObject.name + " has been killed by " + sender.name);
-            if(sender.GetComponent<TeamManager>().teamColor != GetComponent<TeamManager>().teamColor)
+            if(sender.GetComponent<TeamManager>().teamColor != GetComponent<TeamManager>().teamColor && !dead)
             {
                 deathmatchScript.updatePlayerScore(sender);
             }
@@ -78,14 +78,14 @@ public class HealthHandler : MonoBehaviour
             {
                 gameObject.GetComponent<Rigidbody>().AddExplosionForce(jumpForce,transform.position - (transform.position - sender.transform.position),(transform.position - sender.transform.position).magnitude,vertical,ForceMode.Impulse);
             }
-            if(isClient)
+            /*if(isClient && !dead)
             {
                 CameraController camControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
                 camControl.originOffset = new Vector3(0,5,-5);
                 camControl.useWorldY = true;
                 camControl.doMouseMovement = false;
                 camControl.lookAtTarget = true;
-            }
+            }*/
             dead = true;
         }
         if(currentHealth <= 0)

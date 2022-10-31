@@ -39,12 +39,10 @@ public class PlayerShooting : MonoBehaviour
     [Header("Extras")]
     public bool isClientOBJ;
     private GunHandler HeldGun;
-    private UIHandler UI;
     public Image hitMarker;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        UI = FindObjectOfType<UIHandler>();
         layerMasks = 1 << 8;
         layerMasks = ~layerMasks;
         try
@@ -145,7 +143,7 @@ public class PlayerShooting : MonoBehaviour
         HeldGun.shootWeapon();
         Invoke(nameof(readyWeapon), HeldGun.gunList[HeldGun.gunIndex].rateOfFire);
     }
-    private void Reload()
+    public void Reload()
     {
         if(isClientOBJ)animator.SetTrigger("ReloadSpin");
         
