@@ -433,9 +433,9 @@ MonoBehaviour:
   healthMultiplier: 1
   speedIncreaseMultiplier: 2
   slopeIncreaseMultiplier: 2
-  jumpForce: 10
+  jumpForce: 15
   jumpCooldown: 0.2
-  airMultiplier: 1
+  airMultiplier: 0.7
   readyToJump: 0
   dashForce: 69
   dashCount: 2

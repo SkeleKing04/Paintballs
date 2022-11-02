@@ -67,19 +67,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 329b751da9b820a4996374ca8d170122, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 60
+  walkSpeed: 80
   groundDrag: 5
   airDrag: 1
   healthMultiplier: 1
-  speedIncreaseMultiplier: 2
+  speedIncreaseMultiplier: 10
   slopeIncreaseMultiplier: 2
-  jumpForce: 10
+  jumpForce: 15
   jumpCooldown: 0.2
-  airMultiplier: 1
+  airMultiplier: 0.7
   readyToJump: 0
-  dashForce: 69
+  dashForce: 25
   dashCount: 2
-  dashCooldown: 1
+  dashCooldown: 3
   jumpKey: 32
   dashKey: 304
   playerHeight: 2.1

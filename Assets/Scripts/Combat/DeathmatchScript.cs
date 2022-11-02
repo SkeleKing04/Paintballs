@@ -140,12 +140,13 @@ public class DeathmatchScript : MonoBehaviour
         GameObject newScorecard = Instantiate<GameObject>(playerScorecard);
         //scorecards.Add(newScorecard);
         newScorecard.transform.SetParent(gamePanels[1].transform);
-        newScorecard.transform.GetComponentInChildren<TextMeshProUGUI>().text = "0";
+        newScorecard.GetComponentInChildren<TextMeshProUGUI>().text = "0";
         newScorecard.transform.localPosition = new Vector3(newScorecard.transform.position.x, newScorecard.transform.position.y, 0);
         newScorecard.transform.localRotation = Quaternion.Euler(0,0,0);
         newScorecard.transform.localScale = gamePanels[1].transform.localScale;
-        newScorecard.transform.GetComponent<Image>().color = player.GetComponent<TeamManager>().teamColor;
+        newScorecard.GetComponentInChildren<Image>().color = player.GetComponent<TeamManager>().teamColor;
         newScorecard.SetActive(true);
+        if(player.GetComponent<MovementScript>().isClient) newScorecard.GetComponent<Image>().color = Color.green;
         return newScorecard;
     }
     public void resetPlayerCam(int targetInt)

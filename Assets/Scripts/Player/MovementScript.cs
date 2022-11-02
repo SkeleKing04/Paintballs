@@ -99,7 +99,7 @@ public class MovementScript : MonoBehaviour
     {
         if(playerHealth != null)
         {
-            healthMultiplier = Mathf.Clamp(Mathf.Pow(1.6f, playerHealth.currentHealth / 100) -0.6f, 0.5f, 1);
+            healthMultiplier = Mathf.Clamp(Mathf.Pow(1.6f, playerHealth.currentHealth / playerHealth.baseHealth) -0.6f, 0.5f, 1);
         }
         movePlayer();
     }
@@ -231,6 +231,7 @@ public class MovementScript : MonoBehaviour
     {
         exitingSlope = true;
         rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
+        //desiredMoveSpeed += dashForce * healthMultiplier;
         rigidbody.AddForce(moveDirection * dashForce * healthMultiplier, ForceMode.Impulse);
     }
     private void ResetDash()
