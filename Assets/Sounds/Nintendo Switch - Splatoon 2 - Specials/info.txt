@@ -1,0 +1,7 @@
+Ripped by SuperDaStar
+All assets belong to Nintendo
+--
+Apologies for any missing and/or duplicate sounds, each weapon's SFX are scattered throughout multiple files.
+Things included in the main folder are the "general" SFX, whereas the weapon-specific folders are ripped from packed files of the respective weapon. 
+There's definitely duplicates, but for the sake of keeping everything as it is, I didn't delete them.
+Regardless, this should be mostly everything, though. Leave a comment if anything is missing and I'll see if I can hunt it down!

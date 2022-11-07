@@ -40,6 +40,8 @@ public class PlayerShooting : MonoBehaviour
     public bool isClientOBJ;
     private GunHandler HeldGun;
     public Image hitMarker;
+    public AudioClip reloadSound;
+    private AudioSource audio;
     // Start is called before the first frame update
     void Awake()
     {
@@ -56,6 +58,7 @@ public class PlayerShooting : MonoBehaviour
 
         if (isClientOBJ) gunPointer = GetComponent<GunPointer>();
         HeldGun = GetComponent<GunHandler>();
+        audio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -90,6 +93,7 @@ public class PlayerShooting : MonoBehaviour
     }
     public void readyWeapon()
     {
+        if(state == gunState.reloading) audio.Stop();
         if(isClientOBJ) animator.SetTrigger("ReadyWeapon");
         state = gunState.ready;
     }
@@ -140,13 +144,16 @@ public class PlayerShooting : MonoBehaviour
         }
         // stops the gun from firing stupidly
         state = gunState.firing;
+        //animator.SetFloat("ReadySpeed",1 - HeldGun.gunList[HeldGun.gunIndex].rateOfFire);
+        animator.SetTrigger("FireWeapon");
         HeldGun.shootWeapon();
         Invoke(nameof(readyWeapon), HeldGun.gunList[HeldGun.gunIndex].rateOfFire);
     }
     public void Reload()
     {
         if(isClientOBJ)animator.SetTrigger("ReloadSpin");
-        
+        audio.clip = reloadSound;
+        audio.PlayDelayed(0.5f);
         state = gunState.reloading;
         HeldGun.Invoke(nameof(HeldGun.reloadWeapon),HeldGun.gunList[HeldGun.gunIndex].reloadSpeed);
         Invoke(nameof(readyWeapon), HeldGun.gunList[HeldGun.gunIndex].reloadSpeed);

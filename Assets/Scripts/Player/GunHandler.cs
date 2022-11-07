@@ -15,10 +15,13 @@ public class GunHandler : MonoBehaviour
     public float scrollChangeThreashhold;
     public bool invertScroll;
     public MeshFilter gunMeshDisplay;    
+    private AudioSource audio;
+    public AudioClip reloadSound;
     void Start()
     {
         changeGun(0);
         if(isClient) updateUIElements();
+        audio = GetComponent<AudioSource>();
     }
     public void giveGun(GunSO GivenGun, bool forceSwitch)
     {
@@ -47,6 +50,9 @@ public class GunHandler : MonoBehaviour
         ammoInWeapon[gunIndex]--;
         if(isClient) updateUIElements();
         if(ammoInWeapon[gunIndex] <= 0) Invoke(nameof(reloadWeapon), gunList[gunIndex].reloadSpeed);
+        audio.clip = gunList[gunIndex].fireNoise;
+        audio.Play();
+        
     }
     public void reloadWeapon()
     {
@@ -65,7 +71,6 @@ public class GunHandler : MonoBehaviour
             //Mathf.Clamp(gunIndex + 1 * Input.GetAxisRaw("Mouse ScrollWheel") * Convert.ToInt32(invertScroll),0,gunList.Count);
             Debug.Log("Mouse Input = " + Input.GetAxisRaw("Mouse ScrollWheel") * 10);
             changeGun(Convert.ToInt32(Input.GetAxisRaw("Mouse ScrollWheel") * 10));
-            
         }
     }
     private void changeGun(int newIndex)

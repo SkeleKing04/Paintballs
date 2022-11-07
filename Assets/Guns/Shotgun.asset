@@ -18,5 +18,5 @@ MonoBehaviour:
   damage: 75
   paintDamage: 75
   ammo: 6
-  remainingAmmo: 6
   modelPrefab: {fileID: 5855586643228379229, guid: c9841888fa5041d499ada59f73087c6a, type: 3}
+  fireNoise: {fileID: 8300000, guid: 8b7e32731c02aa84caf770e288705a1c, type: 3}
