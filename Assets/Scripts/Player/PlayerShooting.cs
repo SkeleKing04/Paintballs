@@ -145,7 +145,7 @@ public class PlayerShooting : MonoBehaviour
         // stops the gun from firing stupidly
         state = gunState.firing;
         //animator.SetFloat("ReadySpeed",1 - HeldGun.gunList[HeldGun.gunIndex].rateOfFire);
-        animator.SetTrigger("FireWeapon");
+        if(isClientOBJ) animator.SetTrigger("FireWeapon");
         HeldGun.shootWeapon();
         Invoke(nameof(readyWeapon), HeldGun.gunList[HeldGun.gunIndex].rateOfFire);
     }

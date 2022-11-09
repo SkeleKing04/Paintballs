@@ -16,6 +16,8 @@ public class HealthHandler : MonoBehaviour
     //private damageType type;
     private DeathmatchScript deathmatchScript;
     public bool dead, despawned, isClient;
+    public AudioClip deathSound;
+    private AudioSource source;
     [Header("UI")]
     public TextMeshProUGUI damageText, paintText;
     public Image damageImage, paintImage; 
@@ -41,6 +43,7 @@ public class HealthHandler : MonoBehaviour
         gameObject.GetComponent<MovementScript>().enabled = true;
         gameObject.GetComponent<Transform>().rotation = new Quaternion(0,0,0,0);
         gameObject.GetComponent<Rigidbody>().freezeRotation = true;
+        source = gameObject.GetComponent<AudioSource>();
     }
     public void resetHealth()
     {
@@ -50,6 +53,8 @@ public class HealthHandler : MonoBehaviour
     }
     public void UpdateHealth(float damageAmmount, float paintAmmount, GameObject sender)
     {
+        if(!dead)
+        {
         currentHealth = Mathf.Clamp(currentHealth - damageAmmount, 0, baseHealth);
         currentPaint = Mathf.Clamp(currentPaint + paintAmmount, 0, maxPaint);
         if (isClient)
@@ -60,12 +65,15 @@ public class HealthHandler : MonoBehaviour
             damageImage.fillAmount = currentHealth / baseHealth;
         }
         DeathCheck(sender);
+        }
     }
     private void DeathCheck(GameObject sender)
     {
-        if(currentPaint >= maxPaint)
+        if(currentPaint >= maxPaint && !dead)
         {
             Debug.Log(gameObject.name + " has been killed by " + sender.name);
+            source.clip = deathSound;
+            source.Play();
             if(sender.GetComponent<TeamManager>().teamColor != GetComponent<TeamManager>().teamColor && !dead)
             {
                 deathmatchScript.updatePlayerScore(sender);

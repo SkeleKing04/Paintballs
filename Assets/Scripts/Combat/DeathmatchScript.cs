@@ -120,7 +120,7 @@ public class DeathmatchScript : MonoBehaviour
             foreach(playerData dataPoint in data)
             {
                 dataPoint.playerObject.GetComponent<TeamManager>().teamColor = new Color(UnityEngine.Random.Range(0f, 256f)/255f,UnityEngine.Random.Range(0f, 256f)/255f,UnityEngine.Random.Range(0f, 256f)/255f,255f);
-                //dataPoint.playerObject.GetComponent<TeamManager>().UpdateColour();
+                dataPoint.playerObject.GetComponent<TeamManager>().UpdateColour();
                 dataPoint.personalScorecard.transform.GetComponent<Image>().color = dataPoint.playerObject.GetComponent<TeamManager>().teamColor;
                 dataPoint.playerObject.SetActive(false);
             }
@@ -213,7 +213,7 @@ public class DeathmatchScript : MonoBehaviour
     {
         //Debug.Log("SpawnMe called at " + Time.time + " and will wait " + spawnWait + " seconds.");
         yield return new WaitForSeconds(spawnWait);
-        if(sender.activeSelf == false && sender)
+        if(sender.GetComponent<MovementScript>().enabled)
         {
             //Debug.Log("SpawnMe resumed");
             List<Transform> possibleSpawns = new List<Transform>();
@@ -289,7 +289,7 @@ public class DeathmatchScript : MonoBehaviour
             resetPlayerCam(2);
         }
         data[IndexPlayers(sender)].playerObject.GetComponent<HealthHandler>().despawned = true;
-        data[IndexPlayers(sender)].playerObject.SetActive(false);
+        //data[IndexPlayers(sender)].playerObject.SetActive(false);
         if(doRespawn) StartCoroutine(spawnMe(sender, deathCooldown));
     }
     private void restartGame()

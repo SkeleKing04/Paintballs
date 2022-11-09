@@ -272,7 +272,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 940666010994815639}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -360,7 +360,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &940666011427866977
 Transform:
   m_ObjectHideFlags: 0
@@ -474,6 +474,7 @@ MonoBehaviour:
   dead: 0
   despawned: 0
   isClient: 0
+  deathSound: {fileID: 8300000, guid: 4d8a401b914b6954d9a6e5f462c4c0e7, type: 3}
   damageText: {fileID: 0}
   paintText: {fileID: 0}
   damageImage: {fileID: 0}
@@ -495,7 +496,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   teamColor: {r: 1, g: 0, b: 0, a: 0}
-  renderer: {fileID: 0}
+  renderer: {fileID: 940666010058968970}
 --- !u!114 &940666011427866983
 MonoBehaviour:
   m_ObjectHideFlags: 0

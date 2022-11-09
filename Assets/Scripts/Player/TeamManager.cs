@@ -6,7 +6,7 @@ using System;
 public class TeamManager : MonoBehaviour
 {
     public Color teamColor;
-    public new Renderer renderer;
+    public Renderer renderer;
     public void UpdateColour()
     {
         try
