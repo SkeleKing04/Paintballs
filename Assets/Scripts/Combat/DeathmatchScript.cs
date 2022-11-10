@@ -213,7 +213,7 @@ public class DeathmatchScript : MonoBehaviour
     {
         //Debug.Log("SpawnMe called at " + Time.time + " and will wait " + spawnWait + " seconds.");
         yield return new WaitForSeconds(spawnWait);
-        if(sender.GetComponent<MovementScript>().enabled)
+        if(!sender.GetComponent<MovementScript>().enabled || !sender.activeSelf)
         {
             //Debug.Log("SpawnMe resumed");
             List<Transform> possibleSpawns = new List<Transform>();
