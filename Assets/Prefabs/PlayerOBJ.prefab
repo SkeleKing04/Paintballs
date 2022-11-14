@@ -187,7 +187,8 @@ MonoBehaviour:
   switchWeaponKey: 9
   isClientOBJ: 1
   hitMarker: {fileID: 0}
-  reloadSound: {fileID: 0}
+  reloadSound: {fileID: 8300000, guid: 05db75712b37a63459a30a5f63d9d7bc, type: 3}
+  hitParticle: {fileID: 8080931066791540604, guid: ce817ce9a7c32104c9e83ecee1e49f24, type: 3}
 --- !u!114 &7385643459741566855
 MonoBehaviour:
   m_ObjectHideFlags: 0

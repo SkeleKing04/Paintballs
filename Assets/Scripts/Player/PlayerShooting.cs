@@ -42,6 +42,7 @@ public class PlayerShooting : MonoBehaviour
     public Image hitMarker;
     public AudioClip reloadSound;
     private AudioSource audio;
+    public ParticleSystem hitParticle;
     // Start is called before the first frame update
     void Awake()
     {
@@ -112,12 +113,20 @@ public class PlayerShooting : MonoBehaviour
         // The "50f" needs to be changed to the weapons range
         if(Physics.Raycast(startPos, endPoint * HeldGun.gunList[HeldGun.gunIndex].range, out hit, HeldGun.gunList[HeldGun.gunIndex].range, layerMasks))
         {   
-            Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, HeldGun.gunList[HeldGun.gunIndex].rateOfFire);
             Debug.DrawRay(startPos, trueFireTransform.forward * HeldGun.gunList[HeldGun.gunIndex].range, Color.blue, HeldGun.gunList[HeldGun.gunIndex].rateOfFire);
+            Debug.DrawRay(startPos, trueFireTransform.forward * hit.distance, Color.green, HeldGun.gunList[HeldGun.gunIndex].rateOfFire);
             if(hit.collider == null)
             {
                 Ray ray = new Ray(startPos, trueFireTransform.forward * HeldGun.gunList[HeldGun.gunIndex].range);
                 hit.point = (ray.GetPoint(HeldGun.gunList[HeldGun.gunIndex].range));
+            }
+            else
+            {
+                ParticleSystem newParticle = Instantiate(hitParticle, hit.point, Quaternion.LookRotation(hit.normal));
+                var main = newParticle.main;
+                main.startColor = teamColor;
+                newParticle.Play();
+                Destroy(newParticle.gameObject,1f);
             }
             //Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer
@@ -138,9 +147,11 @@ public class PlayerShooting : MonoBehaviour
         else
         {
             Debug.DrawRay(startPos, trueFireTransform.forward * HeldGun.gunList[HeldGun.gunIndex].range, Color.red, 0.1f);
+            Ray ray = new Ray(startPos, trueFireTransform.forward * HeldGun.gunList[HeldGun.gunIndex].range);
+            hit.point = (ray.GetPoint(HeldGun.gunList[HeldGun.gunIndex].range));
             //Debug.Log("Missed object.");
             //Begins to set up the tracer
-            if(doTracer) StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, falseFireTransform.forward * HeldGun.gunList[HeldGun.gunIndex].range, GetComponent<TeamManager>().teamColor, trailTime, trailWidth, gameObject));
+            if(doTracer) StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, hit.point, GetComponent<TeamManager>().teamColor, trailTime, trailWidth, gameObject));
         }
         // stops the gun from firing stupidly
         state = gunState.firing;

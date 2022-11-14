@@ -511,10 +511,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   trueFireTransform: {fileID: 940666011625484313}
   falseFireTransform: {fileID: 940666011086185776}
-  doTracer: 0
-  lineRenderer: {fileID: 0}
-  trailTime: 0
-  trailWidth: 0
+  doTracer: 1
+  lineRenderer: {fileID: 8727200555337586795, guid: 032123c27f1152f4fb0d38bdeca25025, type: 3}
+  trailTime: 1
+  trailWidth: 0.1
   animator: {fileID: 0}
   state: 0
   fireKey: 0
@@ -524,6 +524,7 @@ MonoBehaviour:
   isClientOBJ: 0
   hitMarker: {fileID: 0}
   reloadSound: {fileID: 0}
+  hitParticle: {fileID: 8080931066791540604, guid: ce817ce9a7c32104c9e83ecee1e49f24, type: 3}
 --- !u!114 &940666011427866982
 MonoBehaviour:
   m_ObjectHideFlags: 0
