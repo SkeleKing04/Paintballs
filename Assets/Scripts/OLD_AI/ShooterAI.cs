@@ -30,7 +30,7 @@ public class ShooterAI : MonoBehaviour
     public float randomMoveFloat;
     public float randomMoveWait;
     private bool canMove;
-    private bool doStrafe;
+    //private bool doStrafe;
     public float changeStrafeDirCooldown;
     [Header("Shooting")]
     public GameObject Head;
@@ -44,7 +44,7 @@ public class ShooterAI : MonoBehaviour
     void Start()
     {
         canMove = true;
-        doStrafe = true;
+        //doStrafe = true;
         layerMasks = 1 << 8;
         layerMasks = ~layerMasks;
         Agent = GetComponent<NavMeshAgent>();
@@ -241,7 +241,7 @@ public class ShooterAI : MonoBehaviour
     }
     private void ResetStrafe()
     {
-        doStrafe = true;
+        //doStrafe = true;
     }
     private bool targetBlocked(GameObject objectToHit, Vector3 targetPos)
     {

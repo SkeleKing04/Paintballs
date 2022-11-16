@@ -15,7 +15,7 @@ MonoBehaviour:
   range: 100
   rateOfFire: 3
   reloadSpeed: 5
-  damage: 0
+  damage: 100
   paintDamage: 100
   ammo: 1
   modelPrefab: {fileID: 171527776781687000, guid: 67a7e24bd17106e44b96414cadeb93f0, type: 3}

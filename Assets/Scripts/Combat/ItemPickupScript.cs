@@ -33,12 +33,12 @@ public class ItemPickupScript : MonoBehaviour
         switch(type)
         {
             case pickupType.gun:
-                try {other.GetComponentInParent<GunHandler>().giveGun(gunType,true);} catch (Exception e) {}
+                try {other.GetComponentInParent<GunHandler>().giveGun(gunType,true);} catch (Exception) {Debug.LogWarning("Unable to give " + other.name + " " + gunType.name + ".\nIs the Gun Handler attached?");}
                 break;
             case pickupType.ammo:
                 break;
             case pickupType.heal:
-                try {other.GetComponentInParent<HealthHandler>().UpdateHealth(damagePaintValue.x,damagePaintValue.y,gameObject);} catch (Exception e) {}
+                try {other.GetComponentInParent<HealthHandler>().UpdateHealth(damagePaintValue.x,damagePaintValue.y,gameObject);} catch (Exception) {Debug.LogWarning("Unable to heal " + other.name + ".\nIs the Health Handler attached?");}
                 break;
         }
         Destroy(gameObject);

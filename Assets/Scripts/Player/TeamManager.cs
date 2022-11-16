@@ -6,7 +6,7 @@ using System;
 public class TeamManager : MonoBehaviour
 {
     public Color teamColor;
-    public Renderer renderer;
+    public new Renderer renderer;
     public void UpdateColour()
     {
         try
@@ -14,7 +14,7 @@ public class TeamManager : MonoBehaviour
             renderer.material.color = teamColor;
 
         }
-        catch (Exception e)
+        catch (Exception)
         {
             Debug.LogWarning("Unable to update " + gameObject.name + "'s colour!\n Is there are renderer attached?");
         }

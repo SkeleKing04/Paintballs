@@ -41,7 +41,7 @@ public class PlayerShooting : MonoBehaviour
     private GunHandler HeldGun;
     public Image hitMarker;
     public AudioClip reloadSound;
-    private AudioSource audio;
+    private new AudioSource audio;
     public ParticleSystem hitParticle;
     // Start is called before the first frame update
     void Awake()
@@ -125,8 +125,16 @@ public class PlayerShooting : MonoBehaviour
                 ParticleSystem newParticle = Instantiate(hitParticle, hit.point, Quaternion.LookRotation(hit.normal));
                 var main = newParticle.main;
                 main.startColor = teamColor;
+                ParticleSystem.MinMaxCurve speedCurve = main.startSpeed.constant;
+                speedCurve = 100f;
+                //speedCurve.curveMin = new AnimationCurve(new Keyframe(1,Mathf.FloorToInt((HeldGun.gunList[HeldGun.gunIndex].damage) / 10)));
+                //ParticleSystem.MinMaxCurve maxSpeedCurve = main.startSpeed.constantMax;
+                //maxSpeedCurve = 
+                newParticle.emission.SetBurst(0,new ParticleSystem.Burst(0.0f, Convert.ToInt16(Mathf.FloorToInt((HeldGun.gunList[HeldGun.gunIndex].paintDamage)/ 10)), Convert.ToInt16(Mathf.CeilToInt((HeldGun.gunList[HeldGun.gunIndex].paintDamage) / 10))));
+                Debug.Log("Drawing Particles\nMin Speed =  " + main.startSpeed.constantMin + " | Max Speed = " + main.startSpeed.constantMax +
+                                           "\nMin Size =  " + newParticle.emission.GetBurst(0).minCount + " | Max Speed = " + newParticle.emission.GetBurst(0).maxCount);
                 newParticle.Play();
-                Destroy(newParticle.gameObject,1f);
+                Destroy(newParticle.gameObject,2.5f);
             }
             //Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer

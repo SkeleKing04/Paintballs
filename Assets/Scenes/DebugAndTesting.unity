@@ -900,7 +900,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh23696
+  m_Name: pb_Mesh16614
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2973,7 +2973,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 940666011427866990, guid: b59a0ea05dc2d1c43a8aa8a34af4ab92, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b59a0ea05dc2d1c43a8aa8a34af4ab92, type: 3}
@@ -3002,7 +3002,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2929302541786868895, guid: eaf35da686bdf33479870039b58cdcac, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10
+      value: -9.55
       objectReference: {fileID: 0}
     - target: {fileID: 2929302541786868895, guid: eaf35da686bdf33479870039b58cdcac, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3531,14 +3531,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 7385643459741566073, guid: 5b555c79d546aa04d833f6550162ab5f, type: 3}
-      propertyPath: dashForce
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385643459741566074, guid: 5b555c79d546aa04d833f6550162ab5f, type: 3}
-      propertyPath: teamColor.b
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7385643459741566075, guid: 5b555c79d546aa04d833f6550162ab5f, type: 3}
       propertyPath: paintText
       value: 
@@ -3615,18 +3607,10 @@ PrefabInstance:
       propertyPath: gunNameText
       value: 
       objectReference: {fileID: 371670222}
-    - target: {fileID: 7385643459741566852, guid: 5b555c79d546aa04d833f6550162ab5f, type: 3}
-      propertyPath: reloadSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 05db75712b37a63459a30a5f63d9d7bc, type: 3}
     - target: {fileID: 7385643459741566853, guid: 5b555c79d546aa04d833f6550162ab5f, type: 3}
       propertyPath: hitMarker
       value: 
       objectReference: {fileID: 1579293406}
-    - target: {fileID: 7385643459741566853, guid: 5b555c79d546aa04d833f6550162ab5f, type: 3}
-      propertyPath: hitParticle
-      value: 
-      objectReference: {fileID: 3433751303990077029, guid: 3551b1d490ee25743924fdc9b4c60f98, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5b555c79d546aa04d833f6550162ab5f, type: 3}
 --- !u!1001 &7436584353114475845
@@ -3684,6 +3668,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ItemPickup
       objectReference: {fileID: 0}
+    - target: {fileID: 7436584353427612303, guid: dc65f90bcdb973846825d244509d6ba8, type: 3}
+      propertyPath: gunType
+      value: 
+      objectReference: {fileID: 11400000, guid: 7b1df5630f3bdd4429f3d23ba22c4ed1, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc65f90bcdb973846825d244509d6ba8, type: 3}
 --- !u!114 &7626802004413838764 stripped

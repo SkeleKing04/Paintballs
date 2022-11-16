@@ -35,7 +35,7 @@ public class DeathmatchScript : MonoBehaviour
     public float gameStartTime;
     [Header("Unsorted")]
     public Transform mapCenter;
-    public CameraController camera;
+    public new CameraController camera;
     public GameObject playerScorecard;
     //private List<GameObject> scorecards;
     //private List<float> scores;

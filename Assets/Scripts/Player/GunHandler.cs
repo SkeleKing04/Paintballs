@@ -15,7 +15,7 @@ public class GunHandler : MonoBehaviour
     public float scrollChangeThreashhold;
     public bool invertScroll;
     public MeshFilter gunMeshDisplay;    
-    private AudioSource audio;
+    private new AudioSource audio;
     public AudioClip reloadSound;
     void Start()
     {
