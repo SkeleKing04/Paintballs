@@ -78,7 +78,7 @@ public class EnemyAI : MonoBehaviour
                 float disToEnemy = (enemy.transform.position - transform.position).magnitude;
                 float disToTarg = Mathf.Infinity;
                 if (target != null) disToTarg = (target.transform.position - transform.position).magnitude;
-                if(disToEnemy <= sightRange && disToTarg >= disToEnemy) 
+                if(disToEnemy <= sightRange && disToTarg >= disToEnemy && enemy.GetComponent<MovementScript>().enabled) 
                 {
                     target = enemy;
                 }
