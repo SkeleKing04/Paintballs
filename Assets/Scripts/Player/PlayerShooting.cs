@@ -122,23 +122,36 @@ public class PlayerShooting : MonoBehaviour
             }
             else
             {
+                // Particle Shananagans
                 ParticleSystem newParticle = Instantiate(hitParticle, hit.point, Quaternion.LookRotation(hit.normal));
                 var main = newParticle.main;
                 main.startColor = teamColor;
-                ParticleSystem.MinMaxCurve speedCurve = main.startSpeed.constant;
-                speedCurve = 100f;
+                //ParticleSystem.MinMaxCurve speedCurve = main.startSpeed.constant;
+                //speedCurve = 100f;
+                main.startSpeedMultiplier = Mathf.Ceil(HeldGun.gunList[HeldGun.gunIndex].damage / 10) + 1;
                 //speedCurve.curveMin = new AnimationCurve(new Keyframe(1,Mathf.FloorToInt((HeldGun.gunList[HeldGun.gunIndex].damage) / 10)));
                 //ParticleSystem.MinMaxCurve maxSpeedCurve = main.startSpeed.constantMax;
                 //maxSpeedCurve = 
                 newParticle.emission.SetBurst(0,new ParticleSystem.Burst(0.0f, Convert.ToInt16(Mathf.FloorToInt((HeldGun.gunList[HeldGun.gunIndex].paintDamage)/ 10)), Convert.ToInt16(Mathf.CeilToInt((HeldGun.gunList[HeldGun.gunIndex].paintDamage) / 10))));
-                Debug.Log("Drawing Particles\nMin Speed =  " + main.startSpeed.constantMin + " | Max Speed = " + main.startSpeed.constantMax +
-                                           "\nMin Size =  " + newParticle.emission.GetBurst(0).minCount + " | Max Speed = " + newParticle.emission.GetBurst(0).maxCount);
+                //Debug.Log("Drawing Particles\nMin Speed =  " + main.startSpeed.constantMin + " | Max Speed = " + main.startSpeed.constantMax +
+                //                           "\nMin Size =  " + newParticle.emission.GetBurst(0).minCount + " | Max Speed = " + newParticle.emission.GetBurst(0).maxCount);
                 newParticle.Play();
                 Destroy(newParticle.gameObject,2.5f);
             }
             //Debug.Log("Hit object" + hit.collider.name);
             //Begins to set up the tracer
             if(doTracer) StartCoroutine(line.GetComponent<BulletTracer>().setLine(falseFireTransform.position, hit.point, GetComponent<TeamManager>().teamColor, HeldGun.gunList[HeldGun.gunIndex].rateOfFire, trailWidth, gameObject));
+            if(HeldGun.gunList[HeldGun.gunIndex].explosive)
+            {
+                foreach(Rigidbody rb in FindObjectsOfType<Rigidbody>())
+                {
+                    float distanceFromPoint = (hit.point - rb.transform.position).sqrMagnitude;
+                    if(distanceFromPoint < HeldGun.gunList[HeldGun.gunIndex].explosiveRange)
+                    {
+                        rb.AddExplosionForce(HeldGun.gunList[HeldGun.gunIndex].explosiveForce, hit.point, HeldGun.gunList[HeldGun.gunIndex].explosiveRange, 1);
+                    }
+                }
+            }
             try
             {
                 hit.collider.gameObject.GetComponentInParent<HealthHandler>().UpdateHealth(HeldGun.gunList[HeldGun.gunIndex].damage, HeldGun.gunList[HeldGun.gunIndex].paintDamage, gameObject);

@@ -467,10 +467,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41c056d43c2b6eb43b1ecae3a730255e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHealth: 100
+  baseHealth: 2000
   currentHealth: 0
-  maxPaint: 100
+  maxPaint: 2000
   currentPaint: 0
+  respawnTime: 5
   dead: 0
   despawned: 0
   isClient: 0
@@ -479,10 +480,9 @@ MonoBehaviour:
   paintText: {fileID: 0}
   damageImage: {fileID: 0}
   paintImage: {fileID: 0}
-  jumpForce: 0
-  positionOffset: 0
-  range: 0
-  vertical: 0
+  jumpForce: 100
+  range: 10
+  vertical: 100
 --- !u!114 &940666011427866976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -539,7 +539,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClient: 0
   gunList:
-  - {fileID: 11400000, guid: 28a9df0eda2ff07408694aa9abcfb86d, type: 2}
+  - {fileID: 11400000, guid: d6bb2466551c288419195af1e5890b1d, type: 2}
   ammoInWeapon: 1e000000
   gunIndex: 0
   gunNameText: {fileID: 0}

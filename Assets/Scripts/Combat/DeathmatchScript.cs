@@ -27,7 +27,7 @@ public class DeathmatchScript : MonoBehaviour
     public Transform[] spawnPoints;
     [Header("Game Settings")]
     public static bool teamDeathmatch;
-    public static int scoreCap = 2, teamSize = 1;
+    public static int scoreCap = 1000, teamSize = 50;
     private int botCount;
     public GameObject botPrefab;
     static public bool fillRoomWithBots = true;

@@ -10,13 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3acf2b9fd7e32744af0b3e96dd2bd5e, type: 3}
-  m_Name: RocketLauncher
+  m_Name: Gods Personal Nuke
   m_EditorClassIdentifier: 
-  range: 100
+  range: 9999
   rateOfFire: 0
-  reloadSpeed: 5
-  damage: 200
+  reloadSpeed: 0
+  damage: 100
   paintDamage: 1000
-  ammo: 1
+  ammo: 1000
+  explosive: 1
+  explosiveForce: 100
+  explosiveRange: 5
   modelPrefab: {fileID: 171527776781687000, guid: 67a7e24bd17106e44b96414cadeb93f0, type: 3}
   fireNoise: {fileID: 8300000, guid: 7fac59d3baa0e1a438b6af8cf4d1f385, type: 3}
