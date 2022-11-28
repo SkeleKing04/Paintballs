@@ -107,10 +107,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41c056d43c2b6eb43b1ecae3a730255e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHealth: 3.4028235e+38
+  baseHealth: 100
   currentHealth: 0
-  maxPaint: 3.4028235e+38
+  maxPaint: 100
   currentPaint: 0
+  respawnTime: 0
   dead: 0
   despawned: 0
   isClient: 1

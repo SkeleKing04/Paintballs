@@ -467,9 +467,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41c056d43c2b6eb43b1ecae3a730255e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHealth: 2000
+  baseHealth: 100
   currentHealth: 0
-  maxPaint: 2000
+  maxPaint: 100
   currentPaint: 0
   respawnTime: 5
   dead: 0
@@ -539,7 +539,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClient: 0
   gunList:
-  - {fileID: 11400000, guid: d6bb2466551c288419195af1e5890b1d, type: 2}
+  - {fileID: 11400000, guid: 28a9df0eda2ff07408694aa9abcfb86d, type: 2}
   ammoInWeapon: 1e000000
   gunIndex: 0
   gunNameText: {fileID: 0}

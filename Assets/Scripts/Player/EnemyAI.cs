@@ -64,6 +64,7 @@ public class EnemyAI : MonoBehaviour
     }
     public void refreshEnemies()
     {
+        enemies.Clear();
         foreach(GameObject combatant in allCombatants)
         {
             if(combatant.GetComponent<TeamManager>().teamColor != GetComponent<TeamManager>().teamColor && combatant != gameObject && !enemies.Contains(combatant)) enemies.Add(combatant);
@@ -87,12 +88,16 @@ public class EnemyAI : MonoBehaviour
     }
     private void checkTarget()
     {
-        if((transform.position - target.transform.position).magnitude >= sightRange ||
-            !target.activeSelf ||
-            target.GetComponent<TeamManager>().teamColor == GetComponent<TeamManager>().teamColor)
+        if(target != null)
         {
-            target = null;
-            refreshEnemies();
+            if((transform.position - target.transform.position).magnitude >= sightRange ||
+                !target.activeSelf ||
+                target.GetComponent<TeamManager>().teamColor == GetComponent<TeamManager>().teamColor ||
+                !target.GetComponent<MovementScript>().isActiveAndEnabled)
+            {
+                target = null;
+                refreshEnemies();
+            }
         }
     }
     private void lookAtTarget()
@@ -113,14 +118,14 @@ public class EnemyAI : MonoBehaviour
             if((target.transform.position - transform.position).magnitude > targetStopDist - (targetStopDist * 0.1) && (target.transform.position - transform.position).magnitude < targetStopDist) movement.verticalInput = 0;
             else if((target.transform.position - transform.position).magnitude > targetStopDist - (targetStopDist * 0.1)) movement.verticalInput = 1;
             else if((target.transform.position - transform.position).magnitude < targetStopDist + (targetStopDist * 0.1)) movement.verticalInput = -1;
-        if(Mathf.Abs(target.transform.position.y - transform.position.y) > jumpTreashhold && movement.readyToJump && movement.grounded)
-        {
-            movement.doJump();
-        }
-        else if(Mathf.Abs((target.transform.position - transform.position).magnitude) > dashTreashhold && movement.dashCount > 0)
-        {
-            movement.doDash();
-        }
+            if(Mathf.Abs(target.transform.position.y - transform.position.y) > jumpTreashhold && movement.readyToJump && movement.grounded)
+            {
+                movement.doJump();
+            }
+            else if(Mathf.Abs((target.transform.position - transform.position).magnitude) > dashTreashhold && movement.dashCount > 0)
+            {
+                movement.doDash();
+            }
         }    
         //movement.verticalInput = Input.GetAxisRaw("Vertical");
 

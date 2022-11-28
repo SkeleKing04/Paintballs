@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Gods Personal Nuke
   m_EditorClassIdentifier: 
   range: 9999
-  rateOfFire: 0
+  rateOfFire: 1
   reloadSpeed: 0
   damage: 100
   paintDamage: 1000
   ammo: 1000
   explosive: 1
-  explosiveForce: 100
-  explosiveRange: 5
+  explosiveForce: 1000
+  explosiveRange: 100
   modelPrefab: {fileID: 171527776781687000, guid: 67a7e24bd17106e44b96414cadeb93f0, type: 3}
   fireNoise: {fileID: 8300000, guid: 7fac59d3baa0e1a438b6af8cf4d1f385, type: 3}

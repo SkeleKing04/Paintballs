@@ -149,6 +149,10 @@ public class PlayerShooting : MonoBehaviour
                     if(distanceFromPoint < HeldGun.gunList[HeldGun.gunIndex].explosiveRange)
                     {
                         rb.AddExplosionForce(HeldGun.gunList[HeldGun.gunIndex].explosiveForce, hit.point, HeldGun.gunList[HeldGun.gunIndex].explosiveRange, 1);
+                        if(rb.GetComponent<HealthHandler>())
+                        {
+                            rb.GetComponent<HealthHandler>().UpdateHealth(Mathf.Round(HeldGun.gunList[HeldGun.gunIndex].damage * (0.9861f * Mathf.Exp(-4.27f*(distanceFromPoint/HeldGun.gunList[HeldGun.gunIndex].explosiveRange)))),Mathf.Round(HeldGun.gunList[HeldGun.gunIndex].paintDamage * (0.963f*Mathf.Exp(-4.22f*distanceFromPoint/HeldGun.gunList[HeldGun.gunIndex].explosiveRange))),gameObject);
+                        }
                     }
                 }
             }

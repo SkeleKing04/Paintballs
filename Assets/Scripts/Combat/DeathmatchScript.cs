@@ -27,10 +27,10 @@ public class DeathmatchScript : MonoBehaviour
     public Transform[] spawnPoints;
     [Header("Game Settings")]
     public static bool teamDeathmatch;
-    public static int scoreCap = 1000, teamSize = 50;
+    public static int scoreCap = 1000, teamSize = 1;
     private int botCount;
     public GameObject botPrefab;
-    static public bool fillRoomWithBots = true;
+    static public bool fillRoomWithBots = false;
     public Color teamAColour, teamBColour;
     public float gameStartTime;
     [Header("Unsorted")]
@@ -245,7 +245,6 @@ public class DeathmatchScript : MonoBehaviour
             while(!isSpawned && whileIteration < 10)
             {
                 int rnd = UnityEngine.Random.Range(0, possibleSpawns.Count);
-                    Debug.Log("Gate A Hit");
                     sender.SetActive(true);
                     sender.GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
                     if(sender.GetComponent<MovementScript>().isClient == true)
