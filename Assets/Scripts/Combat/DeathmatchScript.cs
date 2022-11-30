@@ -30,7 +30,7 @@ public class DeathmatchScript : MonoBehaviour
     public static int scoreCap = 1000, teamSize = 1;
     private int botCount;
     public GameObject botPrefab;
-    static public bool fillRoomWithBots = false;
+    static public bool fillRoomWithBots = true;
     public Color teamAColour, teamBColour;
     public float gameStartTime;
     [Header("Unsorted")]
@@ -66,7 +66,6 @@ public class DeathmatchScript : MonoBehaviour
     }
     public void startGate()
     {
-        Debug.Log("Start Gate hit");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         setupGame();
@@ -76,10 +75,10 @@ public class DeathmatchScript : MonoBehaviour
         teamAColour = new Color(UnityEngine.Random.Range(0f, 256f)/255f,UnityEngine.Random.Range(0f, 256f)/255f,UnityEngine.Random.Range(0f, 256f)/255f,255f);
         teamBColour = new Color(1f - teamAColour.r,1f - teamAColour.g, 1f - teamAColour.b,255f);
         GameObject[] allCombatants = GameObject.FindGameObjectsWithTag("Combatant");
-        Debug.Log("Found combantants length @ " + allCombatants.Length.ToString());
+        //Debug.Log("Found combantants length @ " + allCombatants.Length.ToString());
         for(int i = 0; i <= allCombatants.Length - 1; i++)
         {
-            Debug.Log(allCombatants[i].name.ToString());
+            //Debug.Log(allCombatants[i].name.ToString());
             data.Add(new playerData());
             addNewPlayer(data[i], allCombatants[i]);
         }
@@ -223,21 +222,21 @@ public class DeathmatchScript : MonoBehaviour
                 {
                     if(spawnPoint.GetComponent<SpawnPoint>().CheckSpawn(sender))
                     {
-                        Debug.Log("Added " + spawnPoint.name + " to possible spawns");
+                        //Debug.Log("Added " + spawnPoint.name + " to possible spawns");
                         possibleSpawns.Add(spawnPoint);
                     }
-                    else Debug.Log("Didnt add " + spawnPoint.name + " to possible spawns");
+                     //Debug.Log("Didnt add " + spawnPoint.name + " to possible spawns");
                 }
                 if(possibleSpawns.Count >= 1)
                 {
-                    Debug.Log(sender + " has found spawns");
+                    //Debug.Log(sender + " has found spawns");
                     i = 3;
                 }
                 else if(i == 2)
                 {
-                    Debug.Log("No spawns found after 3 loops, something went wrong");
+                    //Debug.Log("No spawns found after 3 loops, something went wrong");
                 }
-                else Debug.Log("No spawns found this loop");
+                 //Debug.Log("No spawns found this loop");
             }
             bool isSpawned = false;
             int whileIteration = 0;
@@ -264,7 +263,7 @@ public class DeathmatchScript : MonoBehaviour
         }
         else
         {
-            Debug.Log(sender.name + " is already spawned");
+            //Debug.Log(sender.name + " is already spawned");
         }
     }
     private void endGame()
@@ -275,7 +274,7 @@ public class DeathmatchScript : MonoBehaviour
             {
                 dataPoint.playerObject.SetActive(true);
             }
-            Debug.Log("despawning " + dataPoint.playerObject.name);
+            //Debug.Log("despawning " + dataPoint.playerObject.name);
             //deSpawnMe(dataPoint.playerObject, false, 0f)
         }
         SceneManager.LoadScene(exitScene);
@@ -302,15 +301,15 @@ public class DeathmatchScript : MonoBehaviour
             {
                 if(data[0].playerObject.GetComponent<EnemyAI>() == true)
                 {   
-                    Debug.Log("destorying " + data[0].playerObject.name);
+                    //Debug.Log("destorying " + data[0].playerObject.name);
                     data[0].playerObject.SetActive(true);
                     Destroy(data[0].playerObject);
                 }
-                else Debug.Log("The player " + data[0].playerObject.name + " is real");
+                 //Debug.Log("The player " + data[0].playerObject.name + " is real");
             }
             catch(Exception e)
             {
-                Debug.Log("Failed to destroy object " + data[0].playerObject.name + "\nError " + e.ToString());
+                //Debug.Log("Failed to destroy object " + data[0].playerObject.name + "\nError " + e.ToString());
             }
             data.RemoveAt(0);
         }

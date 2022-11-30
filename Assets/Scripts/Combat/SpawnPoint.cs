@@ -39,7 +39,7 @@ public class SpawnPoint : MonoBehaviour
         }
         else
         {
-                Debug.Log(sender.name + " is " + (sender.transform.position - gameObject.transform.position).magnitude + " units from this spawn point, " + gameObject.name);
+                //Debug.Log(sender.name + " is " + (sender.transform.position - gameObject.transform.position).magnitude + " units from this spawn point, " + gameObject.name);
                 if(DeathmatchScript.teamDeathmatch)
                 {
                     if(sender.GetComponent<TeamManager>().teamColor == gameObject.GetComponent<TeamManager>().teamColor)

@@ -46,7 +46,7 @@ public class PlayerShooting : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        layerMasks = 1 << 8;
+        layerMasks = 1 << 10;
         layerMasks = ~layerMasks;
         try
         {

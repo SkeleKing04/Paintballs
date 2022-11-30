@@ -36,14 +36,14 @@ public class CameraController : MonoBehaviour
     public void setMainIndex(int index)
     {
         mainIndex = index;
-        Debug.Log("Main index set at " + mainIndex.ToString());
+        //Debug.Log("Main index set at " + mainIndex.ToString());
     }
     public void increaseMainIndex(int index)
     {
         mainIndex += index;
         if(mainIndex < 0) mainIndex = objectToFollow.Count - 1;
         if(mainIndex >= objectToFollow.Count) mainIndex = 0;
-        Debug.Log("Main index increased by " + index + ". Now set at " + mainIndex.ToString());
+        //Debug.Log("Main index increased by " + index + ". Now set at " + mainIndex.ToString());
     }
     // Update is called once per frame
     void Update()
