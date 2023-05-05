@@ -61,8 +61,10 @@ public class MovementScript : MonoBehaviour
     [Header("General")]
     public new Rigidbody rigidbody;
     public Transform playerObj;
+    public SoundHandler soundHandler;
     void Start()
     {
+        soundHandler = GetComponent<SoundHandler>();
         rigidbody = GetComponent<Rigidbody>();
         playerHealth = GetComponent<HealthHandler>();
         rigidbody.freezeRotation = true;
@@ -190,6 +192,7 @@ public class MovementScript : MonoBehaviour
         if(grounded)
         {
             rigidbody.AddForce(moveDirection.normalized * moveSpeed * healthMultiplier, ForceMode.Force);
+            if(!soundHandler.source.isPlaying && moveDirection.magnitude > 0) soundHandler.playRandomClip();
         }
         else if(!grounded)
         {

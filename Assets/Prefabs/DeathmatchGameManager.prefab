@@ -52,7 +52,7 @@ MonoBehaviour:
   botPrefab: {fileID: 940666011427866990, guid: b59a0ea05dc2d1c43a8aa8a34af4ab92, type: 3}
   teamAColour: {r: 0, g: 0, b: 0, a: 0}
   teamBColour: {r: 0, g: 0, b: 0, a: 0}
-  gameStartTime: 10
+  gameStartTime: 1
   mapCenter: {fileID: 6120008282574286919}
   camera: {fileID: 0}
   playerScorecard: {fileID: 0}

@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: RocketLauncher
   m_EditorClassIdentifier: 
   range: 100
-  rateOfFire: 3
+  rateOfFire: 1
   reloadSpeed: 5
   damage: 100
-  paintDamage: 100
+  paintDamage: 120
   ammo: 1
+  explosive: 1
+  explosiveForce: 1000
+  explosiveRange: 50
   modelPrefab: {fileID: 171527776781687000, guid: 67a7e24bd17106e44b96414cadeb93f0, type: 3}
   fireNoise: {fileID: 8300000, guid: 7fac59d3baa0e1a438b6af8cf4d1f385, type: 3}

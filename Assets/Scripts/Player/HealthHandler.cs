@@ -13,6 +13,7 @@ public class HealthHandler : MonoBehaviour
     public float currentHealth;
     public float maxPaint;
     public float currentPaint;
+    public float respawnTime;
     //private damageType type;
     private DeathmatchScript deathmatchScript;
     public bool dead, despawned, isClient;
@@ -23,7 +24,7 @@ public class HealthHandler : MonoBehaviour
     public Image damageImage, paintImage; 
     [Header("DeathJump")]
     public float jumpForce;
-    public float positionOffset, range, vertical;
+    public float range, vertical;
 
     public void Awake()
     {
@@ -55,19 +56,19 @@ public class HealthHandler : MonoBehaviour
     {
         if(!dead)
         {
-        currentHealth = Mathf.Clamp(currentHealth - damageAmmount, 0, baseHealth);
-        currentPaint = Mathf.Clamp(currentPaint + paintAmmount, 0, maxPaint);
-        if (isClient)
-        { 
-            paintText.text = currentPaint.ToString();
-            paintImage.fillAmount = currentPaint/maxPaint; 
-            damageText.text = currentHealth.ToString();
-            damageImage.fillAmount = currentHealth / baseHealth;
-        }
-        DeathCheck(sender);
+            currentHealth = Mathf.Clamp(currentHealth - damageAmmount, 0, baseHealth);
+            currentPaint = Mathf.Clamp(currentPaint + paintAmmount, 0, maxPaint);
+            if (isClient)
+            { 
+                paintText.text = currentPaint.ToString();
+                paintImage.fillAmount = currentPaint/maxPaint; 
+                damageText.text = currentHealth.ToString();
+                damageImage.fillAmount = currentHealth / baseHealth;
+            }
+            DeathCheck(sender, damageAmmount, paintAmmount);
         }
     }
-    private void DeathCheck(GameObject sender)
+    private void DeathCheck(GameObject sender, float damageAmmount, float paintAmmount)
     {
         if(currentPaint >= maxPaint && !dead)
         {
@@ -78,14 +79,14 @@ public class HealthHandler : MonoBehaviour
             {
                 deathmatchScript.updatePlayerScore(sender);
             }
-            deathmatchScript.deSpawnMe(gameObject, true, 5f);
             if(gameObject.GetComponent<EnemyAI>()) gameObject.GetComponent<EnemyAI>().enabled = false;
             gameObject.GetComponent<MovementScript>().enabled = false;
             gameObject.GetComponent<Rigidbody>().freezeRotation = false;
             if(!dead)
             {
-                gameObject.GetComponent<Rigidbody>().AddExplosionForce(jumpForce,transform.position - (transform.position - sender.transform.position),(transform.position - sender.transform.position).magnitude,vertical,ForceMode.Impulse);
+                gameObject.GetComponent<Rigidbody>().AddExplosionForce(damageAmmount,new Vector3(transform.position.x + Random.Range(-5, 5), transform.position.y - GetComponent<MovementScript>().playerHeight, transform.position.z + Random.Range(-5, 5)),100,1,ForceMode.Impulse);
             }
+            deathmatchScript.deSpawnMe(gameObject, true, respawnTime);
             /*if(isClient && !dead)
             {
                 CameraController camControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
@@ -95,10 +96,6 @@ public class HealthHandler : MonoBehaviour
                 camControl.lookAtTarget = true;
             }*/
             dead = true;
-        }
-        if(currentHealth <= 0)
-        {
-            //Debug.Log(gameObject.name + " has been knocked out by " + sender.name);
         }
     }
 
